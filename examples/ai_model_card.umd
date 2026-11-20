@@ -1,9 +1,6 @@
 # DeepReason-70B: Model Specification & Evaluation
 
-
-
 Technical architecture, benchmark metrics, and inference pipeline for the DeepReason-70B foundational model.
-
 
 
 [COLUMNS gap="20"]
@@ -23,19 +20,14 @@ Code, Math & Multi-Step Reasoning
 [/COLUMNS]
 
 
-
 ## 1. Inference Architecture Flow
-
-
 
 [PIPELINE title="End-to-End Inference Pipeline"]
 User Query -> Semantic Tokenizer -> Mixture of Attention Layers -> Tool Calling Router -> Verifier Agent -> Streaming Output
 [/PIPELINE]
 
 
-
 ## 2. Benchmark Evaluation (MMLU & Reasoning)
-
 
 
 [CHART title="Zero-Shot Reasoning Benchmark Scores (%)" type="bar"]
@@ -48,7 +40,9 @@ DeepReason-70B (Ours) | 92.4
 
 
 
+
 ## 3. Latency vs Context Length Performance
+
 
 
 [CHART title="Inference Latency by Context Length (ms)" type="column"]
@@ -61,7 +55,9 @@ DeepReason-70B (Ours) | 92.4
 
 
 
+
 ## 4. Pretraining Data Distribution
+
 
 
 [CHART title="Pretraining Dataset Mixture (%)" type="pie"]
@@ -74,11 +70,14 @@ Conversational Dialog | 8
 
 
 
+
 ## 5. Training & Alignment Status
 
 
 
+
 [PROGRESS label="Stage 2 Reinforcement Learning with Verifiable Rewards (RLVR)" value="94" max="100" /]
+
 
 
 
@@ -88,17 +87,22 @@ Model checkpoints passed all safety filters, hallucination red-teaming, and late
 
 
 
+
 ## 6. Key Deployment Directives
+
 
 
 
 - [x] FP8 and INT4 quantization kernels verified on H100 clusters.
 
 
+
 - [x] Context extension validated up to 128k with zero degradation on Needle-In-A-Haystack.
 
 
+
 - [ ] Finalize Triton kernel optimization for speculative decoding.
+
 
 
 
