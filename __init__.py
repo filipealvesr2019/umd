@@ -19,7 +19,9 @@ from .core.parser import ParseResult, parse as parse_umd
 from .core.validator import validate
 from .document.model import Document
 from .document.persistence import open_document, save_document
+from .renderers.html import render_document
 
+parse = parse_umd
 open = open_document
 
 
@@ -38,13 +40,15 @@ except Exception:
     pass
 
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __all__ = [
     "Document",
     "ParseResult",
     "open",
     "open_document",
+    "parse",
     "parse_umd",
+    "render_document",
     "save_document",
     "validate",
     "view",
