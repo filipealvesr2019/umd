@@ -40,8 +40,6 @@ User Query -> Semantic Tokenizer -> Mixture of Attention Layers -> Tool Calling 
 ## 2. Benchmark Evaluation (MMLU & Reasoning)
 
 
-
-
 [CHART title="Zero-Shot Reasoning Benchmark Scores (%)" type="bar"]
 GPT-4o | 88.5
 Claude 3.5 Sonnet | 89.2
@@ -51,13 +49,7 @@ DeepReason-70B (Ours) | 92.4
 [/CHART]
 
 
-
-
-
-
 ## 3. Latency vs Context Length Performance
-
-
 
 [CHART title="Inference Latency by Context Length (ms)" type="column"]
 2k Tokens | 14.2
