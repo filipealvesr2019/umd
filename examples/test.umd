@@ -1,1 +1,95 @@
+Aqui estão exemplos de documentos `.html` e `.json`, desde os mais simples até estruturas um pouco mais elaboradas.**1. Exemplo de **`.html`**Exemplo: página de apresentação de um produto.**`
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Produto</title>
+</head>
+<body>
+    <header>
+        <h1>Meu Produto</h1>
+        <p>Uma solução para facilitar seu trabalho.</p>
+    </header>
 
+    <main>
+        <section>
+            <h2>Recursos</h2>
+            <ul>
+                <li>Fácil de usar</li>
+                <li>Rápido e leve</li>
+                <li>Personalizável</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Preço</h2>
+            <p>R$ 49,90</p>
+            <button>Comprar agora</button>
+        </section>
+    </main>
+</body>
+</html>
+`**Exemplo: tabela HTML.**`
+<table>
+    <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Teclado</td>
+            <td>R$ 150,00</td>
+            <td>12</td>
+        </tr>
+        <tr>
+            <td>Mouse</td>
+            <td>R$ 80,00</td>
+            <td>25</td>
+        </tr>
+    </tbody>
+</table>
+`**2. Exemplo de **`.json`**Exemplo: dados de um usuário.**`
+{
+    "usuario": {
+        "nome": "João",
+        "idade": 28,
+        "email": "joao@email.com",
+        "ativo": true
+    }
+}
+`**Exemplo: lista de produtos.**`
+{
+    "produtos": [
+        {
+            "id": 1,
+            "nome": "Teclado",
+            "preco": 150.00,
+            "disponivel": true
+        },
+        {
+            "id": 2,
+            "nome": "Mouse",
+            "preco": 80.00,
+            "disponivel": false
+        }
+    ]
+}
+`**Exemplo: configuração de um projeto.**`
+{
+    "projeto": "Meu SaaS",
+    "versao": "1.0.0",
+    "configuracoes": {
+        "tema": "dark",
+        "idioma": "pt-BR",
+        "notificacoes": true
+    },
+    "permissoes": [
+        "read",
+        "write",
+        "delete"
+    ]
+}
+`**3. Diferença entre eles**FormatoFinalidade`.html`Estruturar páginas e interfaces visuais`.json`Armazenar e transmitir dados estruturados`.umd`Criar documentos textuais com elementos visuais interativosUma distinção interessante para o UMD: HTML descreve estruturas de páginas, JSON descreve dados e o UMD pode combinar conteúdo textual com componentes visuais editáveis em um único documento.Está a usar a versão gratuita do ChatGPT. Atualize para ter acesso a modelos avançados, memória melhorada e criação de
