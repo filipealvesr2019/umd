@@ -11,6 +11,10 @@
 
 *Combine fluid Markdown writing with reactive UI blocks, data charts, and pipeline architectures — stored cleanly in a single `.umd` file with zero companion files.*
 
+<br/>
+
+<img src="assets/screenshot_01_editor_overview.png" alt="UI-Markdown Visual Editor: Stat Cards and Architecture Pipeline" width="900" style="border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);" />
+
 </div>
 
 ---
@@ -24,6 +28,10 @@ Traditional documentation tools often force you to choose between:
 2. **Proprietary Workspace Apps**: Visually rich, but stored in proprietary databases or accompanied by messy multi-file bundles (`.html`, `.json`, folder companions).
 
 **UMD solves this.** Every document is stored entirely in **pure human-readable text** under the `.umd` extension, with an AST-backed parser guaranteeing **100% lossless roundtrip preservation**.
+
+<div align="center">
+  <img src="assets/screenshot_02_pipeline_cards.png" alt="Inference Pipeline and Benchmark Evaluation" width="880" style="border-radius: 8px; margin: 16px 0;" />
+</div>
 
 ---
 
@@ -40,6 +48,31 @@ Traditional documentation tools often force you to choose between:
   - **Progress Cards**: Multi-stage fine-tuning and alignment tracking.
 - **🛡️ Security-First Core**: Built-in XSS defense, attribute breakout protection, sanitized URLs (`javascript:`/`vbscript:` neutralization), and resilient fuzz handling.
 - **⚡ Zero External Dependencies**: Core engine is 100% standard-library Python with lightning-fast execution (<1ms parse time).
+
+---
+
+## 📊 Rich AI & Data Visualizations
+
+### 1. Benchmark Horizontal Bar Charts
+Compare LLM benchmarks, evaluation scores, or accuracy metrics with auto-calculated visual bars:
+
+<div align="center">
+  <img src="assets/screenshot_03_benchmark_charts.png" alt="Benchmark Horizontal Bar Chart" width="880" style="border-radius: 8px; margin: 16px 0;" />
+</div>
+
+### 2. Vertical Column & Pie / Donut Charts
+Visualize latency curves across context lengths and dataset token distributions with interactive legends:
+
+<div align="center">
+  <img src="assets/screenshot_04_pie_column_charts.png" alt="Vertical Column Chart and Pie/Donut Chart" width="880" style="border-radius: 8px; margin: 16px 0;" />
+</div>
+
+### 3. Reactive Progress, Callouts & Checklists
+Track alignment stages with progress meters, status banners, and interactive task checkboxes:
+
+<div align="center">
+  <img src="assets/screenshot_05_checklist_callouts.png" alt="Progress Cards, Alert Callouts, and Task Checklists" width="880" style="border-radius: 8px; margin: 16px 0;" />
+</div>
 
 ---
 
@@ -87,7 +120,7 @@ umd install
 
 ## 🧩 Syntax & Component Reference
 
-UMD supports all standard CommonMark syntax (headings, bold, italics, code blocks, blockquotes, lists, tables) along with reactive block components:
+UMD supports all standard CommonMark syntax along with reactive block components:
 
 ### 1. AI & Data Charts
 ```markdown
