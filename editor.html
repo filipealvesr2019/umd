@@ -821,7 +821,7 @@
     outline: none;
     font-size: 13.5px;
     text-align: left;
-    user-select: none;
+    user-select: text;
     white-space: nowrap;
   }
 
@@ -1597,45 +1597,73 @@
       scheduleSave();
       updateFormatBar();
     }
-    // Ctrl+A / Cmd+A: Select All
+    // Ctrl+A / Cmd+A: Select All (Selects the whole document cleanly)
     if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'a') {
       const activeEl = document.activeElement;
-      const sel = window.getSelection();
-      const page = document.getElementById('editor-page');
-
-      if (!page) return;
-
+      // If typing inside an isolated input/textarea (like chart inputs), preserve default native selection
       if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
         return;
       }
 
-      let isBlockFullySelected = false;
-      if (activeEl && activeEl.isContentEditable && sel && sel.rangeCount > 0) {
-        const fullText = (activeEl.innerText || activeEl.textContent || '').replace(/\r?\n$/, '');
-        const selText = sel.toString().replace(/\r?\n$/, '');
-        if (selText.length > 0 && selText === fullText) {
-          isBlockFullySelected = true;
-        }
-      }
-
-      // First Ctrl+A: select all text within the current block
-      if (activeEl && activeEl.isContentEditable && !isBlockFullySelected) {
-        ev.preventDefault();
-        const range = document.createRange();
-        range.selectNodeContents(activeEl);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        updateFormatBar();
-        return;
-      }
-
-      // Second Ctrl+A (or if block already selected, or outside block): select the whole page!
       ev.preventDefault();
+      const page = document.getElementById('editor-page');
+      if (!page) return;
+
+      if (activeEl && typeof activeEl.blur === 'function') {
+        activeEl.blur();
+      }
+
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+
       const range = document.createRange();
       range.selectNodeContents(page);
-      sel.removeAllRanges();
       sel.addRange(range);
       updateFormatBar();
+    }
+
+    // Backspace / Delete when entire page is selected
+    if (ev.key === 'Backspace' || ev.key === 'Delete') {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+        const range = sel.getRangeAt(0);
+        const page = document.getElementById('editor-page');
+        if (page && (range.startContainer === page && range.startOffset === 0 && range.endOffset >= page.childNodes.length)) {
+          ev.preventDefault();
+          page.innerHTML = '';
+          const p = createParagraphBlock('');
+          page.appendChild(p);
+          focusBlock(p, true);
+          scheduleSave();
+        }
+      }
+    }
+  });
+
+  // COPY EVENT: When the entire document is selected (e.g. via Ctrl+A), copy full clean UMD text!
+  document.addEventListener('copy', (ev) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+
+    const page = document.getElementById('editor-page');
+    if (!page) return;
+
+    const range = sel.getRangeAt(0);
+    const isWholePageSelected = 
+      (range.startContainer === page && range.startOffset === 0 && range.endOffset >= page.childNodes.length) ||
+      range.commonAncestorContainer === page ||
+      range.commonAncestorContainer === document.body ||
+      range.commonAncestorContainer === document.documentElement;
+
+    if (isWholePageSelected && ev.clipboardData) {
+      const fullMarkdown = serializeDocument();
+      if (fullMarkdown) {
+        ev.clipboardData.setData('text/plain', fullMarkdown);
+        try {
+          ev.clipboardData.setData('text/html', page.innerHTML);
+        } catch (e) {}
+        ev.preventDefault();
+      }
     }
   });
 
