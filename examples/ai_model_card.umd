@@ -43,8 +43,6 @@ DeepReason-70B (Ours) | 92.4
 
 ## 3. Latency vs Context Length Performance
 
-
-
 [CHART title="Inference Latency by Context Length (ms)" type="column"]
 2k Tokens | 14.2
 8k Tokens | 22.8
@@ -54,11 +52,7 @@ DeepReason-70B (Ours) | 92.4
 [/CHART]
 
 
-
-
 ## 4. Pretraining Data Distribution
-
-
 
 [CHART title="Pretraining Dataset Mixture (%)" type="pie"]
 Code & Repositories | 35
