@@ -1447,6 +1447,46 @@
       scheduleSave();
       updateFormatBar();
     }
+    // Ctrl+A / Cmd+A: Select All
+    if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'a') {
+      const activeEl = document.activeElement;
+      const sel = window.getSelection();
+      const page = document.getElementById('editor-page');
+
+      if (!page) return;
+
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+        return;
+      }
+
+      let isBlockFullySelected = false;
+      if (activeEl && activeEl.isContentEditable && sel && sel.rangeCount > 0) {
+        const fullText = (activeEl.innerText || activeEl.textContent || '').replace(/\r?\n$/, '');
+        const selText = sel.toString().replace(/\r?\n$/, '');
+        if (selText.length > 0 && selText === fullText) {
+          isBlockFullySelected = true;
+        }
+      }
+
+      // First Ctrl+A: select all text within the current block
+      if (activeEl && activeEl.isContentEditable && !isBlockFullySelected) {
+        ev.preventDefault();
+        const range = document.createRange();
+        range.selectNodeContents(activeEl);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        updateFormatBar();
+        return;
+      }
+
+      // Second Ctrl+A (or if block already selected, or outside block): select the whole page!
+      ev.preventDefault();
+      const range = document.createRange();
+      range.selectNodeContents(page);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      updateFormatBar();
+    }
   });
 
   // Context Menu Actions
@@ -2649,6 +2689,33 @@
         continue;
       }
 
+      // Markdown Table (| col1 | col2 |\n|---|---|)
+      const isSepRow = (s) => /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?\s*$/.test(s);
+      const isPipeRow = (s) => s.includes('|') && s.trim().length > 0;
+
+      if (isPipeRow(line) && i + 1 < lines.length && isSepRow(lines[i + 1])) {
+        const parseCells = (rowText) => {
+          let s = rowText.trim();
+          if (s.startsWith('|')) s = s.slice(1);
+          if (s.endsWith('|')) s = s.slice(0, -1);
+          return s.split('|').map(c => c.trim());
+        };
+
+        const headers = parseCells(line);
+        i += 2;
+
+        const rows = [];
+        while (i < lines.length && isPipeRow(lines[i]) && !lines[i].trim().startsWith('[') && !isSepRow(lines[i])) {
+          rows.push(parseCells(lines[i]));
+          i++;
+        }
+
+        const tableBlock = createTableElement('', headers, rows);
+        tableBlock.setAttribute('data-markdown-table', 'true');
+        page.appendChild(tableBlock);
+        continue;
+      }
+
       // Table: [TABLE ...]
       if (line.startsWith('[TABLE')) {
         let titleMatch = line.match(/title="([^"]+)"/);
@@ -2866,22 +2933,32 @@
           lines.push('');
         }
       } else if (type === 'table') {
+        const isMarkdownTable = block.getAttribute('data-markdown-table') === 'true';
         const title = block.getAttribute('data-title') || '';
-        const titleAttr = title ? ' title="' + title + '"' : '';
-        lines.push('[TABLE' + titleAttr + ']');
-
         const ths = Array.from(block.querySelectorAll('thead th')).map(th => htmlToMarkdownInline(th).trim());
-        if (ths.length > 0) {
-          lines.push(ths.join(' | '));
+        const rows = Array.from(block.querySelectorAll('tbody tr')).map(tr =>
+          Array.from(tr.querySelectorAll('td')).map(td => htmlToMarkdownInline(td).trim())
+        );
+
+        if (isMarkdownTable || !title) {
+          if (ths.length > 0) {
+            lines.push('| ' + ths.join(' | ') + ' |');
+            lines.push('| ' + ths.map(() => '---').join(' | ') + ' |');
+          }
+          rows.forEach(cells => {
+            lines.push('| ' + cells.join(' | ') + ' |');
+          });
+        } else {
+          const titleAttr = title ? ' title="' + title + '"' : '';
+          lines.push('[TABLE' + titleAttr + ']');
+          if (ths.length > 0) {
+            lines.push(ths.join(' | '));
+          }
+          rows.forEach(cells => {
+            lines.push(cells.join(' | '));
+          });
+          lines.push('[/TABLE]');
         }
-
-        const rows = Array.from(block.querySelectorAll('tbody tr'));
-        rows.forEach(tr => {
-          const cells = Array.from(tr.querySelectorAll('td')).map(td => htmlToMarkdownInline(td).trim());
-          lines.push(cells.join(' | '));
-        });
-
-        lines.push('[/TABLE]');
         lines.push('');
       } else if (type === 'callout') {
         const tone = block.getAttribute('data-tone') || 'success';
