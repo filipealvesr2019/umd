@@ -23,6 +23,18 @@ classifiers = [
 umd = "umd.cli:main"
 uimd = "umd.cli:main"
 
-[tool.setuptools.packages.find]
-where = [".."]
-include = ["umd*"]
+[tool.setuptools]
+packages = [
+    "umd",
+    "umd.components",
+    "umd.core",
+    "umd.document",
+    "umd.markdown",
+    "umd.renderers",
+]
+
+[tool.setuptools.package-dir]
+umd = "."
+
+[tool.setuptools.package-data]
+umd = ["editor.html", "extension_template.js"]
