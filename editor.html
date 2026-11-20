@@ -1081,7 +1081,7 @@
   </button>
 </div>
 
-<div class="notion-canvas" id="editor-page"></div>
+<div class="notion-canvas" id="editor-page" contenteditable="true" spellcheck="false"></div>
 
 <!-- Floating Text Formatting Toolbar (Bold, Italic, Underline, Strikethrough, Code, Copy) -->
 <div id="format-bar" class="notion-format-bar">
@@ -1622,10 +1622,12 @@
       isSelectAllActive = false;
       return;
     }
+    const selStr = sel.toString().trim();
+    const pageStr = (page.innerText || '').trim();
     const isExactPage = (
       range.startContainer === page && range.startOffset === 0 &&
       range.endContainer === page && range.endOffset >= page.childNodes.length
-    );
+    ) || (selStr.length > 50 && pageStr.length > 50 && selStr === pageStr);
     if (!isExactPage) {
       isSelectAllActive = false;
     }
@@ -1703,10 +1705,12 @@
     if (!page) return;
 
     const range = sel.getRangeAt(0);
+    const selStr = sel.toString().trim();
+    const pageStr = (page.innerText || '').trim();
     const isExactPage = (
       range.startContainer === page && range.startOffset === 0 &&
       range.endContainer === page && range.endOffset >= page.childNodes.length
-    );
+    ) || (selStr.length > 50 && pageStr.length > 50 && selStr === pageStr);
 
     if (isSelectAllActive || isExactPage) {
       if (ev.clipboardData) {
@@ -2268,6 +2272,7 @@
     const wrapper = document.createElement('div');
     wrapper.className = 'isolated-element';
     wrapper.setAttribute('data-block-type', type);
+    wrapper.contentEditable = 'false';
 
     const toolbar = document.createElement('div');
     toolbar.className = 'element-toolbar';
