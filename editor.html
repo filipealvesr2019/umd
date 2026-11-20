@@ -561,6 +561,31 @@
     color: #f43f5e;
   }
 
+  .notion-code-block {
+    background: var(--bg-card, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-main, #e0e0e0);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .notion-code-header {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-muted, #888);
+    font-weight: 600;
+    margin-bottom: 6px;
+    user-select: none;
+    letter-spacing: 0.5px;
+  }
+
   /* Bullet List */
   ul.notion-bullet-list {
     margin: 8px 0 12px 0;
@@ -1092,6 +1117,14 @@
   <div class="menu-divider"></div>
   <div class="menu-header">DATA &amp; CALLOUTS</div>
 
+  <div class="menu-item" data-action="add-code">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    </span>
+    <span class="menu-title">Code Block</span>
+    <span class="menu-shortcut">```</span>
+  </div>
+
   <div class="menu-item" data-action="add-table">
     <span class="menu-icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
@@ -1565,6 +1598,8 @@
       newElement = createHeadingBlock(3, 'Heading 3');
     } else if (action === 'add-h4') {
       newElement = createHeadingBlock(4, 'Heading 4');
+    } else if (action === 'add-code') {
+      newElement = createCodeBlock('python', '# Write code here');
     } else if (action === 'add-table') {
       newElement = createTableElement('Data Table', ['Item', 'Qty', 'Price'], [
         ['Item A', '1', '$100'],
@@ -1789,6 +1824,31 @@
         }
       }
     }
+  }
+
+  function createCodeBlock(lang, code) {
+    const wrap = createIsolatedWrapper('code-block');
+    wrap.setAttribute('data-lang', lang || 'text');
+
+    const block = document.createElement('div');
+    block.className = 'notion-code-block';
+
+    if (lang) {
+      const header = document.createElement('div');
+      header.className = 'notion-code-header';
+      header.innerText = lang;
+      block.appendChild(header);
+    }
+
+    const codeEl = document.createElement('div');
+    codeEl.className = 'notion-code-content';
+    codeEl.contentEditable = 'true';
+    codeEl.innerText = code || '';
+    codeEl.addEventListener('input', scheduleSave);
+    block.appendChild(codeEl);
+
+    wrap.appendChild(block);
+    return wrap;
   }
 
   function createParagraphBlock(text) {
@@ -2599,6 +2659,21 @@
         continue;
       }
 
+      // Fenced Code Block (```lang ... ``` or ~~~lang ... ~~~)
+      if (line.trim().startsWith('```') || line.trim().startsWith('~~~')) {
+        const fence = line.trim().slice(0, 3);
+        const lang = line.trim().slice(3).trim();
+        i++;
+        const codeLines = [];
+        while (i < lines.length && !lines[i].trim().startsWith(fence)) {
+          codeLines.push(lines[i]);
+          i++;
+        }
+        page.appendChild(createCodeBlock(lang, codeLines.join('\n')));
+        i++;
+        continue;
+      }
+
       // Headings 1-4
       if (line.startsWith('# ')) {
         page.appendChild(createHeadingBlock(1, line.substring(2).trim()));
@@ -2693,27 +2768,47 @@
       const isSepRow = (s) => /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?\s*$/.test(s);
       const isPipeRow = (s) => s.includes('|') && s.trim().length > 0;
 
-      if (isPipeRow(line) && i + 1 < lines.length && isSepRow(lines[i + 1])) {
-        const parseCells = (rowText) => {
-          let s = rowText.trim();
-          if (s.startsWith('|')) s = s.slice(1);
-          if (s.endsWith('|')) s = s.slice(0, -1);
-          return s.split('|').map(c => c.trim());
-        };
-
-        const headers = parseCells(line);
-        i += 2;
-
-        const rows = [];
-        while (i < lines.length && isPipeRow(lines[i]) && !lines[i].trim().startsWith('[') && !isSepRow(lines[i])) {
-          rows.push(parseCells(lines[i]));
-          i++;
+      if (isPipeRow(line)) {
+        let sepIdx = i + 1;
+        while (sepIdx < lines.length && !lines[sepIdx].trim()) {
+          sepIdx++;
         }
+        if (sepIdx < lines.length && isSepRow(lines[sepIdx])) {
+          const parseCells = (rowText) => {
+            let s = rowText.trim();
+            if (s.startsWith('|')) s = s.slice(1);
+            if (s.endsWith('|')) s = s.slice(0, -1);
+            return s.split('|').map(c => c.trim());
+          };
 
-        const tableBlock = createTableElement('', headers, rows);
-        tableBlock.setAttribute('data-markdown-table', 'true');
-        page.appendChild(tableBlock);
-        continue;
+          const headers = parseCells(line);
+          i = sepIdx + 1;
+
+          const rows = [];
+          while (i < lines.length) {
+            if (!lines[i].trim()) {
+              let peek = i + 1;
+              while (peek < lines.length && !lines[peek].trim()) peek++;
+              if (peek < lines.length && isPipeRow(lines[peek]) && !lines[peek].trim().startsWith('[') && !isSepRow(lines[peek])) {
+                i++;
+                continue;
+              } else {
+                break;
+              }
+            }
+            if (isPipeRow(lines[i]) && !lines[i].trim().startsWith('[') && !isSepRow(lines[i])) {
+              rows.push(parseCells(lines[i]));
+              i++;
+            } else {
+              break;
+            }
+          }
+
+          const tableBlock = createTableElement('', headers, rows);
+          tableBlock.setAttribute('data-markdown-table', 'true');
+          page.appendChild(tableBlock);
+          continue;
+        }
       }
 
       // Table: [TABLE ...]
@@ -2923,6 +3018,16 @@
         lines.push('<summary>' + sText + '</summary>');
         if (cText) lines.push(cText);
         lines.push('</details>');
+        lines.push('');
+      } else if (type === 'code-block') {
+        const lang = block.getAttribute('data-lang') || '';
+        const codeEl = block.querySelector('.notion-code-content') || block.querySelector('.notion-code-block');
+        const code = codeEl ? codeEl.innerText : '';
+        lines.push('```' + lang);
+        if (code) {
+          lines.push(code);
+        }
+        lines.push('```');
         lines.push('');
       } else if (type === 'p') {
         const text = htmlToMarkdownInline(block).trim();
