@@ -1585,6 +1585,29 @@
     }
   }
 
+  let isSelectAllActive = false;
+
+  document.addEventListener('selectionchange', () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+      isSelectAllActive = false;
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    const page = document.getElementById('editor-page');
+    if (!page) {
+      isSelectAllActive = false;
+      return;
+    }
+    const isExactPage = (
+      range.startContainer === page && range.startOffset === 0 &&
+      range.endContainer === page && range.endOffset >= page.childNodes.length
+    );
+    if (!isExactPage) {
+      isSelectAllActive = false;
+    }
+  });
+
   document.addEventListener('keydown', (ev) => {
     if (ev.key === 'Escape') {
       hideContextMenu();
@@ -1619,6 +1642,7 @@
       const range = document.createRange();
       range.selectNodeContents(page);
       sel.addRange(range);
+      isSelectAllActive = true;
       updateFormatBar();
     }
 
@@ -1628,19 +1652,26 @@
       if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
         const range = sel.getRangeAt(0);
         const page = document.getElementById('editor-page');
-        if (page && (range.startContainer === page && range.startOffset === 0 && range.endOffset >= page.childNodes.length)) {
+        const isExactPage = page && (
+          range.startContainer === page && range.startOffset === 0 &&
+          range.endContainer === page && range.endOffset >= page.childNodes.length
+        );
+        if (isSelectAllActive || isExactPage) {
           ev.preventDefault();
           page.innerHTML = '';
           const p = createParagraphBlock('');
           page.appendChild(p);
           focusBlock(p, true);
+          isSelectAllActive = false;
           scheduleSave();
         }
       }
     }
   });
 
-  // COPY EVENT: When the entire document is selected (e.g. via Ctrl+A), copy full clean UMD text!
+  // COPY EVENT:
+  // - When Ctrl+A / entire page is selected: copy clean complete UMD text and HTML!
+  // - When a part/piece of text is selected: let native copy handle it cleanly!
   document.addEventListener('copy', (ev) => {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
@@ -1649,22 +1680,26 @@
     if (!page) return;
 
     const range = sel.getRangeAt(0);
-    const isWholePageSelected = 
-      (range.startContainer === page && range.startOffset === 0 && range.endOffset >= page.childNodes.length) ||
-      range.commonAncestorContainer === page ||
-      range.commonAncestorContainer === document.body ||
-      range.commonAncestorContainer === document.documentElement;
+    const isExactPage = (
+      range.startContainer === page && range.startOffset === 0 &&
+      range.endContainer === page && range.endOffset >= page.childNodes.length
+    );
 
-    if (isWholePageSelected && ev.clipboardData) {
-      const fullMarkdown = serializeDocument();
-      if (fullMarkdown) {
-        ev.clipboardData.setData('text/plain', fullMarkdown);
-        try {
-          ev.clipboardData.setData('text/html', page.innerHTML);
-        } catch (e) {}
-        ev.preventDefault();
+    if (isSelectAllActive || isExactPage) {
+      if (ev.clipboardData) {
+        const fullMarkdown = serializeDocument();
+        if (fullMarkdown) {
+          ev.clipboardData.setData('text/plain', fullMarkdown);
+          try {
+            ev.clipboardData.setData('text/html', page.innerHTML);
+          } catch (e) {}
+          ev.preventDefault();
+        }
       }
+      return;
     }
+
+    // Partial selection: let the browser natively copy the exact selected text/fragment!
   });
 
   // Context Menu Actions
