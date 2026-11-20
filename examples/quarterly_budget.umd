@@ -1,0 +1,37 @@
+# Cloud Infrastructure Budget
+
+Quarterly cost breakdown and optimization forecast for infrastructure and tools.
+
+[COLUMNS gap="20"]
+
+[CARD title="Monthly Spend"]
+$14,250 / month
+[/CARD]
+
+[CARD title="Projected Annual"]
+$171,000 / year
+[/CARD]
+
+[CARD title="Savings Rate"]
+-18% after migration
+[/CARD]
+
+[/COLUMNS]
+
+[TABLE title="Cost Breakdown by Service"]
+Category | Provider | Monthly Cost | Budget Allocation
+Compute Clusters | AWS EKS | $6,400 | 45%
+Database Tier | AWS Aurora PostgreSQL | $3,850 | 27%
+Observability & Logs | Datadog | $2,200 | 15%
+Developer Tooling | GitHub & Vercel | $1,800 | 13%
+[/TABLE]
+
+[CALLOUT tone="success" title="Cost Optimization"]
+Switching compute instances to 3-year savings plans will save an additional $2,100 per month starting next quarter.
+[/CALLOUT]
+
+## Recommendations
+
+- Archive cold logs older than 90 days to S3 Glacier.
+- Consolidate staging database instances during off-peak hours.
+- Review automated snapshot retention policies.

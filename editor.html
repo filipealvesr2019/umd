@@ -1,0 +1,2976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI-Markdown Visual Editor</title>
+<style>
+  :root {
+    --bg-page: var(--vscode-editor-background, #1e1e1e);
+    --text-primary: #bec4cc;
+    --text-heading: #d0d5dc;
+    --text-body: #aeb4bd;
+    --text-muted: #7c828c;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-hover: rgba(255, 255, 255, 0.15);
+    --accent: #38bdf8;
+    --accent-light: rgba(56, 189, 248, 0.12);
+    --hover-bg: rgba(255, 255, 255, 0.04);
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --menu-bg: #22252a;
+    --menu-border: #374151;
+    --menu-hover: #2563eb;
+    --danger: #ef4444;
+  }
+
+  * { box-sizing: border-box; }
+
+  ::selection {
+    background: rgba(56, 189, 248, 0.35);
+    color: #ffffff;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg-page);
+    color: var(--text-body);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    cursor: text;
+  }
+
+  /* Seamless Notion-style canvas */
+  .notion-canvas {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 48px 60vh;
+    min-height: 100vh;
+    outline: none;
+    cursor: text;
+  }
+
+  /* Isolated element wrapper */
+  .isolated-element {
+    position: relative;
+    margin: 20px 0;
+    border-radius: 8px;
+    transition: box-shadow 0.15s ease;
+  }
+
+  .isolated-element:hover {
+    outline: 1px dashed rgba(128, 128, 128, 0.25);
+  }
+
+  /* Floating element toolbar on hover */
+  .element-toolbar {
+    position: absolute;
+    top: -12px;
+    right: 8px;
+    display: none;
+    gap: 4px;
+    background: var(--menu-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 5px;
+    padding: 2px 6px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .isolated-element:hover > .element-toolbar {
+    display: flex;
+  }
+
+  .tool-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .tool-btn:hover {
+    color: var(--text-primary);
+    background: var(--hover-bg);
+  }
+
+  .tool-btn.danger:hover {
+    color: var(--danger);
+  }
+
+  /* Base Blocks */
+  .notion-block {
+    outline: none;
+    position: relative;
+    border-radius: 4px;
+    transition: background 0.1s ease;
+    word-break: break-word;
+  }
+
+  /* Headings */
+  h1.notion-block {
+    font-size: 28px;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    margin: 18px 0 6px 0;
+    color: var(--text-heading);
+  }
+
+  h2.notion-block {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin: 18px 0 5px 0;
+    color: var(--text-heading);
+  }
+
+  h3.notion-block {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 16px 0 4px 0;
+    color: var(--text-heading);
+  }
+
+  h4.notion-block {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 12px 0 3px 0;
+    color: var(--text-heading);
+    opacity: 0.95;
+  }
+
+  /* Free Paragraph */
+  p.notion-block {
+    font-size: 15px;
+    line-height: 1.65;
+    margin: 4px 0;
+    min-height: 26px;
+    color: var(--text-body);
+    white-space: pre-wrap;
+  }
+
+  p.notion-block:empty::before, p.notion-block[data-empty="true"]::before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* Inline Styling */
+  strong, b {
+    font-weight: 600;
+    color: #d0d5dc;
+  }
+
+  em, i {
+    font-style: italic;
+    color: #aeb4bd;
+  }
+
+  /* Crisp Underline with interactive hover */
+  u, .umd-underlined {
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3.5px;
+    text-decoration-color: var(--accent, #3b82f6);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  u:hover, .umd-underlined:hover {
+    text-decoration-thickness: 2.5px;
+    text-decoration-color: #60a5fa;
+    color: #b5b5b5;
+  }
+
+  /* AI / Data Graphics: Benchmark Chart */
+  .notion-chart-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 16px 0;
+  }
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .chart-title-input {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-heading);
+    outline: none;
+    cursor: text;
+  }
+  .chart-rows-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .chart-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+  .chart-label-input {
+    width: 140px;
+    font-size: 13px;
+    color: var(--text-body);
+    outline: none;
+    cursor: text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chart-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .chart-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  .chart-value-input {
+    width: 55px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-heading);
+    outline: none;
+    cursor: text;
+  }
+  .delete-bar-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 4px;
+    transition: opacity 0.15s ease;
+  }
+  .chart-bar-row:hover .delete-bar-btn {
+    opacity: 1;
+  }
+  .delete-bar-btn:hover {
+    color: var(--danger);
+  }
+  .chart-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+  }
+  .chart-btn {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .chart-btn:hover {
+    color: var(--text-heading);
+    background: var(--hover-bg);
+  }
+
+  /* Chart: Pie / Donut */
+  .chart-pie-container {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-top: 10px;
+  }
+  .chart-pie-visual-wrap {
+    flex-shrink: 0;
+  }
+  .chart-pie-visual {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+  .chart-pie-hole {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--bg-page);
+  }
+  .chart-pie-legend-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .pie-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .pie-color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .pie-lbl-input {
+    flex: 1;
+    color: var(--text-body);
+    outline: none;
+    cursor: text;
+  }
+  .pie-val-input {
+    width: 50px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-heading);
+    outline: none;
+    cursor: text;
+  }
+  .pie-pct-badge {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    width: 48px;
+    text-align: right;
+  }
+
+  /* Chart: Vertical Column */
+  .chart-columns-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    height: 170px;
+    padding: 16px 8px 6px;
+    margin-top: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .column-bar-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    position: relative;
+  }
+  .column-bar-item:hover .delete-col-btn {
+    opacity: 1;
+  }
+  .delete-col-btn {
+    opacity: 0;
+    position: absolute;
+    top: -14px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .delete-col-btn:hover {
+    color: var(--danger);
+  }
+  .column-val-input {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-bottom: 6px;
+    outline: none;
+    cursor: text;
+  }
+  .column-track {
+    flex: 1;
+    width: 28px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px 5px 0 0;
+    display: flex;
+    align-items: flex-end;
+  }
+  .column-fill {
+    width: 100%;
+    border-radius: 5px 5px 0 0;
+    transition: height 0.3s ease;
+  }
+  .column-lbl-input {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    outline: none;
+    cursor: text;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  /* AI / Data Graphics: Pipeline Architecture */
+  .notion-pipeline-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 16px 0;
+  }
+  .pipeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .pipeline-title-input {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-heading);
+    outline: none;
+    cursor: text;
+  }
+  .pipeline-flow-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .pipeline-stage {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-heading);
+  }
+  .pipeline-stage-text {
+    outline: none;
+    cursor: text;
+  }
+  .delete-stage-btn {
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1;
+    border: none;
+    background: none;
+    padding: 0;
+    display: none;
+  }
+  .pipeline-stage:hover .delete-stage-btn {
+    display: inline;
+  }
+  .delete-stage-btn:hover {
+    color: var(--danger);
+  }
+  .pipeline-arrow {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .pipeline-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* AI / Data Graphics: Training Progress Card */
+  .notion-progress-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .progress-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-label-input {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-heading);
+    outline: none;
+    cursor: text;
+  }
+  .progress-badge-input {
+    font-size: 13px;
+    font-weight: 600;
+    color: #38bdf8;
+    outline: none;
+    cursor: text;
+  }
+  .progress-bar-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  a {
+    color: #60a5fa;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: #93c5fd;
+  }
+
+  del, s {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  code.inline-code {
+    background: rgba(128, 128, 128, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 88%;
+    color: #f43f5e;
+  }
+
+  /* Bullet List */
+  ul.notion-bullet-list {
+    margin: 8px 0 12px 0;
+    padding-left: 24px;
+    list-style-type: disc;
+  }
+
+  /* Numbered List */
+  ol.notion-number-list {
+    margin: 8px 0 12px 0;
+    padding-left: 24px;
+    list-style-type: decimal;
+  }
+
+  li.notion-li {
+    font-size: 15.5px;
+    line-height: 1.6;
+    margin: 3px 0;
+    min-height: 26px;
+    color: var(--text-primary);
+    outline: none;
+  }
+
+  li.notion-li:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* To-do List */
+  .notion-todo-wrap {
+    margin: 6px 0;
+  }
+
+  .notion-todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 4px 0;
+    min-height: 26px;
+  }
+
+  .notion-todo-checkbox {
+    margin-top: 5px;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+  }
+
+  .notion-todo-text {
+    flex: 1;
+    outline: none;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+
+  .notion-todo-text.checked {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+
+  .notion-todo-text:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* Toggle List */
+  details.notion-toggle {
+    margin: 8px 0;
+    border-radius: 4px;
+  }
+
+  details.notion-toggle summary {
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    outline: none;
+    padding: 2px 0;
+  }
+
+  details.notion-toggle summary:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .notion-toggle-content {
+    padding-left: 20px;
+    margin: 6px 0;
+    outline: none;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+
+  /* Quote */
+  blockquote.notion-quote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 14px;
+    margin: 12px 0;
+    font-style: italic;
+    color: var(--text-muted);
+    outline: none;
+  }
+
+  /* Divider */
+  hr.notion-hr {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 24px 0;
+    outline: none;
+  }
+
+  /* Tables */
+  .table-block-wrapper {
+    margin: 16px 0;
+    width: 100%;
+    cursor: default;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  table.notion-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+  }
+
+  table.notion-table th {
+    padding: 10px 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-subtle);
+    outline: none;
+    font-size: 13.5px;
+    text-align: left;
+    user-select: none;
+  }
+
+  table.notion-table td {
+    padding: 12px 14px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-subtle);
+    outline: none;
+    transition: background 0.12s ease;
+  }
+
+  table.notion-table td:hover {
+    background: var(--hover-bg);
+  }
+
+  table.notion-table td:focus, table.notion-table th:focus {
+    background: var(--accent-light);
+    box-shadow: inset 0 0 0 1.5px var(--accent);
+    border-radius: 3px;
+  }
+
+  /* AÇÕES DA TABELA (+ Add Row e + Add Column): APARECEM APENAS AO CLICAR NA TABELA */
+  .table-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .table-block-wrapper:focus-within .table-actions,
+  .table-block-wrapper.is-selected .table-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .table-btn {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .table-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--accent);
+    background: var(--hover-bg);
+  }
+
+  /* Callout */
+  .notion-callout {
+    padding: 16px 20px;
+    border-radius: 8px;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: default;
+  }
+
+  .callout-header {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #22c55e;
+    outline: none;
+    cursor: text;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .callout-text {
+    font-size: 14.5px;
+    color: var(--text-primary);
+    outline: none;
+    line-height: 1.5;
+    cursor: text;
+  }
+
+  /* Cards / Columns */
+  .notion-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    cursor: default;
+  }
+
+  .notion-card {
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: var(--card-bg);
+  }
+
+  .card-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    outline: none;
+    cursor: text;
+  }
+
+  .card-value {
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    line-height: 1.4;
+    cursor: text;
+  }
+
+  /* Floating Formatting Toolbar (Bold, Italic, Underline, Strikethrough, Code) */
+  .notion-format-bar {
+    position: fixed;
+    z-index: 1001;
+    display: none;
+    background: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    padding: 3px 5px;
+    gap: 3px;
+    align-items: center;
+  }
+
+  .format-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 13px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    transition: background 0.1s ease;
+  }
+
+  .format-btn:hover {
+    background: var(--menu-hover);
+    color: #fff;
+  }
+
+  .format-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border-subtle);
+    margin: 0 2px;
+  }
+
+  /* Context Menu (Right Click) */
+  .umd-context-menu {
+    position: fixed;
+    z-index: 1000;
+    background: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    width: 280px;
+    padding: 6px;
+    font-size: 13px;
+    user-select: none;
+    display: none;
+    max-height: 480px;
+    overflow-y: auto;
+  }
+
+  .menu-header {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 6px 10px 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+
+  .menu-item:hover {
+    background: var(--menu-hover);
+    color: #fff;
+  }
+
+  .menu-item:hover .menu-icon svg {
+    stroke: #fff;
+  }
+
+  .menu-item:hover .menu-shortcut {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .menu-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+
+  .menu-icon svg {
+    stroke: var(--text-muted);
+    transition: stroke 0.1s ease;
+  }
+
+  .menu-title {
+    flex: 1;
+    font-weight: 500;
+    line-height: 1.2;
+    font-size: 13px;
+  }
+
+  .menu-shortcut {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: monospace;
+    opacity: 0.65;
+  }
+
+  .menu-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 4px 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="notion-canvas" id="editor-page"></div>
+
+<!-- Floating Text Formatting Toolbar (Bold, Italic, Underline, Strikethrough, Code) -->
+<div id="format-bar" class="notion-format-bar">
+  <button class="format-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+  <button class="format-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+  <button class="format-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+  <button class="format-btn" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+  <div class="format-divider"></div>
+  <button class="format-btn" data-cmd="code" title="Inline Code"><code>&lt;&gt;</code></button>
+</div>
+
+<!-- Context Menu in English -->
+<div id="context-menu" class="umd-context-menu">
+  <div class="menu-header">FORMAT SELECTION</div>
+  
+  <div class="menu-item" data-action="format-underline">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg>
+    </span>
+    <span class="menu-title" style="text-decoration: underline; text-underline-offset: 3px;">Underline</span>
+    <span class="menu-shortcut">Ctrl+U</span>
+  </div>
+
+  <div class="menu-item" data-action="format-bold">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h9a4 4 0 0 1 0 8H6v-8zm0-8h8a4 4 0 0 1 0 8H6V4z"/></svg>
+    </span>
+    <span class="menu-title" style="font-weight: 700;">Bold</span>
+    <span class="menu-shortcut">Ctrl+B</span>
+  </div>
+
+  <div class="menu-item" data-action="format-italic">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+    </span>
+    <span class="menu-title" style="font-style: italic;">Italic</span>
+    <span class="menu-shortcut">Ctrl+I</span>
+  </div>
+
+  <div class="menu-item" data-action="format-strike">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4H9a3 3 0 0 0-2.83 4M14 12a4 4 0 0 1 0 8H6"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+    </span>
+    <span class="menu-title" style="text-decoration: line-through;">Strikethrough</span>
+    <span class="menu-shortcut">Alt+Shift+5</span>
+  </div>
+
+  <div class="menu-item" data-action="format-code">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    </span>
+    <span class="menu-title">Inline Code</span>
+    <span class="menu-shortcut">`</span>
+  </div>
+
+  <div class="menu-divider"></div>
+  <div class="menu-header">BASIC BLOCKS</div>
+  
+  <div class="menu-item" data-action="add-p">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+    </span>
+    <span class="menu-title">Text</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-h1">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8M4 18V6M12 18V6M17 12l3-2v8"/></svg>
+    </span>
+    <span class="menu-title">Heading 1</span>
+    <span class="menu-shortcut">#</span>
+  </div>
+
+  <div class="menu-item" data-action="add-h2">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8M4 18V6M12 18V6M21 18h-4c0-4 4-3 4-6 0-1.5-1-2.5-2.5-2.5S16 10.5 16 12"/></svg>
+    </span>
+    <span class="menu-title">Heading 2</span>
+    <span class="menu-shortcut">##</span>
+  </div>
+
+  <div class="menu-item" data-action="add-h3">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8M4 18V6M12 18V6M17.5 10.5c.8-.8 2-.8 2.8 0s.8 2 0 2.8L18 15l2.3 1.7c.8.8.8 2 0 2.8s-2 .8-2.8 0"/></svg>
+    </span>
+    <span class="menu-title">Heading 3</span>
+    <span class="menu-shortcut">###</span>
+  </div>
+
+  <div class="menu-item" data-action="add-h4">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h8M4 18V6M12 18V6M17 10v5h4M21 10v8"/></svg>
+    </span>
+    <span class="menu-title">Heading 4</span>
+    <span class="menu-shortcut">####</span>
+  </div>
+
+  <div class="menu-divider"></div>
+  <div class="menu-header">LISTS</div>
+
+  <div class="menu-item" data-action="add-bullet">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>
+    </span>
+    <span class="menu-title">Bulleted list</span>
+    <span class="menu-shortcut">-</span>
+  </div>
+
+  <div class="menu-item" data-action="add-number">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4M4 10h2M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+    </span>
+    <span class="menu-title">Numbered list</span>
+    <span class="menu-shortcut">1.</span>
+  </div>
+
+  <div class="menu-item" data-action="add-todo">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m5 8 1 1 2-2"/><line x1="13" y1="8" x2="21" y2="8"/><rect x="3" y="15" width="6" height="6" rx="1"/><line x1="13" y1="18" x2="21" y2="18"/></svg>
+    </span>
+    <span class="menu-title">To-do list</span>
+    <span class="menu-shortcut">[]</span>
+  </div>
+
+  <div class="menu-item" data-action="add-toggle">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </span>
+    <span class="menu-title">Toggle list</span>
+    <span class="menu-shortcut">&gt;</span>
+  </div>
+
+  <div class="menu-divider"></div>
+  <div class="menu-header">DATA &amp; CALLOUTS</div>
+
+  <div class="menu-item" data-action="add-table">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+    </span>
+    <span class="menu-title">Data Table</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-callout">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg>
+    </span>
+    <span class="menu-title">Callout</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-columns">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="16" x="3" y="4" rx="1"/><rect width="7" height="16" x="14" y="4" rx="1"/></svg>
+    </span>
+    <span class="menu-title">Stat Cards</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-quote">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2 0 4-1.5 6-1 8zm14 0c3 0 7-1 7-8V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2 0 4-1.5 6-1 8z"/></svg>
+    </span>
+    <span class="menu-title">Quote</span>
+    <span class="menu-shortcut">|</span>
+  </div>
+
+  <div class="menu-item" data-action="add-hr">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="22" y2="12"/></svg>
+    </span>
+    <span class="menu-title">Divider</span>
+    <span class="menu-shortcut">---</span>
+  </div>
+
+  <div class="menu-divider"></div>
+  <div class="menu-header">AI &amp; DATA GRAPHICS</div>
+
+  <div class="menu-item" data-action="add-chart-bar">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </span>
+    <span class="menu-title">Horizontal Bar Chart</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-chart-column">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11" rx="1"/><rect x="10" y="5" width="4" height="16" rx="1"/><rect x="17" y="2" width="4" height="19" rx="1"/></svg>
+    </span>
+    <span class="menu-title">Vertical Column Chart</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-chart-pie">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+    </span>
+    <span class="menu-title">Pie / Donut Chart</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-pipeline">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+    </span>
+    <span class="menu-title">AI Pipeline Architecture</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-progress">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"/><line x1="6" y1="12" x2="14" y2="12"/></svg>
+    </span>
+    <span class="menu-title">Metric / Training Progress</span>
+    <span class="menu-shortcut"></span>
+  </div>
+</div>
+
+<script>
+  const vscode = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : {
+    postMessage: (msg) => {
+      if (msg.type === 'edit') {
+        if (window.pywebview && window.pywebview.api) {
+          window.pywebview.api.save(msg.text);
+        } else {
+          fetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+            body: msg.text
+          });
+        }
+      }
+    }
+  };
+  const page = document.getElementById('editor-page');
+  const contextMenu = document.getElementById('context-menu');
+  const formatBar = document.getElementById('format-bar');
+  let saveTimer = null;
+  let isRendering = false;
+  let lastSerializedText = '';
+  let contextMenuTarget = null;
+
+  window.addEventListener('message', event => {
+    if (event.data && event.data.type === 'update') {
+      const incoming = (event.data.text || '').replace(/\r\n/g, '\n').trim();
+      const current = lastSerializedText.replace(/\r\n/g, '\n').trim();
+      if (incoming && incoming === current) {
+        return;
+      }
+      renderDocument(event.data.text);
+    }
+  });
+
+  function b64ToUtf8(str) {
+    try {
+      const binString = atob(str);
+      const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
+      return new TextDecoder().decode(bytes);
+    } catch (e) {
+      try {
+        return decodeURIComponent(escape(atob(str)));
+      } catch (e2) {
+        return atob(str);
+      }
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // CONVERTE MARKDOWN INLINE PARA HTML VISUAL (SEM ASTERISCOS BRUTOS)
+  function markdownInlineToHtml(text) {
+    if (!text) return '<br>';
+    let html = escapeHtml(text);
+    // Underline: <u>text</u> or <ins>text</ins>
+    html = html.replace(/&lt;u&gt;(.*?)&lt;\/u&gt;/gi, '<u class="umd-underlined">$1</u>');
+    html = html.replace(/&lt;ins&gt;(.*?)&lt;\/ins&gt;/gi, '<u class="umd-underlined">$1</u>');
+    // Code: `code`
+    html = html.replace(/`([^`\n]+?)`/g, '<code class="inline-code">$1</code>');
+    // Bold: **text** or __text__
+    html = html.replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__([^_\n]+?)__/g, '<strong>$1</strong>');
+    // Italic: *text* or _text_
+    html = html.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+    html = html.replace(/_([^_\n]+?)_/g, '<em>$1</em>');
+    // Strike: ~~text~~
+    html = html.replace(/~~([^~\n]+?)~~/g, '<del>$1</del>');
+    return html;
+  }
+
+  // SERIALIZA HTML DE VOLTA PARA MARKDOWN INLINE LIMPO
+  function htmlToMarkdownInline(node) {
+    if (!node) return '';
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.nodeValue;
+    }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName.toUpperCase();
+      if (tag === 'BR') return '';
+      let inner = '';
+      node.childNodes.forEach(child => {
+        inner += htmlToMarkdownInline(child);
+      });
+      if (tag === 'STRONG' || tag === 'B') {
+        return inner ? '**' + inner + '**' : '';
+      }
+      if (tag === 'EM' || tag === 'I') {
+        return inner ? '*' + inner + '*' : '';
+      }
+      if (tag === 'U') {
+        return inner ? '<u>' + inner + '</u>' : '';
+      }
+      if (tag === 'CODE') {
+        return '`' + inner + '`';
+      }
+      if (tag === 'DEL' || tag === 'S') {
+        return '~~' + inner + '~~';
+      }
+      return inner;
+    }
+    return '';
+  }
+
+  try {
+    const rawInitial = b64ToUtf8("__INITIAL_CONTENT_BASE64__");
+    renderDocument(rawInitial);
+  } catch (err) {
+    vscode.postMessage({ type: 'ready' });
+  }
+
+  // FLOATING TEXT FORMATTING TOOLBAR (BOLD, ITALIC, UNDERLINE, STRIKE, CODE)
+  function updateFormatBar() {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) {
+      formatBar.style.display = 'none';
+      return;
+    }
+
+    const selectedText = sel.toString().trim();
+    if (!selectedText) {
+      formatBar.style.display = 'none';
+      return;
+    }
+
+    const range = sel.getRangeAt(0);
+    const commonAncestor = range.commonAncestorContainer;
+    if (!page.contains(commonAncestor)) {
+      formatBar.style.display = 'none';
+      return;
+    }
+
+    const rect = range.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) {
+      formatBar.style.display = 'none';
+      return;
+    }
+
+    formatBar.style.display = 'flex';
+    const barWidth = formatBar.offsetWidth || 190;
+    const barHeight = formatBar.offsetHeight || 32;
+
+    let left = rect.left + (rect.width / 2) - (barWidth / 2);
+    let top = rect.top - barHeight - 8;
+
+    if (top < 10) top = rect.bottom + 8;
+    if (left < 10) left = 10;
+    if (left + barWidth > window.innerWidth - 10) left = window.innerWidth - barWidth - 10;
+
+    formatBar.style.left = left + 'px';
+    formatBar.style.top = top + 'px';
+  }
+
+  document.addEventListener('selectionchange', () => {
+    setTimeout(updateFormatBar, 10);
+  });
+
+  formatBar.querySelectorAll('.format-btn').forEach(btn => {
+    btn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      const cmd = btn.getAttribute('data-cmd');
+      if (cmd === 'code') {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount) {
+          const text = sel.toString();
+          document.execCommand('insertHTML', false, '<code class="inline-code">' + escapeHtml(text) + '</code>');
+        }
+      } else {
+        document.execCommand(cmd, false, null);
+      }
+      scheduleSave();
+      updateFormatBar();
+    });
+  });
+
+  // Left click on empty canvas
+  document.addEventListener('click', (ev) => {
+    hideContextMenu();
+
+    if (!ev.target.closest('.table-block-wrapper')) {
+      document.querySelectorAll('.table-block-wrapper.is-selected').forEach(w => w.classList.remove('is-selected'));
+    }
+
+    if (ev.target === document.body || ev.target === page) {
+      const last = page.lastElementChild;
+      if (last && last.getAttribute('data-block-type') === 'p' && !last.innerText.trim()) {
+        focusBlock(last, true);
+      } else {
+        const p = createParagraphBlock('');
+        page.appendChild(p);
+        focusBlock(p, true);
+        scheduleSave();
+      }
+    }
+  });
+
+  let savedSelectionRange = null;
+
+  // RIGHT CLICK CONTEXT MENU
+  document.addEventListener('contextmenu', (ev) => {
+    ev.preventDefault();
+    formatBar.style.display = 'none';
+
+    // Preserve active text selection for formatting actions
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+      savedSelectionRange = sel.getRangeAt(0).cloneRange();
+    } else {
+      savedSelectionRange = null;
+    }
+    
+    let target = ev.target;
+    let block = null;
+    while (target && target !== page && target !== document.body) {
+      if (target.parentElement === page) {
+        block = target;
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    contextMenuTarget = block || page.lastElementChild;
+    showContextMenu(ev.clientX, ev.clientY);
+  });
+
+  function showContextMenu(x, y) {
+    contextMenu.style.display = 'block';
+    const menuWidth = contextMenu.offsetWidth || 280;
+    const menuHeight = contextMenu.offsetHeight || 420;
+
+    let posX = x;
+    let posY = y;
+    if (posX + menuWidth > window.innerWidth) posX = window.innerWidth - menuWidth - 10;
+    if (posY + menuHeight > window.innerHeight) posY = window.innerHeight - menuHeight - 10;
+
+    contextMenu.style.left = posX + 'px';
+    contextMenu.style.top = posY + 'px';
+  }
+
+  function hideContextMenu() {
+    contextMenu.style.display = 'none';
+  }
+
+  function restoreSavedSelection() {
+    if (savedSelectionRange) {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedSelectionRange);
+    }
+  }
+
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape') {
+      hideContextMenu();
+      formatBar.style.display = 'none';
+    }
+    // Ctrl+U / Cmd+U: Underline
+    if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'u') {
+      ev.preventDefault();
+      document.execCommand('underline', false, null);
+      scheduleSave();
+      updateFormatBar();
+    }
+  });
+
+  // Context Menu Actions
+  contextMenu.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('mousedown', (ev) => {
+      // Prevent blur and loss of selection before click executes
+      ev.preventDefault();
+    });
+    item.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const action = item.getAttribute('data-action');
+      insertFromMenu(action);
+      hideContextMenu();
+    });
+  });
+
+  function insertFromMenu(action) {
+    // TEXT FORMATTING ACTIONS
+    if (action === 'format-underline') {
+      restoreSavedSelection();
+      document.execCommand('underline', false, null);
+      scheduleSave();
+      updateFormatBar();
+      return;
+    }
+    if (action === 'format-bold') {
+      restoreSavedSelection();
+      document.execCommand('bold', false, null);
+      scheduleSave();
+      updateFormatBar();
+      return;
+    }
+    if (action === 'format-italic') {
+      restoreSavedSelection();
+      document.execCommand('italic', false, null);
+      scheduleSave();
+      updateFormatBar();
+      return;
+    }
+    if (action === 'format-strike') {
+      restoreSavedSelection();
+      document.execCommand('strikeThrough', false, null);
+      scheduleSave();
+      updateFormatBar();
+      return;
+    }
+    if (action === 'format-code') {
+      restoreSavedSelection();
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount) {
+        const text = sel.toString();
+        document.execCommand('insertHTML', false, '<code class="inline-code">' + escapeHtml(text) + '</code>');
+      }
+      scheduleSave();
+      updateFormatBar();
+      return;
+    }
+
+    let newElement = null;
+
+    if (action === 'add-p') {
+      newElement = createParagraphBlock('');
+    } else if (action === 'add-bullet') {
+      newElement = createBulletListBlock(['New bullet item']);
+    } else if (action === 'add-number') {
+      newElement = createNumberListBlock(['First numbered item']);
+    } else if (action === 'add-todo') {
+      newElement = createTodoBlock('New task to complete', false);
+    } else if (action === 'add-toggle') {
+      newElement = createToggleBlock('Toggle header', 'Hidden content inside toggle...');
+    } else if (action === 'add-h1') {
+      newElement = createHeadingBlock(1, 'Heading 1');
+    } else if (action === 'add-h2') {
+      newElement = createHeadingBlock(2, 'Heading 2');
+    } else if (action === 'add-h3') {
+      newElement = createHeadingBlock(3, 'Heading 3');
+    } else if (action === 'add-h4') {
+      newElement = createHeadingBlock(4, 'Heading 4');
+    } else if (action === 'add-table') {
+      newElement = createTableElement('Data Table', ['Item', 'Qty', 'Price'], [
+        ['Item A', '1', '$100'],
+        ['Item B', '2', '$200']
+      ]);
+    } else if (action === 'add-callout') {
+      newElement = createCalloutElement('Highlight', 'Write your important note or observation here.', 'success');
+    } else if (action === 'add-columns') {
+      newElement = createColumnsElement([
+        { title: 'CARD 1', value: '100%' },
+        { title: 'CARD 2', value: '$1,000' }
+      ]);
+    } else if (action === 'add-quote') {
+      newElement = createQuoteBlock('Write your quote here...');
+    } else if (action === 'add-hr') {
+      newElement = createHrBlock();
+    } else if (action === 'add-chart' || action === 'add-chart-bar') {
+      newElement = createChartElement('Model Benchmark Comparison (MMLU %)', [
+        { label: 'GPT-4o', value: '88.5' },
+        { label: 'Claude 3.5 Sonnet', value: '89.2' },
+        { label: 'Gemini 1.5 Pro', value: '86.4' },
+        { label: 'Our AI Model', value: '92.1' }
+      ], 'bar');
+    } else if (action === 'add-chart-column') {
+      newElement = createChartElement('Inference Latency by Context (ms)', [
+        { label: '1k ctx', value: '18' },
+        { label: '8k ctx', value: '24' },
+        { label: '32k ctx', value: '35' },
+        { label: '128k ctx', value: '48' }
+      ], 'column');
+    } else if (action === 'add-chart-pie') {
+      newElement = createChartElement('Pretraining Dataset Mixture (%)', [
+        { label: 'Code & Math', value: '40' },
+        { label: 'Scientific Papers', value: '25' },
+        { label: 'High-Quality Web', value: '20' },
+        { label: 'Books & Literature', value: '15' }
+      ], 'pie');
+    } else if (action === 'add-pipeline') {
+      newElement = createPipelineElement('Inference Architecture Pipeline', [
+        'Input Prompt', 'Tokenizer', 'Transformer Backbone', 'Tool Calling', 'Output Stream'
+      ]);
+    } else if (action === 'add-progress') {
+      newElement = createProgressElement('Training Progress (Epoch 48/50)', 96, 100);
+    }
+
+    if (newElement) {
+      if (contextMenuTarget && contextMenuTarget.nextSibling) {
+        page.insertBefore(newElement, contextMenuTarget.nextSibling);
+      } else {
+        page.appendChild(newElement);
+      }
+
+      scheduleSave();
+      setTimeout(() => {
+        const focusable = newElement.isContentEditable ? newElement : newElement.querySelector('[contenteditable="true"]');
+        if (focusable) focusBlock(focusable, true);
+      }, 50);
+    }
+  }
+
+  function getCaretOffset(element) {
+    let caretOffset = 0;
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      caretOffset = preCaretRange.toString().length;
+    }
+    return caretOffset;
+  }
+
+  function focusBlock(el, atEnd = true) {
+    el.focus();
+    if (typeof window.getSelection !== 'undefined' && typeof document.createRange !== 'undefined') {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(!atEnd);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+
+  function scheduleSave() {
+    if (isRendering) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      persist();
+    }, 120);
+  }
+
+  // NOTION KEYBOARD ACTIONS (ENTER & BACKSPACE)
+  function handleTextBlockKeyDown(ev, el, blockType) {
+    if (ev.key === 'Enter' && !ev.shiftKey) {
+      ev.preventDefault();
+
+      if (blockType === 'li') {
+        const text = el.innerText.replace(/\n/g, '').trim();
+        const parentList = el.parentElement;
+        if (!text) {
+          const p = createParagraphBlock('');
+          if (parentList.nextSibling) {
+            page.insertBefore(p, parentList.nextSibling);
+          } else {
+            page.appendChild(p);
+          }
+          el.remove();
+          if (parentList.children.length === 0) parentList.remove();
+          focusBlock(p, true);
+          scheduleSave();
+          return;
+        }
+
+        const newLi = createListItemBlock('');
+        if (el.nextSibling) {
+          parentList.insertBefore(newLi, el.nextSibling);
+        } else {
+          parentList.appendChild(newLi);
+        }
+        focusBlock(newLi, false);
+        scheduleSave();
+        return;
+      }
+
+      if (blockType === 'todo') {
+        const text = el.innerText.replace(/\n/g, '').trim();
+        const wrap = el.closest('.notion-todo-wrap') || el.parentElement;
+        if (!text) {
+          const p = createParagraphBlock('');
+          if (wrap.nextSibling) {
+            page.insertBefore(p, wrap.nextSibling);
+          } else {
+            page.appendChild(p);
+          }
+          wrap.remove();
+          focusBlock(p, true);
+          scheduleSave();
+          return;
+        }
+
+        const newTodo = createTodoBlock('', false);
+        if (wrap.nextSibling) {
+          page.insertBefore(newTodo, wrap.nextSibling);
+        } else {
+          page.appendChild(newTodo);
+        }
+        const textEl = newTodo.querySelector('.notion-todo-text');
+        if (textEl) focusBlock(textEl, false);
+        scheduleSave();
+        return;
+      }
+
+      const offset = getCaretOffset(el);
+      const fullText = el.innerText;
+      const textBefore = fullText.slice(0, offset);
+      const textAfter = fullText.slice(offset);
+
+      if (textBefore) {
+        el.innerText = textBefore;
+      } else {
+        el.innerHTML = '<br>';
+      }
+
+      const p = createParagraphBlock(textAfter);
+      if (el.nextSibling) {
+        page.insertBefore(p, el.nextSibling);
+      } else {
+        page.appendChild(p);
+      }
+      focusBlock(p, false);
+      scheduleSave();
+      return;
+    }
+
+    if (ev.key === 'Backspace') {
+      const text = el.innerText.replace(/\n/g, '').trim();
+      if (!text) {
+        ev.preventDefault();
+        
+        if (blockType === 'li') {
+          const parentList = el.parentElement;
+          let prev = el.previousElementSibling;
+          el.remove();
+          if (prev) {
+            focusBlock(prev, true);
+          } else if (parentList) {
+            let prevBlock = parentList.previousElementSibling;
+            if (parentList.children.length === 0) parentList.remove();
+            if (prevBlock) {
+              const target = prevBlock.isContentEditable ? prevBlock : prevBlock.querySelector('[contenteditable="true"]');
+              if (target) focusBlock(target, true);
+            }
+          }
+          scheduleSave();
+          return;
+        }
+
+        if (blockType === 'todo') {
+          const wrap = el.closest('.notion-todo-wrap') || el.parentElement;
+          let prevBlock = wrap.previousElementSibling;
+          wrap.remove();
+          if (prevBlock) {
+            const target = prevBlock.isContentEditable ? prevBlock : prevBlock.querySelector('[contenteditable="true"]');
+            if (target) focusBlock(target, true);
+          }
+          scheduleSave();
+          return;
+        }
+
+        let prev = el.previousElementSibling;
+        while (prev && !prev.isContentEditable && !prev.querySelector('[contenteditable="true"]')) {
+          prev = prev.previousElementSibling;
+        }
+
+        if (prev) {
+          el.remove();
+          const target = prev.isContentEditable ? prev : prev.querySelector('[contenteditable="true"]');
+          if (target) focusBlock(target, true);
+          scheduleSave();
+        }
+      }
+    }
+  }
+
+  function createParagraphBlock(text) {
+    const p = document.createElement('p');
+    p.className = 'notion-block';
+    p.contentEditable = 'true';
+    p.setAttribute('data-block-type', 'p');
+    p.setAttribute('data-placeholder', 'Type text or right-click to add blocks...');
+    p.innerHTML = markdownInlineToHtml(text);
+    
+    p.addEventListener('input', () => {
+      const val = p.innerText;
+      if (val.startsWith('- ') || val.startsWith('* ')) {
+        const itemText = val.substring(2);
+        const ul = createBulletListBlock([itemText]);
+        if (p.nextSibling) {
+          page.insertBefore(ul, p.nextSibling);
+        } else {
+          page.appendChild(ul);
+        }
+        p.remove();
+        const firstLi = ul.querySelector('li');
+        if (firstLi) focusBlock(firstLi, true);
+        scheduleSave();
+        return;
+      }
+      if (val.startsWith('1. ')) {
+        const itemText = val.substring(3);
+        const ol = createNumberListBlock([itemText]);
+        if (p.nextSibling) {
+          page.insertBefore(ol, p.nextSibling);
+        } else {
+          page.appendChild(ol);
+        }
+        p.remove();
+        const firstLi = ol.querySelector('li');
+        if (firstLi) focusBlock(firstLi, true);
+        scheduleSave();
+        return;
+      }
+      if (val.startsWith('[] ') || val.startsWith('[ ] ')) {
+        const itemText = val.replace(/^\[ ?\] /, '');
+        const todo = createTodoBlock(itemText, false);
+        if (p.nextSibling) {
+          page.insertBefore(todo, p.nextSibling);
+        } else {
+          page.appendChild(todo);
+        }
+        p.remove();
+        const textEl = todo.querySelector('.notion-todo-text');
+        if (textEl) focusBlock(textEl, true);
+        scheduleSave();
+        return;
+      }
+      scheduleSave();
+    });
+    p.addEventListener('keydown', (ev) => handleTextBlockKeyDown(ev, p, 'p'));
+    return p;
+  }
+
+  function createListItemBlock(text) {
+    const li = document.createElement('li');
+    li.className = 'notion-block notion-li';
+    li.contentEditable = 'true';
+    li.setAttribute('data-placeholder', 'List item...');
+    li.innerHTML = markdownInlineToHtml(text);
+    li.addEventListener('input', scheduleSave);
+    li.addEventListener('keydown', (ev) => handleTextBlockKeyDown(ev, li, 'li'));
+    return li;
+  }
+
+  function createBulletListBlock(items) {
+    const ul = document.createElement('ul');
+    ul.className = 'notion-bullet-list';
+    ul.setAttribute('data-block-type', 'bullet-list');
+    items.forEach(text => {
+      ul.appendChild(createListItemBlock(text));
+    });
+    return ul;
+  }
+
+  function createNumberListBlock(items) {
+    const ol = document.createElement('ol');
+    ol.className = 'notion-number-list';
+    ol.setAttribute('data-block-type', 'number-list');
+    items.forEach(text => {
+      ol.appendChild(createListItemBlock(text));
+    });
+    return ol;
+  }
+
+  function createTodoBlock(text, isChecked = false) {
+    const wrap = document.createElement('div');
+    wrap.className = 'notion-todo-wrap';
+    wrap.setAttribute('data-block-type', 'todo');
+
+    const item = document.createElement('div');
+    item.className = 'notion-todo-item';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'notion-todo-checkbox';
+    checkbox.checked = isChecked;
+
+    const textEl = document.createElement('div');
+    textEl.className = 'notion-todo-text notion-block' + (isChecked ? ' checked' : '');
+    textEl.contentEditable = 'true';
+    textEl.setAttribute('data-placeholder', 'To-do...');
+    textEl.innerHTML = markdownInlineToHtml(text);
+
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        textEl.classList.add('checked');
+      } else {
+        textEl.classList.remove('checked');
+      }
+      scheduleSave();
+    });
+
+    textEl.addEventListener('input', scheduleSave);
+    textEl.addEventListener('keydown', (ev) => handleTextBlockKeyDown(ev, textEl, 'todo'));
+
+    item.appendChild(checkbox);
+    item.appendChild(textEl);
+    wrap.appendChild(item);
+    return wrap;
+  }
+
+  function createToggleBlock(headerText, bodyText) {
+    const details = document.createElement('details');
+    details.className = 'notion-toggle';
+    details.setAttribute('data-block-type', 'toggle');
+    details.open = true;
+
+    const summary = document.createElement('summary');
+    summary.className = 'notion-block';
+    summary.contentEditable = 'true';
+    summary.setAttribute('data-placeholder', 'Toggle header...');
+    summary.innerHTML = markdownInlineToHtml(headerText || 'Toggle');
+    summary.addEventListener('input', scheduleSave);
+
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'notion-toggle-content notion-block';
+    bodyEl.contentEditable = 'true';
+    bodyEl.setAttribute('data-placeholder', 'Empty toggle. Type text here...');
+    bodyEl.innerHTML = markdownInlineToHtml(bodyText || '');
+    bodyEl.addEventListener('input', scheduleSave);
+
+    details.appendChild(summary);
+    details.appendChild(bodyEl);
+    return details;
+  }
+
+  function createQuoteBlock(text) {
+    const bq = document.createElement('blockquote');
+    bq.className = 'notion-block notion-quote';
+    bq.contentEditable = 'true';
+    bq.setAttribute('data-block-type', 'quote');
+    bq.innerHTML = markdownInlineToHtml(text || 'Quote...');
+    bq.addEventListener('input', scheduleSave);
+    bq.addEventListener('keydown', (ev) => handleTextBlockKeyDown(ev, bq, 'quote'));
+    return bq;
+  }
+
+  function createHrBlock() {
+    const hr = document.createElement('hr');
+    hr.className = 'notion-hr';
+    hr.setAttribute('data-block-type', 'hr');
+    return hr;
+  }
+
+  function createHeadingBlock(level, text) {
+    const h = document.createElement('h' + level);
+    h.className = 'notion-block';
+    h.contentEditable = 'true';
+    h.setAttribute('data-block-type', 'h' + level);
+    h.innerHTML = markdownInlineToHtml(text);
+    h.addEventListener('input', scheduleSave);
+    h.addEventListener('keydown', (ev) => handleTextBlockKeyDown(ev, h, 'h' + level));
+    return h;
+  }
+
+  // ISOLATED ELEMENT WRAPPER WITH TOOLBAR
+  function createIsolatedWrapper(type) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'isolated-element';
+    wrapper.setAttribute('data-block-type', type);
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'element-toolbar';
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'tool-btn danger';
+    delBtn.innerHTML = '✕ Delete';
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      wrapper.remove();
+      scheduleSave();
+    };
+    toolbar.appendChild(delBtn);
+    wrapper.appendChild(toolbar);
+
+    return wrapper;
+  }
+
+  // DYNAMIC TABLE WITH UNLIMITED ROWS & COLUMNS
+  function createTableElement(tableTitle, headers, rows) {
+    const wrapper = createIsolatedWrapper('table');
+    wrapper.setAttribute('data-title', tableTitle || '');
+
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'table-block-wrapper';
+
+    tableContainer.addEventListener('click', (e) => {
+      document.querySelectorAll('.table-block-wrapper.is-selected').forEach(w => w.classList.remove('is-selected'));
+      tableContainer.classList.add('is-selected');
+    });
+
+    const table = document.createElement('table');
+    table.className = 'notion-table';
+
+    // Headers
+    const thead = document.createElement('thead');
+    const hRow = document.createElement('tr');
+    headers.forEach(hText => {
+      const th = document.createElement('th');
+      th.contentEditable = 'true';
+      th.innerHTML = markdownInlineToHtml(hText);
+      th.addEventListener('input', scheduleSave);
+      hRow.appendChild(th);
+    });
+    thead.appendChild(hRow);
+    table.appendChild(thead);
+
+    // Rows
+    const tbody = document.createElement('tbody');
+    rows.forEach(rowCells => {
+      const tr = document.createElement('tr');
+      while (rowCells.length < headers.length) rowCells.push('');
+      rowCells.forEach(cellText => {
+        const td = document.createElement('td');
+        td.contentEditable = 'true';
+        td.innerHTML = markdownInlineToHtml(cellText);
+        td.addEventListener('input', scheduleSave);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+
+    // Dynamic Table Actions
+    const actions = document.createElement('div');
+    actions.className = 'table-actions';
+
+    const addRowBtn = document.createElement('button');
+    addRowBtn.className = 'table-btn';
+    addRowBtn.innerHTML = '+ Add Row';
+    addRowBtn.onclick = (e) => {
+      e.stopPropagation();
+      const colCount = table.querySelectorAll('thead th').length || 3;
+      const tr = document.createElement('tr');
+      for (let c = 0; c < colCount; c++) {
+        const td = document.createElement('td');
+        td.contentEditable = 'true';
+        td.innerText = '-';
+        td.addEventListener('input', scheduleSave);
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+      scheduleSave();
+    };
+    actions.appendChild(addRowBtn);
+
+    const addColBtn = document.createElement('button');
+    addColBtn.className = 'table-btn';
+    addColBtn.innerHTML = '+ Add Column';
+    addColBtn.onclick = (e) => {
+      e.stopPropagation();
+      const currentHeaders = table.querySelectorAll('thead th');
+      const nextColIdx = currentHeaders.length + 1;
+
+      const newTh = document.createElement('th');
+      newTh.contentEditable = 'true';
+      newTh.innerText = 'Col ' + nextColIdx;
+      newTh.addEventListener('input', scheduleSave);
+      hRow.appendChild(newTh);
+
+      table.querySelectorAll('tbody tr').forEach(tr => {
+        const newTd = document.createElement('td');
+        newTd.contentEditable = 'true';
+        newTd.innerText = '-';
+        newTd.addEventListener('input', scheduleSave);
+        tr.appendChild(newTd);
+      });
+
+      scheduleSave();
+    };
+    actions.appendChild(addColBtn);
+
+    tableContainer.appendChild(actions);
+    wrapper.appendChild(tableContainer);
+    return wrapper;
+  }
+
+  function createCalloutElement(cTitle, bodyText, cTone = 'success') {
+    const wrapper = createIsolatedWrapper('callout');
+    wrapper.setAttribute('data-tone', cTone);
+
+    const callout = document.createElement('div');
+    callout.className = 'notion-callout';
+
+    const header = document.createElement('div');
+    header.className = 'callout-header';
+    header.contentEditable = 'true';
+    header.innerHTML = '<span style="color:#22c55e;">●</span> ' + escapeHtml(cTitle || 'Highlight');
+    header.addEventListener('input', scheduleSave);
+    callout.appendChild(header);
+
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'callout-text';
+    bodyEl.contentEditable = 'true';
+    bodyEl.innerHTML = markdownInlineToHtml(bodyText);
+    bodyEl.addEventListener('input', scheduleSave);
+    callout.appendChild(bodyEl);
+
+    wrapper.appendChild(callout);
+    return wrapper;
+  }
+
+  function createColumnsElement(cards) {
+    const wrapper = createIsolatedWrapper('columns');
+
+    const colsWrap = document.createElement('div');
+    colsWrap.className = 'notion-columns';
+
+    cards.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'notion-card';
+
+      const l = document.createElement('div');
+      l.className = 'card-label';
+      l.contentEditable = 'true';
+      l.innerText = c.title;
+      l.addEventListener('input', scheduleSave);
+      card.appendChild(l);
+
+      const v = document.createElement('div');
+      v.className = 'card-value';
+      v.contentEditable = 'true';
+      v.innerHTML = markdownInlineToHtml(c.value);
+      v.addEventListener('input', scheduleSave);
+      card.appendChild(v);
+
+      colsWrap.appendChild(card);
+    });
+
+    wrapper.appendChild(colsWrap);
+    return wrapper;
+  }
+
+  function createChartElement(title, items, chartType = 'bar') {
+    const wrapper = createIsolatedWrapper('chart');
+    wrapper.setAttribute('data-title', title || 'Benchmark Chart');
+    wrapper.setAttribute('data-chart-type', chartType);
+
+    const chartBlock = document.createElement('div');
+    chartBlock.className = 'notion-chart-block';
+
+    const header = document.createElement('div');
+    header.className = 'chart-header';
+    const titleInput = document.createElement('div');
+    titleInput.className = 'chart-title-input';
+    titleInput.contentEditable = 'true';
+    titleInput.innerText = title || 'Chart Title';
+    titleInput.addEventListener('input', () => {
+      wrapper.setAttribute('data-title', titleInput.innerText.trim());
+      scheduleSave();
+    });
+    header.appendChild(titleInput);
+    chartBlock.appendChild(header);
+
+    const colors = ["#4a88cc", "#6371c6", "#3ca47a", "#c45b85", "#cf8f41", "#846bb3", "#c65c5c"];
+
+    // 1. PIE / DONUT CHART
+    if (chartType === 'pie') {
+      const pieWrap = document.createElement('div');
+      pieWrap.className = 'chart-pie-container';
+
+      const visualWrap = document.createElement('div');
+      visualWrap.className = 'chart-pie-visual-wrap';
+      const visual = document.createElement('div');
+      visual.className = 'chart-pie-visual';
+      const hole = document.createElement('div');
+      hole.className = 'chart-pie-hole';
+      visual.appendChild(hole);
+      visualWrap.appendChild(visual);
+      pieWrap.appendChild(visualWrap);
+
+      const legendWrap = document.createElement('div');
+      legendWrap.className = 'chart-pie-legend-wrap';
+
+      function recalculatePie() {
+        const rows = legendWrap.querySelectorAll('.pie-legend-row');
+        let total = 0;
+        const vals = [];
+        rows.forEach(r => {
+          const v = parseFloat((r.querySelector('.pie-val-input').innerText || '').replace(/[^0-9.]/g, '')) || 0;
+          vals.push(v);
+          total += v;
+        });
+        if (total === 0) total = 1;
+        let curDeg = 0;
+        const stops = [];
+        rows.forEach((r, idx) => {
+          const v = vals[idx];
+          const pct = (v / total) * 100;
+          const nextDeg = curDeg + (pct * 3.6);
+          const col = colors[idx % colors.length];
+          r.querySelector('.pie-color-dot').style.background = col;
+          r.querySelector('.pie-pct-badge').innerText = pct.toFixed(1) + '%';
+          stops.push(col + ' ' + curDeg.toFixed(1) + 'deg ' + nextDeg.toFixed(1) + 'deg');
+          curDeg = nextDeg;
+        });
+        visual.style.background = 'conic-gradient(' + (stops.join(', ') || '#38bdf8 0deg 360deg') + ')';
+      }
+
+      function addPieSlice(label, value) {
+        const row = document.createElement('div');
+        row.className = 'pie-legend-row';
+
+        const dot = document.createElement('span');
+        dot.className = 'pie-color-dot';
+
+        const lbl = document.createElement('span');
+        lbl.className = 'pie-lbl-input';
+        lbl.contentEditable = 'true';
+        lbl.innerText = label;
+        lbl.addEventListener('input', scheduleSave);
+
+        const val = document.createElement('span');
+        val.className = 'pie-val-input';
+        val.contentEditable = 'true';
+        val.innerText = value;
+        val.addEventListener('input', () => {
+          recalculatePie();
+          scheduleSave();
+        });
+
+        const pctBadge = document.createElement('span');
+        pctBadge.className = 'pie-pct-badge';
+        pctBadge.innerText = '';
+
+        const del = document.createElement('button');
+        del.className = 'delete-bar-btn';
+        del.innerHTML = '&times;';
+        del.title = 'Remove slice';
+        del.addEventListener('click', () => {
+          row.remove();
+          recalculatePie();
+          scheduleSave();
+        });
+
+        row.appendChild(dot);
+        row.appendChild(lbl);
+        row.appendChild(val);
+        row.appendChild(pctBadge);
+        row.appendChild(del);
+        legendWrap.appendChild(row);
+        recalculatePie();
+      }
+
+      (items || []).forEach(it => addPieSlice(it.label, it.value));
+      pieWrap.appendChild(legendWrap);
+      chartBlock.appendChild(pieWrap);
+
+      const actions = document.createElement('div');
+      actions.className = 'chart-actions';
+      const addBtn = document.createElement('button');
+      addBtn.className = 'chart-btn';
+      addBtn.innerText = '+ Add Slice';
+      addBtn.addEventListener('click', () => {
+        addPieSlice('New Category', '20');
+        scheduleSave();
+      });
+      actions.appendChild(addBtn);
+      chartBlock.appendChild(actions);
+
+      wrapper.appendChild(chartBlock);
+      return wrapper;
+    }
+
+    // 2. VERTICAL COLUMN CHART
+    if (chartType === 'column' || chartType === 'bar-vertical') {
+      const colWrap = document.createElement('div');
+      colWrap.className = 'chart-columns-container';
+
+      function recalculateColumns() {
+        let maxVal = 10.0;
+        const colEls = colWrap.querySelectorAll('.column-bar-item');
+        colEls.forEach(c => {
+          const v = parseFloat((c.querySelector('.column-val-input').innerText || '').replace(/[^0-9.]/g, '')) || 0;
+          if (v > maxVal) maxVal = v;
+        });
+        colEls.forEach(c => {
+          const v = parseFloat((c.querySelector('.column-val-input').innerText || '').replace(/[^0-9.]/g, '')) || 0;
+          const fill = c.querySelector('.column-fill');
+          const pct = Math.min(100, Math.max(0, (v / maxVal) * 100));
+          fill.style.height = pct + '%';
+        });
+      }
+
+      function addColumn(label, value, idx) {
+        const item = document.createElement('div');
+        item.className = 'column-bar-item';
+
+        const del = document.createElement('button');
+        del.className = 'delete-col-btn';
+        del.innerHTML = '&times;';
+        del.title = 'Remove column';
+        del.addEventListener('click', () => {
+          item.remove();
+          recalculateColumns();
+          scheduleSave();
+        });
+
+        const val = document.createElement('div');
+        val.className = 'column-val-input';
+        val.contentEditable = 'true';
+        val.innerText = value;
+        val.addEventListener('input', () => {
+          recalculateColumns();
+          scheduleSave();
+        });
+
+        const track = document.createElement('div');
+        track.className = 'column-track';
+        const fill = document.createElement('div');
+        fill.className = 'column-fill';
+        fill.style.background = colors[idx % colors.length];
+        track.appendChild(fill);
+
+        const lbl = document.createElement('div');
+        lbl.className = 'column-lbl-input';
+        lbl.contentEditable = 'true';
+        lbl.innerText = label;
+        lbl.addEventListener('input', scheduleSave);
+
+        item.appendChild(del);
+        item.appendChild(val);
+        item.appendChild(track);
+        item.appendChild(lbl);
+        colWrap.appendChild(item);
+        recalculateColumns();
+      }
+
+      (items || []).forEach((it, idx) => addColumn(it.label, it.value, idx));
+      chartBlock.appendChild(colWrap);
+
+      const actions = document.createElement('div');
+      actions.className = 'chart-actions';
+      const addBtn = document.createElement('button');
+      addBtn.className = 'chart-btn';
+      addBtn.innerText = '+ Add Column';
+      addBtn.addEventListener('click', () => {
+        addColumn('New Col', '40', colWrap.children.length);
+        scheduleSave();
+      });
+      actions.appendChild(addBtn);
+      chartBlock.appendChild(actions);
+
+      wrapper.appendChild(chartBlock);
+      return wrapper;
+    }
+
+    // 3. HORIZONTAL BAR CHART (DEFAULT)
+    const rowsWrap = document.createElement('div');
+    rowsWrap.className = 'chart-rows-container';
+
+    function recalculateBars() {
+      let maxVal = 100.0;
+      const rowEls = rowsWrap.querySelectorAll('.chart-bar-row');
+      rowEls.forEach(r => {
+        const vEl = r.querySelector('.chart-value-input');
+        const v = parseFloat((vEl.innerText || '').replace(/[^0-9.]/g, '')) || 0;
+        if (v > maxVal) maxVal = v;
+      });
+      rowEls.forEach((r, idx) => {
+        const vEl = r.querySelector('.chart-value-input');
+        const fill = r.querySelector('.chart-bar-fill');
+        const v = parseFloat((vEl.innerText || '').replace(/[^0-9.]/g, '')) || 0;
+        const pct = Math.min(100, Math.max(0, (v / maxVal) * 100));
+        fill.style.width = pct + '%';
+        fill.style.background = colors[idx % colors.length];
+      });
+    }
+
+    function addBarRow(label, value, idx) {
+      const row = document.createElement('div');
+      row.className = 'chart-bar-row';
+
+      const lbl = document.createElement('div');
+      lbl.className = 'chart-label-input';
+      lbl.contentEditable = 'true';
+      lbl.innerText = label;
+      lbl.addEventListener('input', scheduleSave);
+
+      const track = document.createElement('div');
+      track.className = 'chart-track';
+      const fill = document.createElement('div');
+      fill.className = 'chart-bar-fill';
+      fill.style.background = colors[idx % colors.length];
+      track.appendChild(fill);
+
+      const val = document.createElement('div');
+      val.className = 'chart-value-input';
+      val.contentEditable = 'true';
+      val.innerText = value;
+      val.addEventListener('input', () => {
+        recalculateBars();
+        scheduleSave();
+      });
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-bar-btn';
+      delBtn.innerHTML = '&times;';
+      delBtn.title = 'Remove metric';
+      delBtn.addEventListener('click', () => {
+        row.remove();
+        recalculateBars();
+        scheduleSave();
+      });
+
+      row.appendChild(lbl);
+      row.appendChild(track);
+      row.appendChild(val);
+      row.appendChild(delBtn);
+      rowsWrap.appendChild(row);
+      recalculateBars();
+    }
+
+    (items || []).forEach((it, idx) => {
+      addBarRow(it.label, it.value, idx);
+    });
+
+    chartBlock.appendChild(rowsWrap);
+
+    const actions = document.createElement('div');
+    actions.className = 'chart-actions';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'chart-btn';
+    addBtn.innerText = '+ Add Bar';
+    addBtn.addEventListener('click', () => {
+      addBarRow('New Model', '80.0', rowsWrap.children.length);
+      scheduleSave();
+    });
+    actions.appendChild(addBtn);
+    chartBlock.appendChild(actions);
+
+    wrapper.appendChild(chartBlock);
+    return wrapper;
+  }
+
+  function createPipelineElement(title, steps) {
+    const wrapper = createIsolatedWrapper('pipeline');
+    wrapper.setAttribute('data-title', title || 'AI Pipeline');
+
+    const pipeBlock = document.createElement('div');
+    pipeBlock.className = 'notion-pipeline-block';
+
+    const header = document.createElement('div');
+    header.className = 'pipeline-header';
+    const titleInput = document.createElement('div');
+    titleInput.className = 'pipeline-title-input';
+    titleInput.contentEditable = 'true';
+    titleInput.innerText = title || 'Inference Architecture Pipeline';
+    titleInput.addEventListener('input', () => {
+      wrapper.setAttribute('data-title', titleInput.innerText.trim());
+      scheduleSave();
+    });
+    header.appendChild(titleInput);
+    pipeBlock.appendChild(header);
+
+    const flowWrap = document.createElement('div');
+    flowWrap.className = 'pipeline-flow-container';
+
+    function renderStages(stageList) {
+      flowWrap.innerHTML = '';
+      stageList.forEach((st, idx) => {
+        const stageEl = document.createElement('div');
+        stageEl.className = 'pipeline-stage';
+
+        const txt = document.createElement('span');
+        txt.className = 'pipeline-stage-text';
+        txt.contentEditable = 'true';
+        txt.innerText = st;
+        txt.addEventListener('input', scheduleSave);
+
+        const del = document.createElement('button');
+        del.className = 'delete-stage-btn';
+        del.innerHTML = '&times;';
+        del.title = 'Remove step';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const currentStages = Array.from(flowWrap.querySelectorAll('.pipeline-stage-text')).map(s => s.innerText.trim());
+          currentStages.splice(idx, 1);
+          renderStages(currentStages);
+          scheduleSave();
+        });
+
+        stageEl.appendChild(txt);
+        stageEl.appendChild(del);
+        flowWrap.appendChild(stageEl);
+
+        if (idx < stageList.length - 1) {
+          const arrow = document.createElement('span');
+          arrow.className = 'pipeline-arrow';
+          arrow.innerText = '→';
+          flowWrap.appendChild(arrow);
+        }
+      });
+    }
+
+    renderStages(steps && steps.length ? steps : ['Input', 'Encoder', 'Decoder', 'Output']);
+    pipeBlock.appendChild(flowWrap);
+
+    const actions = document.createElement('div');
+    actions.className = 'pipeline-actions';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'chart-btn';
+    addBtn.innerText = '+ Add Stage';
+    addBtn.addEventListener('click', () => {
+      const currentStages = Array.from(flowWrap.querySelectorAll('.pipeline-stage-text')).map(s => s.innerText.trim());
+      currentStages.push('New Stage');
+      renderStages(currentStages);
+      scheduleSave();
+    });
+    actions.appendChild(addBtn);
+    pipeBlock.appendChild(actions);
+
+    wrapper.appendChild(pipeBlock);
+    return wrapper;
+  }
+
+  function createProgressElement(label, value, max = 100) {
+    const wrapper = createIsolatedWrapper('progress');
+    wrapper.setAttribute('data-label', label || 'Progress');
+    wrapper.setAttribute('data-value', String(value || 0));
+    wrapper.setAttribute('data-max', String(max || 100));
+
+    const progBlock = document.createElement('div');
+    progBlock.className = 'notion-progress-block';
+
+    const header = document.createElement('div');
+    header.className = 'progress-card-header';
+
+    const lblInput = document.createElement('div');
+    lblInput.className = 'progress-label-input';
+    lblInput.contentEditable = 'true';
+    lblInput.innerText = label || 'Training Progress';
+    lblInput.addEventListener('input', () => {
+      wrapper.setAttribute('data-label', lblInput.innerText.trim());
+      scheduleSave();
+    });
+
+    const badgeInput = document.createElement('div');
+    badgeInput.className = 'progress-badge-input';
+    badgeInput.contentEditable = 'true';
+    badgeInput.innerText = (value || 0) + '%';
+
+    header.appendChild(lblInput);
+    header.appendChild(badgeInput);
+    progBlock.appendChild(header);
+
+    const track = document.createElement('div');
+    track.className = 'progress-bar-track';
+    const fill = document.createElement('div');
+    fill.className = 'progress-bar-fill';
+    fill.style.width = Math.min(100, Math.max(0, parseInt(value || 0, 10))) + '%';
+    track.appendChild(fill);
+    progBlock.appendChild(track);
+
+    badgeInput.addEventListener('input', () => {
+      const v = parseInt(badgeInput.innerText.replace(/[^0-9]/g, ''), 10) || 0;
+      wrapper.setAttribute('data-value', String(v));
+      fill.style.width = Math.min(100, Math.max(0, v)) + '%';
+      scheduleSave();
+    });
+
+    wrapper.appendChild(progBlock);
+    return wrapper;
+  }
+
+  // DOCUMENT PARSING & RENDERING
+  function renderDocument(text) {
+    if (typeof text !== 'string') text = '';
+    isRendering = true;
+    page.innerHTML = '';
+
+    const lines = text.split(/\r?\n/);
+    let i = 0;
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      if (!line.trim() && page.children.length === 0) {
+        i++;
+        continue;
+      }
+
+      // Headings 1-4
+      if (line.startsWith('# ')) {
+        page.appendChild(createHeadingBlock(1, line.substring(2).trim()));
+        i++;
+        continue;
+      }
+      if (line.startsWith('## ')) {
+        page.appendChild(createHeadingBlock(2, line.substring(3).trim()));
+        i++;
+        continue;
+      }
+      if (line.startsWith('### ')) {
+        page.appendChild(createHeadingBlock(3, line.substring(4).trim()));
+        i++;
+        continue;
+      }
+      if (line.startsWith('#### ')) {
+        page.appendChild(createHeadingBlock(4, line.substring(5).trim()));
+        i++;
+        continue;
+      }
+
+      // Divider (---)
+      if (line.trim() === '---' || line.trim() === '***') {
+        page.appendChild(createHrBlock());
+        i++;
+        continue;
+      }
+
+      // Quote (> text)
+      if (line.startsWith('> ') || line === '>') {
+        page.appendChild(createQuoteBlock(line.substring(2).trim()));
+        i++;
+        continue;
+      }
+
+      // Toggle List (<details> ... </details>)
+      if (line.startsWith('<details>')) {
+        i++;
+        let sum = 'Toggle';
+        let body = '';
+        while (i < lines.length && !lines[i].startsWith('</details>')) {
+          if (lines[i].startsWith('<summary>')) {
+            sum = lines[i].replace(/<\/?summary>/g, '').trim();
+          } else if (lines[i].trim()) {
+            body += (body ? '\n' : '') + lines[i];
+          }
+          i++;
+        }
+        page.appendChild(createToggleBlock(sum, body));
+        i++;
+        continue;
+      }
+
+      // To-do (- [ ] or - [x])
+      if (line.match(/^-\s+\[([ xX])\]\s*(.*)$/)) {
+        const m = line.match(/^-\s+\[([ xX])\]\s*(.*)$/);
+        const checked = m[1].toLowerCase() === 'x';
+        page.appendChild(createTodoBlock(m[2], checked));
+        i++;
+        continue;
+      }
+
+      // Bullet List (- item or * item)
+      if (line.startsWith('- ') || line.startsWith('* ')) {
+        const bulletItems = [];
+        while (i < lines.length && (lines[i].startsWith('- ') || lines[i].startsWith('* '))) {
+          if (!lines[i].match(/^-\s+\[([ xX])\]/)) {
+            bulletItems.push(lines[i].substring(2).trim());
+          }
+          i++;
+        }
+        if (bulletItems.length > 0) {
+          page.appendChild(createBulletListBlock(bulletItems));
+        }
+        continue;
+      }
+
+      // Numbered List (1. item)
+      if (line.match(/^\d+\.\s+(.*)$/)) {
+        const numItems = [];
+        while (i < lines.length && lines[i].match(/^\d+\.\s+(.*)$/)) {
+          const m = lines[i].match(/^\d+\.\s+(.*)$/);
+          numItems.push(m[1].trim());
+          i++;
+        }
+        page.appendChild(createNumberListBlock(numItems));
+        continue;
+      }
+
+      // Table: [TABLE ...]
+      if (line.startsWith('[TABLE')) {
+        let titleMatch = line.match(/title="([^"]+)"/);
+        let tableTitle = titleMatch ? titleMatch[1] : '';
+        i++;
+
+        const tableLines = [];
+        while (i < lines.length && !lines[i].startsWith('[/TABLE]')) {
+          if (lines[i].trim()) tableLines.push(lines[i]);
+          i++;
+        }
+
+        const headers = tableLines.length > 0 ? tableLines[0].split('|').map(c => c.trim()) : ['Item', 'Qty', 'Price'];
+        const rows = [];
+        for (let r = 1; r < tableLines.length; r++) {
+          rows.push(tableLines[r].split('|').map(c => c.trim()));
+        }
+
+        page.appendChild(createTableElement(tableTitle, headers, rows));
+        i++;
+        continue;
+      }
+
+      // Callout: [CALLOUT ...]
+      if (line.startsWith('[CALLOUT')) {
+        let titleMatch = line.match(/title="([^"]+)"/);
+        let toneMatch = line.match(/tone="([^"]+)"/);
+        let cTitle = titleMatch ? titleMatch[1] : 'Highlight';
+        let cTone = toneMatch ? toneMatch[1] : 'success';
+        i++;
+
+        const bodyLines = [];
+        while (i < lines.length && !lines[i].startsWith('[/CALLOUT]')) {
+          if (lines[i].trim()) bodyLines.push(lines[i]);
+          i++;
+        }
+
+        page.appendChild(createCalloutElement(cTitle, bodyLines.join('\n'), cTone));
+        i++;
+        continue;
+      }
+
+      // Columns / Cards: [COLUMNS ...]
+      if (line.startsWith('[COLUMNS')) {
+        i++;
+        const cards = [];
+        while (i < lines.length && !lines[i].startsWith('[/COLUMNS]')) {
+          if (lines[i].startsWith('[CARD')) {
+            let titleMatch = lines[i].match(/title="([^"]+)"/);
+            let cardTitle = titleMatch ? titleMatch[1] : 'Card';
+            i++;
+            const cBodyLines = [];
+            while (i < lines.length && !lines[i].startsWith('[/CARD]')) {
+              if (lines[i].trim()) cBodyLines.push(lines[i]);
+              i++;
+            }
+            cards.push({ title: cardTitle, value: cBodyLines.join('\n') });
+          }
+          i++;
+        }
+        page.appendChild(createColumnsElement(cards));
+        i++;
+        continue;
+      }
+
+      // Chart: [CHART ...]
+      if (line.startsWith('[CHART')) {
+        let titleMatch = line.match(/title="([^"]+)"/);
+        let typeMatch = line.match(/type="([^"]+)"/);
+        let cTitle = titleMatch ? titleMatch[1] : 'Benchmark Chart';
+        let cType = typeMatch ? typeMatch[1] : 'bar';
+        i++;
+        const chartLines = [];
+        while (i < lines.length && !lines[i].startsWith('[/CHART]')) {
+          if (lines[i].trim()) chartLines.push(lines[i].trim());
+          i++;
+        }
+        const items = [];
+        chartLines.forEach(cl => {
+          const p = cl.split('|');
+          items.push({ label: p[0].trim(), value: p[1] ? p[1].trim() : '50' });
+        });
+        page.appendChild(createChartElement(cTitle, items, cType));
+        i++;
+        continue;
+      }
+
+      // Pipeline: [PIPELINE ...]
+      if (line.startsWith('[PIPELINE')) {
+        let titleMatch = line.match(/title="([^"]+)"/);
+        let pTitle = titleMatch ? titleMatch[1] : 'AI Pipeline';
+        i++;
+        const pipeLines = [];
+        while (i < lines.length && !lines[i].startsWith('[/PIPELINE]')) {
+          if (lines[i].trim()) pipeLines.push(lines[i].trim());
+          i++;
+        }
+        let fullPipe = pipeLines.join(' ');
+        let steps = fullPipe.includes('->') ? fullPipe.split('->').map(s => s.trim()) : pipeLines;
+        page.appendChild(createPipelineElement(pTitle, steps));
+        i++;
+        continue;
+      }
+
+      // Progress: [PROGRESS ...]
+      if (line.startsWith('[PROGRESS')) {
+        let lblMatch = line.match(/label="([^"]+)"/);
+        let valMatch = line.match(/value="?([0-9]+)"?/);
+        let maxMatch = line.match(/max="?([0-9]+)"?/);
+        let pLabel = lblMatch ? lblMatch[1] : 'Progress';
+        let pVal = valMatch ? parseInt(valMatch[1], 10) : 50;
+        let pMax = maxMatch ? parseInt(maxMatch[1], 10) : 100;
+        page.appendChild(createProgressElement(pLabel, pVal, pMax));
+        i++;
+        continue;
+      }
+
+      // Plain text line or blank line
+      if (line.trim().length > 0) {
+        page.appendChild(createParagraphBlock(line));
+      } else {
+        page.appendChild(createParagraphBlock(''));
+      }
+      i++;
+    }
+
+    if (page.children.length === 0 || page.lastElementChild.getAttribute('data-block-type') !== 'p') {
+      page.appendChild(createParagraphBlock(''));
+    }
+
+    isRendering = false;
+  }
+
+  // SERIALIZE BACK TO CLEAN TEXT (.umd)
+  function serializeDocument() {
+    const lines = [];
+
+    Array.from(page.children).forEach(block => {
+      const type = block.getAttribute('data-block-type');
+
+      if (type === 'h1') {
+        const text = htmlToMarkdownInline(block).trim();
+        if (text) {
+          lines.push('# ' + text);
+          lines.push('');
+        }
+      } else if (type === 'h2') {
+        const text = htmlToMarkdownInline(block).trim();
+        if (text) {
+          lines.push('## ' + text);
+          lines.push('');
+        }
+      } else if (type === 'h3') {
+        const text = htmlToMarkdownInline(block).trim();
+        if (text) {
+          lines.push('### ' + text);
+          lines.push('');
+        }
+      } else if (type === 'h4') {
+        const text = htmlToMarkdownInline(block).trim();
+        if (text) {
+          lines.push('#### ' + text);
+          lines.push('');
+        }
+      } else if (type === 'hr') {
+        lines.push('---');
+        lines.push('');
+      } else if (type === 'quote') {
+        const text = htmlToMarkdownInline(block).trim();
+        if (text) {
+          lines.push('> ' + text);
+          lines.push('');
+        }
+      } else if (type === 'bullet-list') {
+        const items = Array.from(block.querySelectorAll('li'));
+        items.forEach(li => {
+          const text = htmlToMarkdownInline(li).trim();
+          if (text) {
+            lines.push('- ' + text);
+          }
+        });
+        lines.push('');
+      } else if (type === 'number-list') {
+        const items = Array.from(block.querySelectorAll('li'));
+        items.forEach((li, idx) => {
+          const text = htmlToMarkdownInline(li).trim();
+          if (text) {
+            lines.push((idx + 1) + '. ' + text);
+          }
+        });
+        lines.push('');
+      } else if (type === 'todo') {
+        const check = block.querySelector('.notion-todo-checkbox');
+        const textEl = block.querySelector('.notion-todo-text');
+        const text = textEl ? htmlToMarkdownInline(textEl).trim() : '';
+        const mark = (check && check.checked) ? 'x' : ' ';
+        lines.push('- [' + mark + '] ' + text);
+        lines.push('');
+      } else if (type === 'toggle') {
+        const summary = block.querySelector('summary');
+        const content = block.querySelector('.notion-toggle-content');
+        const sText = summary ? htmlToMarkdownInline(summary).trim() : 'Toggle';
+        const cText = content ? htmlToMarkdownInline(content).trim() : '';
+        lines.push('<details>');
+        lines.push('<summary>' + sText + '</summary>');
+        if (cText) lines.push(cText);
+        lines.push('</details>');
+        lines.push('');
+      } else if (type === 'p') {
+        const text = htmlToMarkdownInline(block).trim();
+        if (text) {
+          lines.push(text);
+          lines.push('');
+        } else {
+          lines.push('');
+        }
+      } else if (type === 'table') {
+        const title = block.getAttribute('data-title') || '';
+        const titleAttr = title ? ' title="' + title + '"' : '';
+        lines.push('[TABLE' + titleAttr + ']');
+
+        const ths = Array.from(block.querySelectorAll('thead th')).map(th => htmlToMarkdownInline(th).trim());
+        if (ths.length > 0) {
+          lines.push(ths.join(' | '));
+        }
+
+        const rows = Array.from(block.querySelectorAll('tbody tr'));
+        rows.forEach(tr => {
+          const cells = Array.from(tr.querySelectorAll('td')).map(td => htmlToMarkdownInline(td).trim());
+          lines.push(cells.join(' | '));
+        });
+
+        lines.push('[/TABLE]');
+        lines.push('');
+      } else if (type === 'callout') {
+        const tone = block.getAttribute('data-tone') || 'success';
+        const header = block.querySelector('.callout-header');
+        let title = header ? header.innerText.replace('●', '').trim() : '';
+        const body = block.querySelector('.callout-text');
+        const text = body ? htmlToMarkdownInline(body).trim() : '';
+
+        lines.push('[CALLOUT tone="' + tone + '" title="' + title + '"]');
+        if (text) lines.push(text);
+        lines.push('[/CALLOUT]');
+        lines.push('');
+      } else if (type === 'columns') {
+        lines.push('[COLUMNS gap="20"]');
+        lines.push('');
+        const cards = Array.from(block.querySelectorAll('.notion-card'));
+        cards.forEach(card => {
+          const label = card.querySelector('.card-label');
+          const val = card.querySelector('.card-value');
+          const title = label ? label.innerText.trim() : '';
+          const body = val ? htmlToMarkdownInline(val).trim() : '';
+
+          lines.push('[CARD title="' + title + '"]');
+          if (body) lines.push(body);
+          lines.push('[/CARD]');
+          lines.push('');
+        });
+        lines.push('[/COLUMNS]');
+        lines.push('');
+      } else if (type === 'chart') {
+        const title = block.getAttribute('data-title') || 'Benchmark Chart';
+        const chartType = block.getAttribute('data-chart-type') || 'bar';
+        lines.push('[CHART title="' + title + '" type="' + chartType + '"]');
+        if (chartType === 'pie') {
+          const rows = block.querySelectorAll('.pie-legend-row');
+          rows.forEach(r => {
+            const l = r.querySelector('.pie-lbl-input');
+            const v = r.querySelector('.pie-val-input');
+            if (l && v) {
+              lines.push(l.innerText.trim() + ' | ' + v.innerText.trim());
+            }
+          });
+        } else if (chartType === 'column') {
+          const cols = block.querySelectorAll('.column-bar-item');
+          cols.forEach(c => {
+            const l = c.querySelector('.column-lbl-input');
+            const v = c.querySelector('.column-val-input');
+            if (l && v) {
+              lines.push(l.innerText.trim() + ' | ' + v.innerText.trim());
+            }
+          });
+        } else {
+          const rows = block.querySelectorAll('.chart-bar-row');
+          rows.forEach(r => {
+            const l = r.querySelector('.chart-label-input');
+            const v = r.querySelector('.chart-value-input');
+            if (l && v) {
+              lines.push(l.innerText.trim() + ' | ' + v.innerText.trim());
+            }
+          });
+        }
+        lines.push('[/CHART]');
+        lines.push('');
+      } else if (type === 'pipeline') {
+        const title = block.getAttribute('data-title') || 'AI Pipeline';
+        lines.push('[PIPELINE title="' + title + '"]');
+        const stages = Array.from(block.querySelectorAll('.pipeline-stage-text')).map(s => s.innerText.trim()).filter(Boolean);
+        if (stages.length) {
+          lines.push(stages.join(' -> '));
+        }
+        lines.push('[/PIPELINE]');
+        lines.push('');
+      } else if (type === 'progress') {
+        const label = block.getAttribute('data-label') || 'Progress';
+        const val = block.getAttribute('data-value') || '0';
+        const mx = block.getAttribute('data-max') || '100';
+        lines.push('[PROGRESS label="' + label + '" value="' + val + '" max="' + mx + '" /]');
+        lines.push('');
+      }
+    });
+
+    return lines.join('\n').trim() + '\n';
+  }
+
+  function persist() {
+    const text = serializeDocument();
+    lastSerializedText = text;
+    vscode.postMessage({ type: 'edit', text: text });
+  }
+</script>
+</body>
+</html>

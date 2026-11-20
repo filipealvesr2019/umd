@@ -1,0 +1,105 @@
+# DeepReason-70B: Model Specification & Evaluation
+
+
+
+Technical architecture, benchmark metrics, and inference pipeline for the DeepReason-70B foundational model.
+
+
+
+[COLUMNS gap="20"]
+
+[CARD title="PARAMETERS"]
+70.6 Billion (Dense Decoder-Only)
+[/CARD]
+
+[CARD title="CONTEXT WINDOW"]
+128,000 tokens
+[/CARD]
+
+[CARD title="TARGET MODALITY"]
+Code, Math & Multi-Step Reasoning
+[/CARD]
+
+[/COLUMNS]
+
+
+
+## 1. Inference Architecture Flow
+
+
+
+[PIPELINE title="End-to-End Inference Pipeline"]
+User Query -> Semantic Tokenizer -> Mixture of Attention Layers -> Tool Calling Router -> Verifier Agent -> Streaming Output
+[/PIPELINE]
+
+
+
+## 2. Benchmark Evaluation (MMLU & Reasoning)
+
+
+
+[CHART title="Zero-Shot Reasoning Benchmark Scores (%)" type="bar"]
+GPT-4o | 88.5
+Claude 3.5 Sonnet | 89.2
+Gemini 1.5 Pro | 86.4
+DeepSeek-V3 | 88.8
+DeepReason-70B (Ours) | 92.4
+[/CHART]
+
+
+
+## 3. Latency vs Context Length Performance
+
+
+[CHART title="Inference Latency by Context Length (ms)" type="column"]
+2k Tokens | 14.2
+8k Tokens | 22.8
+32k Tokens | 41.5
+64k Tokens | 68.0
+128k Tokens | 104.3
+[/CHART]
+
+
+
+## 4. Pretraining Data Distribution
+
+
+[CHART title="Pretraining Dataset Mixture (%)" type="pie"]
+Code & Repositories | 35
+Scientific Papers | 25
+Web Curated Text | 20
+Mathematical Proofs | 12
+Conversational Dialog | 8
+[/CHART]
+
+
+
+## 5. Training & Alignment Status
+
+
+
+[PROGRESS label="Stage 2 Reinforcement Learning with Verifiable Rewards (RLVR)" value="94" max="100" /]
+
+
+
+[CALLOUT tone="success" title="Production Check Complete"]
+Model checkpoints passed all safety filters, hallucination red-teaming, and latency thresholds under 28ms/token.
+[/CALLOUT]
+
+
+
+## 6. Key Deployment Directives
+
+
+
+- [x] FP8 and INT4 quantization kernels verified on H100 clusters.
+
+
+- [x] Context extension validated up to 128k with zero degradation on Needle-In-A-Haystack.
+
+
+- [ ] Finalize Triton kernel optimization for speculative decoding.
+
+
+
+> "True machine reasoning requires structured verification loops integrated directly into generation."

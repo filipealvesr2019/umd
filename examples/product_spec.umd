@@ -1,0 +1,24 @@
+# UI-Markdown (UMD) Specification
+
+Unified document model combining fluid Markdown writing with reactive UI blocks.
+
+## 1. Core Principles
+
+- **Zero Companion Files**: Stored entirely in plain text with the `.umd` extension.
+- **Notion-Like Fluidity**: Free typing anywhere, instant keyboard block creation.
+- **Full Bi-directional Editing**: AST-backed parser guarantees lossless roundtrip preservation.
+
+[TABLE title="Supported Components"]
+Component | Syntax | Output
+Table | [TABLE title="..."] | Interactive table with dynamic rows/columns
+Callout | [CALLOUT tone="..."] | Tinted alert card with icon and body
+Stat Cards | [COLUMNS] [CARD] | Responsive multi-column metric boxes
+Task Checklist | - [ ] Task name | Interactive checkbox with strike-through
+Toggle List | <details> <summary> | Collapsible accordion dropdown
+[/TABLE]
+
+[CALLOUT tone="success" title="Production Ready"]
+The core parser and VS Code extension are published under the MIT license.
+[/CALLOUT]
+
+> "Write like Markdown. Experience like Notion. Store like pure text."

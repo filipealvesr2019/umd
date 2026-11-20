@@ -1,0 +1,40 @@
+# Q4 Global Sales Report
+
+Executive revenue performance summary across regional markets.
+
+<!-- This comment is preserved across all edits. -->
+
+[COLUMNS gap="20"]
+
+[CARD title="Total Revenue"]
+$1,248,500 (+24% YoY)
+[/CARD]
+
+[CARD title="Active Accounts"]
+4,820 enterprise clients
+[/CARD]
+
+[CARD title="Net Retention"]
+118% net dollar retention
+[/CARD]
+
+[/COLUMNS]
+
+[TABLE title="Regional Breakdown"]
+Product | Units | Revenue
+Notebook Pro | 120 | $144,000
+Server Node | 45 | $90,000
+Cloud Backup | 310 | $31,000
+[/TABLE]
+
+[CALLOUT tone="success" title="Milestone Reached"]
+The APAC expansion exceeded projections by 15%, driven by enterprise cloud adoption.
+[/CALLOUT]
+
+## Key Highlights
+
+- Cloud migrations accounted for 68% of all new deals.
+- Average sales cycle reduced from 42 days to 29 days.
+- Zero critical downtime during the global Black Friday weekend.
+
+> "Our customer-first approach is directly driving sustainable, multi-year expansion."

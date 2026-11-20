@@ -1,0 +1,43 @@
+# Engineering Roadmap 2026
+
+Quarterly deliverables and technical milestones for core platform initiatives.
+
+[COLUMNS gap="20"]
+
+[CARD title="Current Sprint"]
+Sprint 42 — Feature Complete
+[/CARD]
+
+[CARD title="Overall Progress"]
+78% of Q4 roadmap shipped
+[/CARD]
+
+[/COLUMNS]
+
+[TABLE title="Milestones & Owners"]
+Initiative | Owner | Target Date | Status
+Authentication v2 | Alex Chen | Oct 15 | Completed
+Distributed Cache | Maria Santos | Nov 02 | In Progress
+Realtime WebSocket API | Filipe Alves | Nov 20 | In Review
+Edge AI Inference | Sarah Lin | Dec 10 | Planned
+[/TABLE]
+
+[CALLOUT tone="success" title="Architecture Approved"]
+The RFC for real-time document streaming has been approved by the architecture committee.
+[/CALLOUT]
+
+## Sprint Action Items
+
+- [x] Complete security audit on token exchange
+- [x] Run stress tests on WebSocket connection pools
+- [ ] Finalize end-to-end telemetry dashboards
+- [ ] Deploy canary release to staging cluster
+
+<details>
+<summary>View Architecture Specifications</summary>
+
+- Latency SLA: under 15ms p99 at edge nodes.
+- Zero-copy deserialization using FlatBuffers.
+- Bidirectional conflict resolution powered by CRDTs.
+
+</details>
