@@ -16,14 +16,12 @@
 
 <br/>
 
-<a href="https://github.com/filipealvesr2019/umd/blob/main/assets/umd_demo.mp4">
-  <img src="https://raw.githubusercontent.com/filipealvesr2019/umd/main/assets/screenshot_01_editor_overview.png" alt="UI-Markdown Visual Editor: Stat Cards and Architecture Pipeline" width="900" style="border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);" />
-</a>
+<img src="https://raw.githubusercontent.com/filipealvesr2019/umd/main/assets/umd_demo.gif" alt="UI-Markdown (UMD) Live Demo" width="900" style="border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);" />
 
-<br/><br/>
+<br/>
 
 <a name="-live-demo"></a>
-**🎬 [Watch UI-Markdown (UMD) in Action — Demo Video (MP4)](https://github.com/filipealvesr2019/umd/blob/main/assets/umd_demo.mp4)**
+*🎬 Live demo of UI-Markdown (UMD) visual editor in action*
 
 </div>
 
