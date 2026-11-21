@@ -1,1 +1,9 @@
 # Heading 1
+
+### Heading 3
+
+[TABLE title="Data Table"]
+Item | Qty | Price
+Item A | 1 | $100
+Item B | 2 | $200
+[/TABLE]

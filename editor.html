@@ -474,6 +474,162 @@
     text-align: center;
   }
 
+  /* Chart: Multi-Series Line Chart */
+  .chart-line-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+    position: relative;
+  }
+  .line-chart-svg-wrap {
+    position: relative;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+    padding: 12px 14px 8px;
+    overflow: visible;
+  }
+  .line-chart-svg {
+    width: 100%;
+    height: 220px;
+    overflow: visible;
+  }
+  .chart-grid {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+  }
+  .axis-label {
+    fill: var(--text-muted);
+    font-size: 10.5px;
+    font-family: inherit;
+  }
+  .axis-label-x {
+    text-anchor: middle;
+  }
+  .axis-label-y {
+    text-anchor: end;
+  }
+  .chart-polyline {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: d 0.25s ease;
+  }
+  .chart-point {
+    cursor: pointer;
+    transition: r 0.15s ease, stroke-width 0.15s ease;
+  }
+  .chart-point:hover {
+    r: 6.5;
+    stroke-width: 2.5;
+    stroke: #ffffff;
+  }
+  .chart-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: #18181b;
+    border: 1px solid #3f3f46;
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #f4f4f5;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    z-index: 100;
+    transform: translate(-50%, -115%);
+  }
+  .line-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .line-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-heading);
+  }
+  .line-legend-color {
+    width: 14px;
+    height: 4px;
+    border-radius: 2px;
+  }
+  .line-legend-name {
+    outline: none;
+    cursor: text;
+    border-bottom: 1px dashed transparent;
+  }
+  .line-legend-name:hover, .line-legend-name:focus {
+    border-bottom-color: var(--text-muted);
+  }
+  .delete-series-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0 2px;
+    transition: opacity 0.15s ease;
+  }
+  .line-legend-item:hover .delete-series-btn {
+    opacity: 1;
+  }
+  .delete-series-btn:hover {
+    color: var(--danger);
+  }
+  .line-data-table-wrap {
+    overflow-x: auto;
+    margin-top: 4px;
+  }
+  .line-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .line-data-table th, .line-data-table td {
+    border: 1px solid var(--border-subtle);
+    padding: 6px 10px;
+    text-align: left;
+  }
+  .line-data-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .line-cell-input {
+    outline: none;
+    cursor: text;
+    display: inline-block;
+    min-width: 30px;
+  }
+  .line-row-del-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0 4px;
+    transition: opacity 0.15s ease;
+  }
+  tr:hover .line-row-del-btn {
+    opacity: 1;
+  }
+  .line-row-del-btn:hover {
+    color: var(--danger);
+  }
+
   /* AI / Data Graphics: Pipeline Architecture */
   .notion-pipeline-block {
     background: var(--card-bg);
@@ -1377,6 +1533,14 @@
   <div class="menu-divider"></div>
   <div class="menu-header">AI &amp; DATA GRAPHICS</div>
 
+  <div class="menu-item" data-action="add-chart-line">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M19 9l-5 5-4-4-3 3"/></svg>
+    </span>
+    <span class="menu-title">Line Chart</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
   <div class="menu-item" data-action="add-chart-bar">
     <span class="menu-icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -1795,11 +1959,12 @@
   });
 
   function exportCleanClipboard(root) {
+    if (!root) root = document.getElementById('editor-page');
     const clone = root.cloneNode(true);
 
     // 1. Remove all editor UI buttons, toolbars, actions, scrollbars
     clone.querySelectorAll(
-      '.element-toolbar, .delete-stage-btn, .code-copy-btn, .code-gutter, ' +
+      '.element-toolbar, .delete-stage-btn, .delete-series-btn, .line-row-del-btn, .delete-bar-btn, .delete-col-btn, .code-copy-btn, .code-gutter, ' +
       '.table-actions, .pipeline-actions, .chart-actions, .add-block-btn, ' +
       '.notion-drag-handle, .table-top-scroll, .format-bar, .umd-context-menu'
     ).forEach(el => el.remove());
@@ -1849,6 +2014,30 @@
     // 4. Transform charts
     const chartContainers = Array.from(clone.querySelectorAll('.chart-wrapper, .isolated-element[data-block-type="chart"]'));
     chartContainers.forEach(chartEl => {
+      const cType = chartEl.getAttribute('data-chart-type');
+      if (cType === 'line' || chartEl.querySelector('.chart-line-container')) {
+        const title = chartEl.getAttribute('data-title') || chartEl.querySelector('.chart-title-input')?.innerText.trim() || 'Line Chart';
+        const seriesNames = Array.from(chartEl.querySelectorAll('.line-legend-name')).map(el => el.innerText.trim()).filter(Boolean);
+        const rows = [];
+        chartEl.querySelectorAll('.line-data-table tbody tr').forEach(tr => {
+          const cells = Array.from(tr.querySelectorAll('.line-cell-input')).map(c => c.innerText.trim());
+          if (cells.length > 0) rows.push(cells);
+        });
+        if (rows.length > 0) {
+          const wrap = document.createElement('div');
+          wrap.setAttribute('style', 'margin:16px 0; padding:14px; background:#1e1e1e; border:1px solid #333; border-radius:8px;');
+          let ths = '<th style="text-align:left; padding:6px 8px; color:#aaa;">Point</th>' +
+            seriesNames.map(s => '<th style="text-align:right; padding:6px 8px; color:#aaa;">' + s + '</th>').join('');
+          let trs = rows.map(r => {
+            let tds = '<td style="padding:6px 8px; color:#fff;">' + (r[0] || '') + '</td>' +
+              r.slice(1).map(val => '<td style="text-align:right; padding:6px 8px; color:#38bdf8; font-weight:bold;">' + val + '</td>').join('');
+            return '<tr style="border-bottom:1px solid #333;">' + tds + '</tr>';
+          }).join('');
+          wrap.innerHTML = '<div style="font-weight:bold; font-size:14px; margin-bottom:10px; color:#fff;">' + title + '</div><table style="width:100%; border-collapse:collapse; font-size:13px;"><thead><tr style="border-bottom:2px solid #555;">' + ths + '</tr></thead><tbody>' + trs + '</tbody></table>';
+          chartEl.replaceWith(wrap);
+        }
+        return;
+      }
       const title = chartEl.getAttribute('data-title') || chartEl.querySelector('.chart-title-input')?.innerText.trim() || 'Benchmark Chart';
       const items = [];
       chartEl.querySelectorAll('.chart-bar-row, .column-bar-item, .pie-legend-row').forEach(row => {
@@ -2129,6 +2318,14 @@
         { label: 'High-Quality Web', value: '20' },
         { label: 'Books & Literature', value: '15' }
       ], 'pie');
+    } else if (action === 'add-chart-line') {
+      newElement = createLineChartElement('Training vs Validation Loss', ['Train Loss', 'Val Loss'], [
+        { label: 'Epoch 1', values: ['0.85', '0.92'] },
+        { label: 'Epoch 2', values: ['0.62', '0.71'] },
+        { label: 'Epoch 3', values: ['0.45', '0.58'] },
+        { label: 'Epoch 4', values: ['0.34', '0.49'] },
+        { label: 'Epoch 5', values: ['0.26', '0.45'] }
+      ]);
     } else if (action === 'add-pipeline') {
       newElement = createPipelineElement('Inference Architecture Pipeline', [
         'Input Prompt', 'Tokenizer', 'Transformer Backbone', 'Tool Calling', 'Output Stream'
@@ -3003,6 +3200,363 @@
     return wrapper;
   }
 
+  function createLineChartElement(title, seriesNames, dataPoints) {
+    const wrapper = createIsolatedWrapper('chart');
+    wrapper.setAttribute('data-title', title || 'Line Chart');
+    wrapper.setAttribute('data-chart-type', 'line');
+
+    const chartBlock = document.createElement('div');
+    chartBlock.className = 'notion-chart-block';
+
+    const header = document.createElement('div');
+    header.className = 'chart-header';
+    const titleInput = document.createElement('div');
+    titleInput.className = 'chart-title-input';
+    titleInput.contentEditable = 'true';
+    titleInput.innerText = title || 'Line Chart';
+    titleInput.addEventListener('input', () => {
+      wrapper.setAttribute('data-title', titleInput.innerText.trim());
+      scheduleSave();
+    });
+    header.appendChild(titleInput);
+    chartBlock.appendChild(header);
+
+    const linePalette = ['#2dd4bf', '#f59e0b', '#38bdf8', '#ec4899', '#a855f7', '#10b981', '#eab308'];
+
+    let series = (seriesNames && seriesNames.length > 0) ? [...seriesNames] : ['Series 1', 'Series 2'];
+    let points = (dataPoints && dataPoints.length > 0) ? JSON.parse(JSON.stringify(dataPoints)) : [
+      { label: 'A', values: ['10', '20'] },
+      { label: 'B', values: ['25', '18'] },
+      { label: 'C', values: ['15', '30'] }
+    ];
+
+    const container = document.createElement('div');
+    container.className = 'chart-line-container';
+
+    // Legend
+    const legend = document.createElement('div');
+    legend.className = 'line-chart-legend';
+
+    // SVG wrap
+    const svgWrap = document.createElement('div');
+    svgWrap.className = 'line-chart-svg-wrap';
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 600 240');
+    svg.setAttribute('class', 'line-chart-svg');
+    svgWrap.appendChild(svg);
+
+    // Tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'chart-tooltip';
+    svgWrap.appendChild(tooltip);
+
+    // Table wrap
+    const tableWrap = document.createElement('div');
+    tableWrap.className = 'line-data-table-wrap';
+    const table = document.createElement('table');
+    table.className = 'line-data-table';
+    tableWrap.appendChild(table);
+
+    // Actions
+    const actions = document.createElement('div');
+    actions.className = 'chart-actions';
+
+    const addPointBtn = document.createElement('button');
+    addPointBtn.className = 'chart-btn';
+    addPointBtn.innerText = '+ Add Point';
+
+    const addSeriesBtn = document.createElement('button');
+    addSeriesBtn.className = 'chart-btn';
+    addSeriesBtn.innerText = '+ Add Line Series';
+
+    actions.appendChild(addPointBtn);
+    actions.appendChild(addSeriesBtn);
+
+    container.appendChild(legend);
+    container.appendChild(svgWrap);
+    container.appendChild(tableWrap);
+    chartBlock.appendChild(container);
+    chartBlock.appendChild(actions);
+    wrapper.appendChild(chartBlock);
+
+    function renderLegend() {
+      legend.innerHTML = '';
+      series.forEach((sName, sIdx) => {
+        const color = linePalette[sIdx % linePalette.length];
+        const item = document.createElement('div');
+        item.className = 'line-legend-item';
+
+        const bar = document.createElement('span');
+        bar.className = 'line-legend-color';
+        bar.style.backgroundColor = color;
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'line-legend-name';
+        nameSpan.contentEditable = 'true';
+        nameSpan.innerText = sName;
+        nameSpan.addEventListener('input', () => {
+          series[sIdx] = nameSpan.innerText.trim();
+          renderTableHeaders();
+          scheduleSave();
+        });
+
+        item.appendChild(bar);
+        item.appendChild(nameSpan);
+
+        if (series.length > 1) {
+          const delBtn = document.createElement('button');
+          delBtn.className = 'delete-series-btn';
+          delBtn.innerHTML = '&times;';
+          delBtn.title = 'Remove series';
+          delBtn.addEventListener('click', () => {
+            series.splice(sIdx, 1);
+            points.forEach(p => {
+              if (p.values) p.values.splice(sIdx, 1);
+            });
+            renderAll();
+            scheduleSave();
+          });
+          item.appendChild(delBtn);
+        }
+
+        legend.appendChild(item);
+      });
+    }
+
+    function renderSvg() {
+      svg.innerHTML = '';
+      const w = 600;
+      const h = 240;
+      const padLeft = 55;
+      const padRight = 25;
+      const padTop = 20;
+      const padBottom = 35;
+      const plotW = w - padLeft - padRight;
+      const plotH = h - padTop - padBottom;
+
+      let allVals = [];
+      points.forEach(p => {
+        (p.values || []).forEach(v => {
+          const num = parseFloat(String(v).replace(/[^0-9.-]/g, ''));
+          if (!isNaN(num)) allVals.push(num);
+        });
+      });
+
+      let minVal = allVals.length > 0 ? Math.min(...allVals) : 0;
+      let maxVal = allVals.length > 0 ? Math.max(...allVals) : 100;
+      if (minVal > 0) minVal = 0;
+      if (minVal === maxVal) { maxVal = minVal + 10; }
+
+      // Horizontal grid lines
+      const gridCount = 4;
+      for (let g = 0; g <= gridCount; g++) {
+        const val = minVal + (g / gridCount) * (maxVal - minVal);
+        const y = padTop + plotH - (g / gridCount) * plotH;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', padLeft);
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', padLeft + plotW);
+        line.setAttribute('y2', y);
+        line.setAttribute('class', 'chart-grid');
+        svg.appendChild(line);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', padLeft - 8);
+        text.setAttribute('y', y + 3.5);
+        text.setAttribute('class', 'axis-label axis-label-y');
+        text.textContent = Number(val.toFixed(2)).toString();
+        svg.appendChild(text);
+      }
+
+      // Base line
+      const baseLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      baseLine.setAttribute('x1', padLeft);
+      baseLine.setAttribute('y1', padTop + plotH);
+      baseLine.setAttribute('x2', padLeft + plotW);
+      baseLine.setAttribute('y2', padTop + plotH);
+      baseLine.setAttribute('stroke', 'rgba(255,255,255,0.15)');
+      baseLine.setAttribute('stroke-width', '1');
+      svg.appendChild(baseLine);
+
+      if (points.length === 0) return;
+
+      const numPoints = points.length;
+      const getX = (idx) => numPoints === 1 ? padLeft + plotW / 2 : padLeft + (idx / (numPoints - 1)) * plotW;
+      const getY = (val) => {
+        const num = parseFloat(String(val).replace(/[^0-9.-]/g, '')) || 0;
+        const norm = (num - minVal) / (maxVal - minVal);
+        return padTop + plotH - norm * plotH;
+      };
+
+      // X labels
+      points.forEach((p, idx) => {
+        const cx = getX(idx);
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', cx);
+        text.setAttribute('y', padTop + plotH + 20);
+        text.setAttribute('class', 'axis-label axis-label-x');
+        text.textContent = p.label || ('P' + (idx + 1));
+        svg.appendChild(text);
+      });
+
+      // Lines & Points per series
+      series.forEach((sName, sIdx) => {
+        const color = linePalette[sIdx % linePalette.length];
+        const polyCoords = [];
+
+        points.forEach((p, pIdx) => {
+          const val = (p.values && p.values[sIdx] !== undefined) ? p.values[sIdx] : '0';
+          const cx = getX(pIdx);
+          const cy = getY(val);
+          polyCoords.push(cx.toFixed(1) + ',' + cy.toFixed(1));
+        });
+
+        const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.setAttribute('points', polyCoords.join(' '));
+        polyline.setAttribute('class', 'chart-polyline');
+        polyline.setAttribute('stroke', color);
+        svg.appendChild(polyline);
+
+        // Point circles
+        points.forEach((p, pIdx) => {
+          const val = (p.values && p.values[sIdx] !== undefined) ? p.values[sIdx] : '0';
+          const cx = getX(pIdx);
+          const cy = getY(val);
+
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', cx);
+          circle.setAttribute('cy', cy);
+          circle.setAttribute('r', '4.5');
+          circle.setAttribute('fill', color);
+          circle.setAttribute('stroke', '#18181b');
+          circle.setAttribute('stroke-width', '2');
+          circle.setAttribute('class', 'chart-point');
+
+          circle.addEventListener('mouseenter', () => {
+            circle.setAttribute('r', '7');
+            circle.setAttribute('stroke', '#ffffff');
+            circle.setAttribute('stroke-width', '2.5');
+            tooltip.innerHTML = '<strong>' + sName + '</strong> (' + (p.label || '') + '): ' + val;
+            const wrapRect = svgWrap.getBoundingClientRect();
+            const ptX = (cx / 600) * wrapRect.width;
+            const ptY = (cy / 240) * wrapRect.height;
+            tooltip.style.left = ptX + 'px';
+            tooltip.style.top = ptY + 'px';
+            tooltip.style.opacity = '1';
+          });
+
+          circle.addEventListener('mouseleave', () => {
+            circle.setAttribute('r', '4.5');
+            circle.setAttribute('stroke', '#18181b');
+            circle.setAttribute('stroke-width', '2');
+            tooltip.style.opacity = '0';
+          });
+
+          svg.appendChild(circle);
+        });
+      });
+    }
+
+    function renderTableHeaders() {
+      const thead = table.querySelector('thead');
+      if (!thead) return;
+      let html = '<tr><th>Point</th>';
+      series.forEach((sName, sIdx) => {
+        html += '<th style="color:' + linePalette[sIdx % linePalette.length] + ';">' + sName + '</th>';
+      });
+      html += '<th style="width:36px; text-align:center;"></th></tr>';
+      thead.innerHTML = html;
+    }
+
+    function renderTable() {
+      table.innerHTML = '<thead></thead><tbody></tbody>';
+      renderTableHeaders();
+      const tbody = table.querySelector('tbody');
+
+      points.forEach((p, pIdx) => {
+        const tr = document.createElement('tr');
+
+        // Point label cell
+        const tdLabel = document.createElement('td');
+        const spanLabel = document.createElement('span');
+        spanLabel.className = 'line-cell-input';
+        spanLabel.contentEditable = 'true';
+        spanLabel.innerText = p.label;
+        spanLabel.addEventListener('input', () => {
+          points[pIdx].label = spanLabel.innerText.trim();
+          renderSvg();
+          scheduleSave();
+        });
+        tdLabel.appendChild(spanLabel);
+        tr.appendChild(tdLabel);
+
+        // Value cells per series
+        series.forEach((sName, sIdx) => {
+          const tdVal = document.createElement('td');
+          const spanVal = document.createElement('span');
+          spanVal.className = 'line-cell-input';
+          spanVal.contentEditable = 'true';
+          spanVal.innerText = (p.values && p.values[sIdx] !== undefined) ? p.values[sIdx] : '0';
+          spanVal.addEventListener('input', () => {
+            if (!points[pIdx].values) points[pIdx].values = [];
+            points[pIdx].values[sIdx] = spanVal.innerText.trim();
+            renderSvg();
+            scheduleSave();
+          });
+          tdVal.appendChild(spanVal);
+          tr.appendChild(tdVal);
+        });
+
+        // Delete row button
+        const tdDel = document.createElement('td');
+        tdDel.style.textAlign = 'center';
+        const delBtn = document.createElement('button');
+        delBtn.className = 'line-row-del-btn';
+        delBtn.innerHTML = '&times;';
+        delBtn.title = 'Remove point';
+        delBtn.addEventListener('click', () => {
+          points.splice(pIdx, 1);
+          renderAll();
+          scheduleSave();
+        });
+        tdDel.appendChild(delBtn);
+        tr.appendChild(tdDel);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderAll() {
+      renderLegend();
+      renderSvg();
+      renderTable();
+    }
+
+    addPointBtn.addEventListener('click', () => {
+      const nextIdx = points.length + 1;
+      const defVals = series.map(() => String(Math.round(20 + Math.random() * 60)));
+      points.push({ label: 'P' + nextIdx, values: defVals });
+      renderAll();
+      scheduleSave();
+    });
+
+    addSeriesBtn.addEventListener('click', () => {
+      const nextSeriesIdx = series.length + 1;
+      series.push('Series ' + nextSeriesIdx);
+      points.forEach(p => {
+        if (!p.values) p.values = [];
+        p.values.push(String(Math.round(20 + Math.random() * 60)));
+      });
+      renderAll();
+      scheduleSave();
+    });
+
+    renderAll();
+    return wrapper;
+  }
+
   function createChartElement(title, items, chartType = 'bar') {
     const wrapper = createIsolatedWrapper('chart');
     wrapper.setAttribute('data-title', title || 'Benchmark Chart');
@@ -3747,6 +4301,30 @@
           if (lines[i].trim()) chartLines.push(lines[i].trim());
           i++;
         }
+        if (cType === 'line') {
+          let seriesNames = [];
+          const dataPoints = [];
+          if (chartLines.length > 0) {
+            const firstParts = chartLines[0].split('|').map(s => s.trim());
+            const isHeader = isNaN(parseFloat(firstParts[1] || ''));
+            let startRow = 0;
+            if (isHeader && firstParts.length > 1) {
+              seriesNames = firstParts.slice(1);
+              startRow = 1;
+            } else {
+              seriesNames = ['Value'];
+            }
+            for (let r = startRow; r < chartLines.length; r++) {
+              const parts = chartLines[r].split('|').map(s => s.trim());
+              const label = parts[0];
+              const vals = parts.slice(1);
+              dataPoints.push({ label, values: vals });
+            }
+          }
+          page.appendChild(createLineChartElement(cTitle, seriesNames, dataPoints));
+          i++;
+          continue;
+        }
         const items = [];
         chartLines.forEach(cl => {
           const p = cl.split('|');
@@ -3956,7 +4534,19 @@
         const title = block.getAttribute('data-title') || 'Benchmark Chart';
         const chartType = block.getAttribute('data-chart-type') || 'bar';
         lines.push('[CHART title="' + title + '" type="' + chartType + '"]');
-        if (chartType === 'pie') {
+        if (chartType === 'line') {
+          const seriesNames = Array.from(block.querySelectorAll('.line-legend-name')).map(el => el.innerText.trim()).filter(Boolean);
+          if (seriesNames.length > 0) {
+            lines.push('Point | ' + seriesNames.join(' | '));
+          }
+          const rows = block.querySelectorAll('.line-data-table tbody tr');
+          rows.forEach(r => {
+            const cells = Array.from(r.querySelectorAll('.line-cell-input')).map(c => c.innerText.trim());
+            if (cells.length > 0) {
+              lines.push(cells.join(' | '));
+            }
+          });
+        } else if (chartType === 'pie') {
           const rows = block.querySelectorAll('.pie-legend-row');
           rows.forEach(r => {
             const l = r.querySelector('.pie-lbl-input');
