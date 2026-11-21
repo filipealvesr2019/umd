@@ -1804,6 +1804,18 @@
     <option value="36px">36px</option>
   </select>
 
+  <select id="format-spacing-select" class="format-select" title="Letter Spacing">
+    <option value="" selected>Spacing</option>
+    <option value="normal">Normal</option>
+    <option value="-1px">Tight (-1px)</option>
+    <option value="-0.5px">Semi-tight (-0.5px)</option>
+    <option value="0.5px">Semi-wide (+0.5px)</option>
+    <option value="1px">Wide (+1px)</option>
+    <option value="2px">Wider (+2px)</option>
+    <option value="3px">Widest (+3px)</option>
+    <option value="5px">Extra Wide (+5px)</option>
+  </select>
+
   <div class="format-divider"></div>
 
   <div class="format-color-wrapper">
@@ -2190,8 +2202,11 @@
   function markdownInlineToHtml(text) {
     if (!text) return '<br>';
     let html = escapeHtml(text);
-    // Inline spans with styles (color, font-size, font-family)
-    html = html.replace(/&lt;span style=(?:&quot;|")([^"&]*?)(?:&quot;|")&gt;([\s\S]*?)&lt;\/span&gt;/gi, '<span style="$1">$2</span>');
+    // Inline spans with styles (color, font-size, font-family, letter-spacing)
+    html = html.replace(/&lt;span\s+style=(?:&quot;|")([\s\S]*?)(?:&quot;|")&gt;([\s\S]*?)&lt;\/span&gt;/gi, (m, st, content) => {
+      const decodedStyle = st.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+      return `<span style="${decodedStyle}">${content}</span>`;
+    });
     // Underline: <u>text</u> or <ins>text</ins>
     html = html.replace(/&lt;u&gt;(.*?)&lt;\/u&gt;/gi, '<u class="umd-underlined">$1</u>');
     html = html.replace(/&lt;ins&gt;(.*?)&lt;\/ins&gt;/gi, '<u class="umd-underlined">$1</u>');
@@ -2268,28 +2283,32 @@
     vscode.postMessage({ type: 'ready' });
   }
 
-  // FLOATING TEXT FORMATTING TOOLBAR (FONT, SIZE, COLOR, BOLD, ITALIC, UNDERLINE, STRIKE, CODE)
+  // FLOATING TEXT FORMATTING TOOLBAR (FONT, SIZE, SPACING, COLOR, BOLD, ITALIC, UNDERLINE, STRIKE, CODE)
+  let savedSelectionRange = null;
+  let isInteractingWithFormatBar = false;
+
+  function restoreSavedSelection() {
+    if (savedSelectionRange) {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedSelectionRange);
+    }
+  }
+
   const fontSelect = document.getElementById('format-font-select');
   const sizeSelect = document.getElementById('format-size-select');
+  const spacingSelect = document.getElementById('format-spacing-select');
   const colorToggleBtn = document.getElementById('format-color-toggle-btn');
   const colorMenu = document.getElementById('format-color-menu');
   const colorBar = document.getElementById('format-color-bar');
   const customColorPicker = document.getElementById('format-custom-color-picker');
 
   function updateFormatBar() {
-    const sel = window.getSelection();
-    if (!sel || sel.isCollapsed || !sel.rangeCount) {
-      if (document.activeElement && (document.activeElement.closest('#format-bar') || document.activeElement === customColorPicker)) {
-        return;
-      }
-      formatBar.style.display = 'none';
-      if (colorMenu) colorMenu.style.display = 'none';
-      return;
-    }
+    let sel = window.getSelection();
+    let hasLiveSelection = sel && !sel.isCollapsed && sel.rangeCount > 0 && sel.toString().trim().length > 0;
 
-    const selectedText = sel.toString().trim();
-    if (!selectedText) {
-      if (document.activeElement && (document.activeElement.closest('#format-bar') || document.activeElement === customColorPicker)) {
+    if (!hasLiveSelection) {
+      if (savedSelectionRange && formatBar.style.display === 'flex') {
         return;
       }
       formatBar.style.display = 'none';
@@ -2315,7 +2334,7 @@
     }
 
     formatBar.style.display = 'flex';
-    const barWidth = formatBar.offsetWidth || 340;
+    const barWidth = formatBar.offsetWidth || 440;
     const barHeight = formatBar.offsetHeight || 34;
 
     let left = rect.left + (rect.width / 2) - (barWidth / 2);
@@ -2335,58 +2354,60 @@
     if (!sel || !sel.rangeCount || sel.isCollapsed) return;
     const range = sel.getRangeAt(0);
 
-    try {
-      document.execCommand('styleWithCSS', false, true);
-    } catch(e) {}
+    let targetSpan = null;
+    let node = range.commonAncestorContainer;
+    if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
 
-    if (styles.color) {
-      if (styles.color === 'inherit') {
-        document.execCommand('removeFormat', false, null);
-      } else {
-        document.execCommand('foreColor', false, styles.color);
+    if (node && node.tagName === 'SPAN' && node.textContent.trim() === sel.toString().trim()) {
+      targetSpan = node;
+    } else {
+      targetSpan = document.createElement('span');
+      try {
+        const contents = range.extractContents();
+        targetSpan.appendChild(contents);
+        range.insertNode(targetSpan);
+      } catch(err) {
+        targetSpan = null;
       }
     }
 
-    if (styles.fontFamily) {
-      if (styles.fontFamily === 'inherit') {
-        document.execCommand('fontName', false, 'inherit');
-      } else {
-        document.execCommand('fontName', false, styles.fontFamily);
+    if (targetSpan) {
+      if (styles.color !== undefined) {
+        if (styles.color === 'inherit') targetSpan.style.removeProperty('color');
+        else targetSpan.style.color = styles.color;
       }
-    }
+      if (styles.fontFamily !== undefined) {
+        if (styles.fontFamily === 'inherit') targetSpan.style.removeProperty('font-family');
+        else targetSpan.style.fontFamily = styles.fontFamily;
+      }
+      if (styles.fontSize !== undefined) {
+        if (styles.fontSize === 'inherit') targetSpan.style.removeProperty('font-size');
+        else targetSpan.style.fontSize = styles.fontSize;
+      }
+      if (styles.letterSpacing !== undefined) {
+        if (styles.letterSpacing === 'normal' || styles.letterSpacing === 'inherit') targetSpan.style.removeProperty('letter-spacing');
+        else targetSpan.style.letterSpacing = styles.letterSpacing;
+      }
 
-    if (styles.fontSize) {
-      let node = range.commonAncestorContainer;
-      if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
-
-      if (node && node.tagName === 'SPAN' && node.textContent.trim() === sel.toString().trim()) {
-        if (styles.fontSize === 'inherit') {
-          node.style.removeProperty('font-size');
-        } else {
-          node.style.fontSize = styles.fontSize;
+      // If no inline styles remain, unwrap span
+      const inlineStyle = targetSpan.getAttribute('style');
+      if (!inlineStyle || inlineStyle.trim() === '') {
+        const parent = targetSpan.parentNode;
+        if (parent) {
+          while (targetSpan.firstChild) {
+            parent.insertBefore(targetSpan.firstChild, targetSpan);
+          }
+          parent.removeChild(targetSpan);
         }
       } else {
-        const span = document.createElement('span');
-        if (styles.fontSize !== 'inherit') span.style.fontSize = styles.fontSize;
         try {
-          const contents = range.extractContents();
-          span.appendChild(contents);
-          range.insertNode(span);
-
           sel.removeAllRanges();
           const newRange = document.createRange();
-          newRange.selectNodeContents(span);
+          newRange.selectNodeContents(targetSpan);
           sel.addRange(newRange);
           savedSelectionRange = newRange.cloneRange();
-        } catch(err) {
-          document.execCommand('fontSize', false, '4');
-        }
+        } catch(e) {}
       }
-    }
-
-    const newSel = window.getSelection();
-    if (newSel && newSel.rangeCount > 0 && !newSel.isCollapsed) {
-      savedSelectionRange = newSel.getRangeAt(0).cloneRange();
     }
 
     scheduleSave();
@@ -2446,6 +2467,21 @@
     });
   }
 
+  // Spacing Select (Letter Spacing)
+  if (spacingSelect) {
+    spacingSelect.addEventListener('mousedown', () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount && !sel.isCollapsed) {
+        savedSelectionRange = sel.getRangeAt(0).cloneRange();
+      }
+    });
+    spacingSelect.addEventListener('change', () => {
+      const val = spacingSelect.value;
+      if (val) applyInlineStyle({ letterSpacing: val });
+      spacingSelect.value = '';
+    });
+  }
+
   // Color Toggle Button
   if (colorToggleBtn && colorMenu) {
     colorToggleBtn.addEventListener('mousedown', (e) => {
@@ -2457,10 +2493,15 @@
     colorMenu.querySelectorAll('.color-swatch-btn').forEach(swatch => {
       swatch.addEventListener('mousedown', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const c = swatch.getAttribute('data-color');
         applyInlineStyle({ color: c });
         if (colorBar) colorBar.style.background = (c === 'inherit') ? 'transparent' : c;
         colorMenu.style.display = 'none';
+      });
+      swatch.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
       });
     });
 
@@ -2484,6 +2525,31 @@
     });
   }
 
+  formatBar.addEventListener('mousedown', (e) => {
+    isInteractingWithFormatBar = true;
+    if (e.target.tagName !== 'SELECT' && e.target.tagName !== 'INPUT') {
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('mousedown', (e) => {
+    if (!e.target.closest('#format-bar')) {
+      isInteractingWithFormatBar = false;
+    }
+  });
+
+  document.addEventListener('mouseup', (e) => {
+    if (e.target.closest('#format-bar')) {
+      restoreSavedSelection();
+      updateFormatBar();
+    }
+    if (isInteractingWithFormatBar) {
+      setTimeout(() => {
+        isInteractingWithFormatBar = false;
+      }, 250);
+    }
+  });
+
   // Left click on empty canvas
   document.addEventListener('click', (ev) => {
     hideContextMenu();
@@ -2504,8 +2570,6 @@
       }
     }
   });
-
-  let savedSelectionRange = null;
 
   // RIGHT CLICK CONTEXT MENU
   document.addEventListener('contextmenu', (ev) => {
@@ -2565,14 +2629,6 @@
 
   function hideContextMenu() {
     contextMenu.style.display = 'none';
-  }
-
-  function restoreSavedSelection() {
-    if (savedSelectionRange) {
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(savedSelectionRange);
-    }
   }
 
   let isSelectAllActive = false;

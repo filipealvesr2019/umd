@@ -236,9 +236,13 @@ def test_text_font_size_and_color_formatting():
         # 3. Apply font family
         page.locator('#format-font-select').select_option(index=2)
 
+        # 4. Apply letter spacing
+        page.locator('#format-spacing-select').select_option('2px')
+
         # Verify serialization contains span with styling
         ser = page.evaluate("() => serializeDocument()")
         assert '<span style="' in ser
         assert 'color' in ser
+        assert 'letter-spacing' in ser
 
         browser.close()
