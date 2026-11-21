@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ui-markdown"
-version = "0.0.5"
+version = "0.0.6"
 description = "UI-Markdown — Interactive visual documents in pure plain text"
 readme = "README.md"
 license = { file = "LICENSE" }
