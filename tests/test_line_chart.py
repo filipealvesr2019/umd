@@ -1,5 +1,5 @@
 import pytest
-from playwright.sync_api import Page, sync_playwright
+from playwright.sync_api import sync_playwright
 from pathlib import Path
 
 EDITOR_HTML = Path(__file__).resolve().parent.parent / "editor.html"
@@ -16,103 +16,70 @@ Epoch 5 | 0.26 | 0.45
 [/CHART]
 """
 
-def test_line_chart_render_and_hover():
+def test_direct_line_chart_no_table_and_interactions():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto(f"file:///{str(EDITOR_HTML).replace('\\', '/')}")
         
-        # Load sample document with line chart
+        # Load sample document
         page.evaluate("(text) => renderDocument(text)", SAMPLE_LINE_UMD)
         
-        # Verify chart wrapper exists
-        chart = page.locator('.isolated-element[data-chart-type="line"]')
-        assert chart.count() == 1
-        assert chart.get_attribute("data-title") == "Training vs Validation Loss"
+        # 1. Verify NO TABLE exists
+        assert page.locator('.line-data-table').count() == 0
+        assert page.locator('.line-data-table-wrap').count() == 0
         
-        # Verify legend has both series
-        legends = page.locator('.line-legend-name')
-        assert legends.count() == 2
-        assert legends.nth(0).inner_text().strip() == "Train Loss"
-        assert legends.nth(1).inner_text().strip() == "Val Loss"
+        # 2. Verify large SVG canvas
+        svg = page.locator('.line-chart-svg')
+        assert svg.count() == 1
+        viewbox = svg.get_attribute("viewBox")
+        assert "900 380" in viewbox
         
-        # Verify SVG contains polylines and points
+        # 3. Verify points and series count
         polylines = page.locator('.chart-polyline')
         assert polylines.count() == 2
         
-        # 5 points * 2 series = 10 circle points
         points = page.locator('.chart-point')
         assert points.count() == 10
         
-        # Verify tooltip on hover
-        tooltip = page.locator('.chart-tooltip')
-        assert tooltip.count() == 1
+        # 4. Click a point to open popover
+        first_point = points.first
+        first_point.click()
         
-        # Hover first point
-        points.first.hover()
-        page.wait_for_timeout(100)
+        popover = page.locator('.chart-point-popover')
+        assert popover.count() == 1
         
-        # Check tooltip visible and contains series & value
-        tip_text = tooltip.inner_text()
-        assert "Train Loss" in tip_text
-        assert "0.85" in tip_text
+        # Edit point value in popover
+        val_input = popover.locator('.popover-input')
+        val_input.fill("0.99")
+        popover.locator('.popover-btn-save').click()
         
-        # Verify table rows
-        rows = page.locator('.line-data-table tbody tr')
-        assert rows.count() == 5
+        # Verify popover closed
+        assert not popover.is_visible()
         
-        # Test serialization
+        # Verify serialization reflects new value
         serialized = page.evaluate("() => serializeDocument()")
-        assert '[CHART title="Training vs Validation Loss" type="line"]' in serialized
-        assert 'Point | Train Loss | Val Loss' in serialized
-        assert 'Epoch 1 | 0.85 | 0.92' in serialized
-        assert 'Epoch 5 | 0.26 | 0.45' in serialized
+        assert "Epoch 1 | 0.99 | 0.92" in serialized
         
-        browser.close()
-
-def test_line_chart_interactive_edit():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(f"file:///{str(EDITOR_HTML).replace('\\', '/')}")
+        # 5. Delete a point via popover
+        last_point = page.locator('.chart-point').last
+        last_point.click()
+        assert popover.is_visible()
+        popover.locator('.popover-btn-del').click()
         
-        # Initialize empty document
-        page.evaluate("() => renderDocument('')")
+        # Point count should decrease from 10 to 8
+        assert page.locator('.chart-point').count() == 8
         
-        # Open context menu and add line chart
-        page.evaluate("""() => {
-            const menu = document.getElementById('context-menu');
-            const item = menu.querySelector('[data-action="add-chart-line"]');
-            item.click();
-        }""")
+        # 6. Click canvas to add a new line series
+        # Click in the middle of SVG plot area (e.g. x=400, y=200)
+        svg_box = svg.bounding_box()
+        page.mouse.click(svg_box["x"] + 400, svg_box["y"] + 200)
         
-        # Verify chart was inserted
-        chart = page.locator('.isolated-element[data-chart-type="line"]')
-        assert chart.count() == 1
+        # Polylines should now be 3
+        assert page.locator('.chart-polyline').count() == 3
+        assert page.locator('.line-legend-name').count() == 3
         
-        # Add a point
-        add_pt_btn = chart.locator('button:has-text("+ Add Point")')
-        add_pt_btn.click()
-        
-        # Add a series
-        add_series_btn = chart.locator('button:has-text("+ Add Line Series")')
-        add_series_btn.click()
-        
-        # Series should now be 3
-        legends = chart.locator('.line-legend-name')
-        assert legends.count() == 3
-        
-        # Edit title
-        title_input = chart.locator('.chart-title-input')
-        title_input.fill("Custom Model Metrics")
-        title_input.dispatch_event('input')
-        
-        # Check serialization has new title and 3 series
-        serialized = page.evaluate("() => serializeDocument()")
-        assert '[CHART title="Custom Model Metrics" type="line"]' in serialized
-        assert 'Point | Train Loss | Val Loss | Series 3' in serialized
-        
-        # Test exportCleanClipboard
+        # 7. Test clean clipboard export
         clip_data = page.evaluate("""() => {
             const clean = exportCleanClipboard();
             return {
@@ -121,11 +88,19 @@ def test_line_chart_interactive_edit():
             };
         }""")
         
-        assert "Custom Model Metrics" in clip_data["html"]
+        assert "Training vs Validation Loss" in clip_data["html"]
         assert "<table" in clip_data["html"]
-        assert "Point" in clip_data["html"]
-        assert "Series 3" in clip_data["html"]
-        assert "delete-series-btn" not in clip_data["html"]
-        assert "chart-btn" not in clip_data["html"]
+        assert "delete" not in clip_data["html"].lower()
+        
+        # 8. Test clicking on a line hitarea to add a point
+        # Get first hitarea
+        hitarea = page.locator('.chart-line-hitarea').first
+        box = hitarea.bounding_box()
+        # Click on line
+        page.mouse.click(box["x"] + box["width"] * 0.5, box["y"] + box["height"] * 0.5)
+        
+        # Point count should increase
+        new_point_count = page.locator('.chart-point').count()
+        assert new_point_count > 8
         
         browser.close()
