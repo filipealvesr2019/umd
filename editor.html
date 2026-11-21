@@ -1663,6 +1663,21 @@
       target = target.parentElement;
     }
 
+    // If right-clicked on empty canvas space, find the block directly at or above the click
+    if (!block) {
+      const children = Array.from(page.children);
+      for (const child of children) {
+        const rect = child.getBoundingClientRect();
+        if (ev.clientY >= rect.top && ev.clientY <= rect.bottom) {
+          block = child;
+          break;
+        }
+        if (rect.bottom <= ev.clientY) {
+          block = child;
+        }
+      }
+    }
+
     contextMenuTarget = block || page.lastElementChild;
     showContextMenu(ev.clientX, ev.clientY);
   });
@@ -2123,8 +2138,19 @@
     }
 
     if (newElement) {
-      if (contextMenuTarget && contextMenuTarget.nextSibling) {
-        page.insertBefore(newElement, contextMenuTarget.nextSibling);
+      if (contextMenuTarget) {
+        // If the target clicked is an empty placeholder paragraph, replace it directly
+        // so the new element is positioned EXACTLY where the user clicked!
+        if (contextMenuTarget.getAttribute('data-block-type') === 'p' && !contextMenuTarget.innerText.trim()) {
+          page.replaceChild(newElement, contextMenuTarget);
+        } else if (contextMenuTarget.nextSibling && contextMenuTarget.nextSibling.getAttribute('data-block-type') === 'p' && !contextMenuTarget.nextSibling.innerText.trim()) {
+          // If the next sibling is an empty placeholder paragraph, replace that placeholder!
+          page.replaceChild(newElement, contextMenuTarget.nextSibling);
+        } else if (contextMenuTarget.nextSibling) {
+          page.insertBefore(newElement, contextMenuTarget.nextSibling);
+        } else {
+          page.appendChild(newElement);
+        }
       } else {
         page.appendChild(newElement);
       }
