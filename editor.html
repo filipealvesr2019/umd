@@ -1569,6 +1569,123 @@
     margin: 0 2px;
   }
 
+  .format-select {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 11.5px;
+    padding: 2px 4px;
+    height: 26px;
+    outline: none;
+    cursor: pointer;
+  }
+  .format-select option {
+    background: #18181b;
+    color: #f4f4f5;
+  }
+
+  .format-color-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .format-color-btn {
+    padding: 2px 6px;
+  }
+  .format-color-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    line-height: 1;
+  }
+  .format-color-bar {
+    width: 14px;
+    height: 3px;
+    background: #ef4444;
+    border-radius: 1px;
+    margin-top: 1px;
+    transition: background 0.15s ease;
+  }
+  .format-color-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--menu-bg);
+    border: 1px solid var(--menu-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    padding: 8px;
+    width: 170px;
+    z-index: 1002;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .color-palette-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .color-palette-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+  }
+  .color-swatch-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    line-height: 1;
+    transition: transform 0.1s ease;
+  }
+  .color-swatch-btn:hover {
+    transform: scale(1.2);
+    border-color: #fff;
+  }
+  .color-custom-row {
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 6px;
+    margin-top: 2px;
+  }
+  .custom-color-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .custom-color-label input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+  }
+  .custom-color-label input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .custom-color-label input[type="color"]::-webkit-color-swatch {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
   /* Context Menu (Right Click) */
   .umd-context-menu {
     position: fixed;
@@ -1665,8 +1782,63 @@
 
 <div class="notion-canvas" id="editor-page" contenteditable="true" spellcheck="false"></div>
 
-<!-- Floating Text Formatting Toolbar (Bold, Italic, Underline, Strikethrough, Code, Copy) -->
+<!-- Floating Text Formatting Toolbar (Font, Size, Color, Bold, Italic, Underline, Strikethrough, Code, Copy) -->
 <div id="format-bar" class="notion-format-bar">
+  <select id="format-font-select" class="format-select" title="Font Family">
+    <option value="" selected>Font</option>
+    <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Sans</option>
+    <option value="Georgia, Cambria, 'Times New Roman', serif">Serif</option>
+    <option value="'JetBrains Mono', Consolas, 'Courier New', monospace">Mono</option>
+    <option value="'Comic Sans MS', 'Segoe Print', cursive">Casual</option>
+    <option value="Impact, Haettenschweiler, sans-serif">Display</option>
+  </select>
+
+  <select id="format-size-select" class="format-select" title="Font Size">
+    <option value="" selected>Size</option>
+    <option value="11px">11px</option>
+    <option value="13px">13px</option>
+    <option value="15px">15px</option>
+    <option value="18px">18px</option>
+    <option value="22px">22px</option>
+    <option value="28px">28px</option>
+    <option value="36px">36px</option>
+  </select>
+
+  <div class="format-divider"></div>
+
+  <div class="format-color-wrapper">
+    <button class="format-btn format-color-btn" id="format-color-toggle-btn" title="Text Color">
+      <span class="format-color-icon">
+        <span style="font-weight:bold; font-size:13px; line-height:1;">A</span>
+        <span id="format-color-bar" class="format-color-bar"></span>
+      </span>
+    </button>
+    <div id="format-color-menu" class="format-color-menu" style="display:none;">
+      <div class="color-palette-title">Color</div>
+      <div class="color-palette-grid">
+        <button class="color-swatch-btn" data-color="inherit" title="Default" style="background:#27272a; color:#a1a1aa;">✕</button>
+        <button class="color-swatch-btn" data-color="#ffffff" title="White" style="background:#ffffff;"></button>
+        <button class="color-swatch-btn" data-color="#9ca3af" title="Grey" style="background:#9ca3af;"></button>
+        <button class="color-swatch-btn" data-color="#ef4444" title="Red" style="background:#ef4444;"></button>
+        <button class="color-swatch-btn" data-color="#f97316" title="Orange" style="background:#f97316;"></button>
+        <button class="color-swatch-btn" data-color="#eab308" title="Yellow" style="background:#eab308;"></button>
+        <button class="color-swatch-btn" data-color="#10b981" title="Green" style="background:#10b981;"></button>
+        <button class="color-swatch-btn" data-color="#06b6d4" title="Cyan" style="background:#06b6d4;"></button>
+        <button class="color-swatch-btn" data-color="#3b82f6" title="Blue" style="background:#3b82f6;"></button>
+        <button class="color-swatch-btn" data-color="#8b5cf6" title="Purple" style="background:#8b5cf6;"></button>
+        <button class="color-swatch-btn" data-color="#ec4899" title="Pink" style="background:#ec4899;"></button>
+      </div>
+      <div class="color-custom-row">
+        <label class="custom-color-label">
+          <input type="color" id="format-custom-color-picker" value="#38bdf8" />
+          <span>Custom color...</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="format-divider"></div>
+
   <button class="format-btn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
   <button class="format-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
   <button class="format-btn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
@@ -2018,6 +2190,8 @@
   function markdownInlineToHtml(text) {
     if (!text) return '<br>';
     let html = escapeHtml(text);
+    // Inline spans with styles (color, font-size, font-family)
+    html = html.replace(/&lt;span style=(?:&quot;|")([^"&]*?)(?:&quot;|")&gt;([\s\S]*?)&lt;\/span&gt;/gi, '<span style="$1">$2</span>');
     // Underline: <u>text</u> or <ins>text</ins>
     html = html.replace(/&lt;u&gt;(.*?)&lt;\/u&gt;/gi, '<u class="umd-underlined">$1</u>');
     html = html.replace(/&lt;ins&gt;(.*?)&lt;\/ins&gt;/gi, '<u class="umd-underlined">$1</u>');
@@ -2062,6 +2236,26 @@
       if (tag === 'DEL' || tag === 'S') {
         return '~~' + inner + '~~';
       }
+      if (tag === 'SPAN') {
+        const style = node.getAttribute('style');
+        if (style) {
+          return '<span style="' + style.replace(/"/g, '&quot;') + '">' + inner + '</span>';
+        }
+        return inner;
+      }
+      if (tag === 'FONT') {
+        const color = node.getAttribute('color');
+        const face = node.getAttribute('face');
+        const size = node.getAttribute('size');
+        let style = '';
+        if (color) style += 'color:' + color + ';';
+        if (face) style += 'font-family:' + face + ';';
+        if (size) style += 'font-size:' + size + ';';
+        if (style) {
+          return '<span style="' + style.replace(/"/g, '&quot;') + '">' + inner + '</span>';
+        }
+        return inner;
+      }
       return inner;
     }
     return '';
@@ -2074,17 +2268,32 @@
     vscode.postMessage({ type: 'ready' });
   }
 
-  // FLOATING TEXT FORMATTING TOOLBAR (BOLD, ITALIC, UNDERLINE, STRIKE, CODE)
+  // FLOATING TEXT FORMATTING TOOLBAR (FONT, SIZE, COLOR, BOLD, ITALIC, UNDERLINE, STRIKE, CODE)
+  const fontSelect = document.getElementById('format-font-select');
+  const sizeSelect = document.getElementById('format-size-select');
+  const colorToggleBtn = document.getElementById('format-color-toggle-btn');
+  const colorMenu = document.getElementById('format-color-menu');
+  const colorBar = document.getElementById('format-color-bar');
+  const customColorPicker = document.getElementById('format-custom-color-picker');
+
   function updateFormatBar() {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed || !sel.rangeCount) {
+      if (document.activeElement && (document.activeElement.closest('#format-bar') || document.activeElement === customColorPicker)) {
+        return;
+      }
       formatBar.style.display = 'none';
+      if (colorMenu) colorMenu.style.display = 'none';
       return;
     }
 
     const selectedText = sel.toString().trim();
     if (!selectedText) {
+      if (document.activeElement && (document.activeElement.closest('#format-bar') || document.activeElement === customColorPicker)) {
+        return;
+      }
       formatBar.style.display = 'none';
+      if (colorMenu) colorMenu.style.display = 'none';
       return;
     }
 
@@ -2092,18 +2301,22 @@
     const commonAncestor = range.commonAncestorContainer;
     if (!page.contains(commonAncestor)) {
       formatBar.style.display = 'none';
+      if (colorMenu) colorMenu.style.display = 'none';
       return;
     }
+
+    savedSelectionRange = range.cloneRange();
 
     const rect = range.getBoundingClientRect();
     if (rect.width === 0 && rect.height === 0) {
       formatBar.style.display = 'none';
+      if (colorMenu) colorMenu.style.display = 'none';
       return;
     }
 
     formatBar.style.display = 'flex';
-    const barWidth = formatBar.offsetWidth || 190;
-    const barHeight = formatBar.offsetHeight || 32;
+    const barWidth = formatBar.offsetWidth || 340;
+    const barHeight = formatBar.offsetHeight || 34;
 
     let left = rect.left + (rect.width / 2) - (barWidth / 2);
     let top = rect.top - barHeight - 8;
@@ -2116,11 +2329,76 @@
     formatBar.style.top = top + 'px';
   }
 
+  function applyInlineStyle(styles) {
+    restoreSavedSelection();
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+
+    try {
+      document.execCommand('styleWithCSS', false, true);
+    } catch(e) {}
+
+    if (styles.color) {
+      if (styles.color === 'inherit') {
+        document.execCommand('removeFormat', false, null);
+      } else {
+        document.execCommand('foreColor', false, styles.color);
+      }
+    }
+
+    if (styles.fontFamily) {
+      if (styles.fontFamily === 'inherit') {
+        document.execCommand('fontName', false, 'inherit');
+      } else {
+        document.execCommand('fontName', false, styles.fontFamily);
+      }
+    }
+
+    if (styles.fontSize) {
+      let node = range.commonAncestorContainer;
+      if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+
+      if (node && node.tagName === 'SPAN' && node.textContent.trim() === sel.toString().trim()) {
+        if (styles.fontSize === 'inherit') {
+          node.style.removeProperty('font-size');
+        } else {
+          node.style.fontSize = styles.fontSize;
+        }
+      } else {
+        const span = document.createElement('span');
+        if (styles.fontSize !== 'inherit') span.style.fontSize = styles.fontSize;
+        try {
+          const contents = range.extractContents();
+          span.appendChild(contents);
+          range.insertNode(span);
+
+          sel.removeAllRanges();
+          const newRange = document.createRange();
+          newRange.selectNodeContents(span);
+          sel.addRange(newRange);
+          savedSelectionRange = newRange.cloneRange();
+        } catch(err) {
+          document.execCommand('fontSize', false, '4');
+        }
+      }
+    }
+
+    const newSel = window.getSelection();
+    if (newSel && newSel.rangeCount > 0 && !newSel.isCollapsed) {
+      savedSelectionRange = newSel.getRangeAt(0).cloneRange();
+    }
+
+    scheduleSave();
+    updateFormatBar();
+  }
+
   document.addEventListener('selectionchange', () => {
     setTimeout(updateFormatBar, 10);
   });
 
-  formatBar.querySelectorAll('.format-btn').forEach(btn => {
+  // Buttons with data-cmd
+  formatBar.querySelectorAll('.format-btn[data-cmd]').forEach(btn => {
     btn.addEventListener('mousedown', (e) => {
       e.preventDefault();
       const cmd = btn.getAttribute('data-cmd');
@@ -2137,6 +2415,74 @@
       updateFormatBar();
     });
   });
+
+  // Font Select
+  if (fontSelect) {
+    fontSelect.addEventListener('mousedown', () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount && !sel.isCollapsed) {
+        savedSelectionRange = sel.getRangeAt(0).cloneRange();
+      }
+    });
+    fontSelect.addEventListener('change', () => {
+      const val = fontSelect.value;
+      if (val) applyInlineStyle({ fontFamily: val });
+      fontSelect.value = '';
+    });
+  }
+
+  // Size Select
+  if (sizeSelect) {
+    sizeSelect.addEventListener('mousedown', () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount && !sel.isCollapsed) {
+        savedSelectionRange = sel.getRangeAt(0).cloneRange();
+      }
+    });
+    sizeSelect.addEventListener('change', () => {
+      const val = sizeSelect.value;
+      if (val) applyInlineStyle({ fontSize: val });
+      sizeSelect.value = '';
+    });
+  }
+
+  // Color Toggle Button
+  if (colorToggleBtn && colorMenu) {
+    colorToggleBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      colorMenu.style.display = colorMenu.style.display === 'none' ? 'flex' : 'none';
+    });
+
+    colorMenu.querySelectorAll('.color-swatch-btn').forEach(swatch => {
+      swatch.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        const c = swatch.getAttribute('data-color');
+        applyInlineStyle({ color: c });
+        if (colorBar) colorBar.style.background = (c === 'inherit') ? 'transparent' : c;
+        colorMenu.style.display = 'none';
+      });
+    });
+
+    if (customColorPicker) {
+      customColorPicker.addEventListener('input', (e) => {
+        const c = e.target.value;
+        applyInlineStyle({ color: c });
+        if (colorBar) colorBar.style.background = c;
+      });
+      customColorPicker.addEventListener('change', (e) => {
+        const c = e.target.value;
+        applyInlineStyle({ color: c });
+        if (colorBar) colorBar.style.background = c;
+      });
+    }
+
+    document.addEventListener('mousedown', (e) => {
+      if (!e.target.closest('#format-bar')) {
+        colorMenu.style.display = 'none';
+      }
+    });
+  }
 
   // Left click on empty canvas
   document.addEventListener('click', (ev) => {
@@ -4408,21 +4754,21 @@
         const lbl = document.createElement('div');
         lbl.className = 'comparison-group-lbl';
         lbl.contentEditable = 'true';
-        lbl.innerText = g.label || ('Group ' + (gIdx + 1));
-        lbl.title = g.label || '';
+        lbl.innerHTML = markdownInlineToHtml(g.label || ('Group ' + (gIdx + 1)));
+        lbl.title = lbl.innerText.trim();
         const groupWidth = Math.max(48, series.length * 32 + (series.length - 1) * 5);
         lbl.style.width = groupWidth + 'px';
         lbl.style.maxWidth = Math.max(120, groupWidth) + 'px';
 
         const tip = document.createElement('div');
         tip.className = 'comparison-lbl-tooltip';
-        tip.innerText = g.label || '';
+        tip.innerText = lbl.innerText.trim();
 
         lbl.addEventListener('input', () => {
-          const txt = lbl.innerText.trim();
+          const txt = htmlToMarkdownInline(lbl);
           g.label = txt;
-          lbl.title = txt;
-          tip.innerText = txt;
+          lbl.title = lbl.innerText.trim();
+          tip.innerText = lbl.innerText.trim();
           syncDataset();
           scheduleSave();
         });
@@ -4650,17 +4996,16 @@
         const lbl = document.createElement('div');
         lbl.className = 'column-lbl-input';
         lbl.contentEditable = 'true';
-        lbl.innerText = label;
-        lbl.title = label;
+        lbl.innerHTML = markdownInlineToHtml(label);
+        lbl.title = lbl.innerText.trim();
 
         const tip = document.createElement('div');
         tip.className = 'column-lbl-tooltip';
-        tip.innerText = label;
+        tip.innerText = lbl.innerText.trim();
 
         lbl.addEventListener('input', () => {
-          const txt = lbl.innerText.trim();
-          lbl.title = txt;
-          tip.innerText = txt;
+          lbl.title = lbl.innerText.trim();
+          tip.innerText = lbl.innerText.trim();
           scheduleSave();
         });
 
@@ -4720,7 +5065,7 @@
       const lbl = document.createElement('div');
       lbl.className = 'chart-label-input';
       lbl.contentEditable = 'true';
-      lbl.innerText = label;
+      lbl.innerHTML = markdownInlineToHtml(label);
       lbl.addEventListener('input', scheduleSave);
 
       const track = document.createElement('div');
@@ -5511,35 +5856,35 @@
           lines.push('[CHART title="' + title + '" type="comparison" series="' + seriesNames.join(', ') + '"]');
           const groupEls = block.querySelectorAll('.comparison-group-item');
           groupEls.forEach(gEl => {
-            const l = gEl.querySelector('.comparison-group-lbl')?.innerText.trim() || 'Group';
+            const l = htmlToMarkdownInline(gEl.querySelector('.comparison-group-lbl')) || 'Group';
             const vals = Array.from(gEl.querySelectorAll('.comparison-val-input')).map(vEl => vEl.innerText.trim() || '0');
             lines.push([l, ...vals].join(' | '));
           });
         } else if (chartType === 'pie') {
           const rows = block.querySelectorAll('.pie-legend-row');
           rows.forEach(r => {
-            const l = r.querySelector('.pie-lbl-input');
+            const l = htmlToMarkdownInline(r.querySelector('.pie-lbl-input'));
             const v = r.querySelector('.pie-val-input');
             if (l && v) {
-              lines.push(l.innerText.trim() + ' | ' + v.innerText.trim());
+              lines.push(l.trim() + ' | ' + v.innerText.trim());
             }
           });
         } else if (chartType === 'column') {
           const cols = block.querySelectorAll('.column-bar-item');
           cols.forEach(c => {
-            const l = c.querySelector('.column-lbl-input');
+            const l = htmlToMarkdownInline(c.querySelector('.column-lbl-input'));
             const v = c.querySelector('.column-val-input');
             if (l && v) {
-              lines.push(l.innerText.trim() + ' | ' + v.innerText.trim());
+              lines.push(l.trim() + ' | ' + v.innerText.trim());
             }
           });
         } else {
           const rows = block.querySelectorAll('.chart-bar-row');
           rows.forEach(r => {
-            const l = r.querySelector('.chart-label-input');
+            const l = htmlToMarkdownInline(r.querySelector('.chart-label-input'));
             const v = r.querySelector('.chart-value-input');
             if (l && v) {
-              lines.push(l.innerText.trim() + ' | ' + v.innerText.trim());
+              lines.push(l.trim() + ' | ' + v.innerText.trim());
             }
           });
         }

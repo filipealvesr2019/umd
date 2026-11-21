@@ -194,3 +194,51 @@ Spain | 46.6 | 47.4
         assert "Germany | 99.9 | 83.2" in ser
 
         browser.close()
+
+
+def test_text_font_size_and_color_formatting():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(f"file:///{str(EDITOR_HTML).replace('\\', '/')}")
+
+        sample = "Hello formatting world"
+        page.evaluate("(text) => renderDocument(text)", sample)
+
+        # Select word "formatting"
+        page.evaluate("""() => {
+            const p = document.querySelector('p');
+            const range = document.createRange();
+            const textNode = p.firstChild;
+            range.setStart(textNode, 6);
+            range.setEnd(textNode, 16);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.dispatchEvent(new Event('selectionchange'));
+        }""")
+
+        # Verify format bar is displayed
+        format_bar = page.locator('#format-bar')
+        page.wait_for_selector('#format-bar', state='visible')
+        assert format_bar.is_visible()
+
+        # 1. Apply color via color menu
+        page.locator('#format-color-toggle-btn').click()
+        assert page.locator('#format-color-menu').is_visible()
+
+        # Click red swatch
+        page.locator('.color-swatch-btn[data-color="#ef4444"]').click()
+
+        # 2. Apply font size
+        page.locator('#format-size-select').select_option('22px')
+
+        # 3. Apply font family
+        page.locator('#format-font-select').select_option(index=2)
+
+        # Verify serialization contains span with styling
+        ser = page.evaluate("() => serializeDocument()")
+        assert '<span style="' in ser
+        assert 'color' in ser
+
+        browser.close()
