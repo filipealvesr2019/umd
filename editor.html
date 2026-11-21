@@ -2308,7 +2308,7 @@
     let hasLiveSelection = sel && !sel.isCollapsed && sel.rangeCount > 0 && sel.toString().trim().length > 0;
 
     if (!hasLiveSelection) {
-      if (savedSelectionRange && formatBar.style.display === 'flex') {
+      if (savedSelectionRange && (isInteractingWithFormatBar || formatBar.contains(document.activeElement)) && formatBar.style.display === 'flex') {
         return;
       }
       formatBar.style.display = 'none';
@@ -2535,6 +2535,11 @@
   document.addEventListener('mousedown', (e) => {
     if (!e.target.closest('#format-bar')) {
       isInteractingWithFormatBar = false;
+      if (!e.target.closest('.umd-context-menu')) {
+        savedSelectionRange = null;
+        formatBar.style.display = 'none';
+        if (colorMenu) colorMenu.style.display = 'none';
+      }
     }
   });
 
@@ -2660,6 +2665,8 @@
     if (ev.key === 'Escape') {
       hideContextMenu();
       formatBar.style.display = 'none';
+      if (colorMenu) colorMenu.style.display = 'none';
+      savedSelectionRange = null;
     }
     // Ctrl+U / Cmd+U: Underline
     if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'u') {
