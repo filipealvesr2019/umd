@@ -14,7 +14,7 @@ PACKAGE_JSON = {
     "name": "ui-markdown-editor",
     "displayName": "UI-Markdown Visual Editor",
     "description": "Interactive Notion-style visual editor for .umd files",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "ui-markdown",
     "engines": {
         "vscode": "^1.60.0"
