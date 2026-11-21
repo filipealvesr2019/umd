@@ -2,14 +2,14 @@
 
 # UI-Markdown (UMD)
 
-**Interactive Notion-Style Visual Documents in Pure Plain Text**
+**Interactive Visual Documents in Pure Plain Text**
 
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-68%20passed-brightgreen.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-75%20passed-brightgreen.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20external-purple.svg)]()
 
-*Combine fluid Markdown writing with reactive UI blocks, data charts, and pipeline architectures — stored cleanly in a single `.umd` file with zero companion files.*
+*Combine fluid Markdown writing with interactive UI blocks, live editable data charts, rich typography controls, and architecture pipelines — stored cleanly in a single `.umd` file with zero companion files.*
 
 <br/>
 
@@ -21,13 +21,15 @@
 
 ## 🌟 Overview
 
-**UI-Markdown (`.umd`)** bridges the gap between readable plain-text Markdown and rich visual workspace editors like Notion.
+**UI-Markdown (`.umd`)** bridges the gap between readable plain-text Markdown and rich visual document editors.
 
 Traditional documentation tools often force you to choose between:
 1. **Plain Markdown**: Lightweight and Git-friendly, but visually plain with limited interactivity and no structured visual components.
-2. **Proprietary Workspace Apps**: Visually rich, but stored in proprietary databases or accompanied by messy multi-file bundles (`.html`, `.json`, folder companions).
+2. **Proprietary Document Apps**: Visually rich, but locked inside proprietary databases or accompanied by messy multi-file bundles (`.html`, `.json`, companion asset folders).
 
 **UMD solves this.** Every document is stored entirely in **pure human-readable text** under the `.umd` extension, with an AST-backed parser guaranteeing **100% lossless roundtrip preservation**.
+
+> 📖 **New to UMD?** Read the complete step-by-step **[Editor User Guide & Tutorial](docs/TUTORIAL.md)** to master every tool, chart, and shortcut.
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/filipealvesr2019/umd/main/assets/screenshot_02_pipeline_cards.png" alt="Inference Pipeline and Benchmark Evaluation" width="880" style="border-radius: 8px; margin: 16px 0;" />
@@ -37,15 +39,29 @@ Traditional documentation tools often force you to choose between:
 
 ## ✨ Key Features
 
-- **📄 Zero Companion Files**: Everything — text, metrics, bar charts, pie charts, pipelines, callouts, and tables — lives inside one plain `.umd` text file.
-- **🎨 Interactive Visual Editor**: Seamless WYSIWYG editor built for **Antigravity IDE** and **VS Code**, featuring full keyboard navigation, right-click component menus, and real-time live preview.
-- **🔄 Lossless Bi-Directional Roundtrip**: Visual changes immediately sync back to clean Markdown without reordering, mangling comments, or breaking formatting.
-- **📊 AI & Data Graphics Built-In**:
-  - **Horizontal Bar Charts**: Benchmark comparisons with proportional bars.
-  - **Vertical Column Charts**: Latency, batch sizes, and context profiles.
-  - **Pie / Donut Charts**: Dataset mixture and token distributions.
-  - **AI Pipeline Architecture**: End-to-end model workflows (`Prompt -> Tokenizer -> Transformer -> Output`).
-  - **Progress Cards**: Multi-stage fine-tuning and alignment tracking.
+- **📄 Zero Companion Files**: Everything — styled text, metrics, charts, pipelines, callouts, checklists, and tables — lives inside one plain `.umd` text file.
+- **🎨 Interactive Visual Editor**: Seamless WYSIWYG editor built for **Antigravity IDE** and **VS Code**, featuring full keyboard navigation, right-click component insertion menus, and real-time live sync.
+- **✍️ Universal Rich Typography Toolbar**: Select any text in any element (paragraphs, headings, tables, cards, callouts, or chart labels) to customize:
+  - **Font Family** (`Sans`, `Serif`, `Mono`, `Casual`, `Display`)
+  - **Font Size** (`11px` to `36px`)
+  - **Letter Spacing** (`-1px` to `+5px`, or `Normal`)
+  - **Text Color** (10 quick palette swatches + custom color picker)
+  - **Inline Styles** (**Bold**, *Italic*, <u>Underline</u>, ~~Strikethrough~~, `Inline Code`, and quick Copy)
+- **🔄 Lossless Bi-Directional Roundtrip**: Visual edits immediately sync back to clean `.umd` Markdown without reordering blocks, mangling comments, or breaking formatting.
+- **📊 Interactive Data & AI Charts Built-In**:
+  - **Comparison Column Charts (`comparison`)**: Grouped multi-series vertical bars with dynamic `+ Add Comparison Series` and `+ Add Group`, inline value editing, and legend customization.
+  - **Curved Spline Line Charts (`curved`)**: Smooth cubic Bézier trajectories where you can click the canvas to add a new curve, click any curve to insert points, drag points vertically, or click points/X-axis labels to edit inline.
+  - **Multi-Series Line Charts (`line`)**: Direct SVG plotting with interactive point popovers, drag-to-adjust values, and inline X-axis label editing.
+  - **Vertical Column Charts (`column`)**: Uniform-width bars, values anchored directly above each bar, and truncated labels with full-text hover tooltips.
+  - **Horizontal Bar Charts (`bar`)**: Benchmark comparisons with proportional bars.
+  - **Pie / Donut Charts (`pie`)**: Dataset mixtures and distributions with interactive legends.
+- **🧩 Structured Layout & Workflow Blocks**:
+  - **AI Pipeline Architecture (`[PIPELINE]`)**: End-to-end step flows (`Input -> Process -> Output`).
+  - **Stat Cards & Multi-Column Grids (`[COLUMNS]`, `[CARD]`)**: Responsive metric dashboards.
+  - **Progress Bars (`[PROGRESS]`)**: Multi-stage training, project, or milestone tracking.
+  - **Callouts (`[CALLOUT]`)**: Styled banners (`info`, `success`, `warning`, `danger`, `note`).
+  - **Interactive Checklists & Tables**: Toggleable task lists and editable grids with dynamic row/column controls.
+- **📋 Clean Clipboard Export**: Copy content directly into Google Docs, Word, or chat apps without carrying over editor buttons or UI overlays.
 - **🛡️ Security-First Core**: Built-in XSS defense, attribute breakout protection, sanitized URLs (`javascript:`/`vbscript:` neutralization), and resilient fuzz handling.
 - **⚡ Zero External Dependencies**: Core engine is 100% standard-library Python with lightning-fast execution (<1ms parse time).
 
@@ -61,7 +77,7 @@ Compare LLM benchmarks, evaluation scores, or accuracy metrics with auto-calcula
 </div>
 
 ### 2. Vertical Column & Pie / Donut Charts
-Visualize latency curves across context lengths and dataset token distributions with interactive legends:
+Visualize latency across context lengths with uniform-width columns, hover tooltips on long labels, and dataset token distributions:
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/filipealvesr2019/umd/main/assets/screenshot_04_pie_column_charts.png" alt="Vertical Column Chart and Pie/Donut Chart" width="880" style="border-radius: 8px; margin: 16px 0;" />
@@ -94,7 +110,7 @@ Activate the visual editor in VS Code and Antigravity IDE with a single command:
 umd install
 ```
 
-> **Tip:** Reload your IDE (`Ctrl+Shift+P > Developer: Reload Window`). Click any `.umd` file to open it directly in the Notion-like visual editor!
+> **Tip:** Reload your IDE (`Ctrl+Shift+P` → `Developer: Reload Window`). Click any `.umd` file to open it directly in the visual editor!
 
 ---
 
@@ -120,9 +136,37 @@ umd install
 
 ## 🧩 Syntax & Component Reference
 
-UMD supports all standard CommonMark syntax along with reactive block components:
+UMD supports all standard CommonMark syntax along with interactive block components and inline typography styles. For a full interactive walkthrough, see **[docs/TUTORIAL.md](docs/TUTORIAL.md)**.
 
-### 1. AI & Data Charts
+### 1. Comparison Column Chart (Multi-Series Grouped Bars)
+```markdown
+[CHART title="Population of Selected Countries (Millions)" type="comparison" series="2013, 2021"]
+Germany | 80.6 | 83.2
+Spain | 46.6 | 47.4
+France | 65.8 | 67.7
+Italy | 60.2 | 59.1
+[/CHART]
+```
+
+### 2. Curved Spline Line Chart & Standard Line Chart
+```markdown
+[CHART title="Metric Trajectory Trends" type="curved" series="Series A, Series B, Series C"]
+Jan | 75 | 50 | 48
+Mar | 66 | -10 | 22
+May | 70 | -18 | 14
+Jul | 60 | 2 | 15
+Sep | 62 | -12 | 8
+[/CHART]
+
+[CHART title="Training vs Validation Loss" type="line" series="Train Loss, Val Loss"]
+Epoch 1 | 0.85 | 0.92
+Epoch 2 | 0.62 | 0.71
+Epoch 3 | 0.45 | 0.58
+Epoch 4 | 0.34 | 0.49
+[/CHART]
+```
+
+### 3. Bar, Column & Pie Charts
 ```markdown
 [CHART title="Zero-Shot Reasoning Benchmark Scores (%)" type="bar"]
 GPT-4o | 88.5
@@ -147,14 +191,14 @@ Conversational Dialog | 8
 [/CHART]
 ```
 
-### 2. Architecture Pipelines
+### 4. Architecture Pipelines
 ```markdown
 [PIPELINE title="End-to-End Inference Pipeline"]
 User Query -> Semantic Tokenizer -> Mixture of Attention Layers -> Tool Calling Router -> Verifier Agent -> Streaming Output
 [/PIPELINE]
 ```
 
-### 3. Stat Cards & Columns
+### 5. Stat Cards & Multi-Column Grids
 ```markdown
 [COLUMNS gap="20"]
 
@@ -173,13 +217,15 @@ Code, Math & Multi-Step Reasoning
 [/COLUMNS]
 ```
 
-### 4. Reactive Callouts & Progress
+### 6. Reactive Progress, Callouts & Inline Styling
 ```markdown
 [PROGRESS label="Stage 2 Reinforcement Learning (RLVR)" value="94" max="100" /]
 
 [CALLOUT tone="success" title="Verification Passed"]
 All unit benchmarks, safety filters, and latency boundaries passed.
 [/CALLOUT]
+
+Highlighted text with <span style="color: #ef4444; font-size: 22px; letter-spacing: 2px;">custom typography</span> persists losslessly.
 ```
 
 ---
@@ -214,16 +260,16 @@ print(doc.to_text())
 
 ## 🧪 Testing & Verification
 
-UMD includes a comprehensive test suite covering parser grammar, AST validation, roundtrip persistence, security escaping, and visual rendering:
+UMD includes a comprehensive test suite covering parser grammar, AST validation, roundtrip persistence, security escaping, Playwright visual editor interactions, and rendering:
 
 ```bash
 pytest tests/
 ```
 
-**Status:** 68 passed (100% coverage across editing, parsing, rendering, roundtrip, and security modules).
+**Status:** 75 passed (100% pass rate across editing, interactive charts, typography formatting, parsing, rendering, roundtrip, and security modules).
 
 ---
 
 ## 📄 License
 
-MIT License. Free and open-source for personal, academic, and enterprise software.
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for full details.
