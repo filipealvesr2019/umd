@@ -12,11 +12,18 @@
 
 *Combine fluid Markdown writing with interactive UI blocks, live editable data charts, rich typography controls, and architecture pipelines — stored cleanly in a single `.umd` file with zero companion files.*
 
-[Overview](#-overview) • [Key Features](#-key-features) • **[📖 Editor Tutorials](#-visual-editor-tutorials-all-features)** • [Quick Start](#-quick-start) • [Syntax Reference](#-syntax--component-reference) • [Python API](#-python-api) • [License](#-license)
+[Live Demo](#-live-demo) • [Overview](#-overview) • [Key Features](#-key-features) • **[📖 Editor Tutorials](#-visual-editor-tutorials-all-features)** • [Quick Start](#-quick-start) • [Syntax Reference](#-syntax--component-reference) • [Python API](#-python-api) • [License](#-license)
 
 <br/>
 
-<img src="https://raw.githubusercontent.com/filipealvesr2019/umd/main/assets/screenshot_01_editor_overview.png" alt="UI-Markdown Visual Editor: Stat Cards and Architecture Pipeline" width="900" style="border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);" />
+<a href="https://github.com/filipealvesr2019/umd/blob/main/assets/umd_demo.mp4">
+  <img src="https://raw.githubusercontent.com/filipealvesr2019/umd/main/assets/screenshot_01_editor_overview.png" alt="UI-Markdown Visual Editor: Stat Cards and Architecture Pipeline" width="900" style="border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);" />
+</a>
+
+<br/><br/>
+
+<a name="-live-demo"></a>
+**🎬 [Watch UI-Markdown (UMD) in Action — Demo Video (MP4)](https://github.com/filipealvesr2019/umd/blob/main/assets/umd_demo.mp4)**
 
 </div>
 
