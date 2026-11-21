@@ -1,95 +1,2175 @@
-Aqui estão exemplos de documentos `.html` e `.json`, desde os mais simples até estruturas um pouco mais elaboradas.**1. Exemplo de **`.html`**Exemplo: página de apresentação de um produto.**`
+# Exemplos de HTML e JSON
+
+Aqui estão exemplos de documentos `.html` e `.json`, desde os mais simples até estruturas mais elaboradas.
+
+## 1. Exemplo de HTML
+
+### Página de apresentação de um produto
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Meu Produto</title>
+  <meta charset="UTF-8">
+  <title>Meu Produto</title>
 </head>
 <body>
-    <header>
-        <h1>Meu Produto</h1>
-        <p>Uma solução para facilitar seu trabalho.</p>
-    </header>
-
-    <main>
-        <section>
-            <h2>Recursos</h2>
-            <ul>
-                <li>Fácil de usar</li>
-                <li>Rápido e leve</li>
-                <li>Personalizável</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Preço</h2>
-            <p>R$ 49,90</p>
-            <button>Comprar agora</button>
-        </section>
-    </main>
+  <header>
+    <h1>Meu Produto</h1>
+    <p>Uma solução para facilitar seu trabalho.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Recursos</h2>
+      <ul>
+        <li>Fácil de usar</li>
+        <li>Rápido e leve</li>
+        <li>Personalizável</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Preço</h2>
+      <p>R$ 49,90</p>
+      <button>Comprar agora</button>
+    </section>
+  </main>
 </body>
 </html>
-`**Exemplo: tabela HTML.**`
+```
+
+### Exemplo: Tabela HTML
+
+```html
 <table>
-    <thead>
-        <tr>
-            <th>Produto</th>
-            <th>Preço</th>
-            <th>Estoque</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Teclado</td>
-            <td>R$ 150,00</td>
-            <td>12</td>
-        </tr>
-        <tr>
-            <td>Mouse</td>
-            <td>R$ 80,00</td>
-            <td>25</td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Preço</th>
+      <th>Estoque</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Teclado</td>
+      <td>R$ 150,00</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>Mouse</td>
+      <td>R$ 80,00</td>
+      <td>25</td>
+    </tr>
+  </tbody>
 </table>
-`**2. Exemplo de **`.json`**Exemplo: dados de um usuário.**`
+```
+
+## 2. Exemplo de JSON
+
+### Dados de um usuário
+
+```json
 {
-    "usuario": {
-        "nome": "João",
-        "idade": 28,
-        "email": "joao@email.com",
-        "ativo": true
-    }
+  "usuario": {
+    "nome": "João",
+    "idade": 28,
+    "email": "joao@email.com",
+    "ativo": true
+  }
 }
-`**Exemplo: lista de produtos.**`
+```
+
+### Exemplo: Lista de produtos
+
+```json
 {
-    "produtos": [
-        {
-            "id": 1,
-            "nome": "Teclado",
-            "preco": 150.00,
-            "disponivel": true
-        },
-        {
-            "id": 2,
-            "nome": "Mouse",
-            "preco": 80.00,
-            "disponivel": false
-        }
-    ]
-}
-`**Exemplo: configuração de um projeto.**`
-{
-    "projeto": "Meu SaaS",
-    "versao": "1.0.0",
-    "configuracoes": {
-        "tema": "dark",
-        "idioma": "pt-BR",
-        "notificacoes": true
+  "produtos": [
+    {
+      "id": 1,
+      "nome": "Teclado",
+      "preco": 150.00,
+      "disponivel": true
     },
-    "permissoes": [
-        "read",
-        "write",
-        "delete"
-    ]
+    {
+      "id": 2,
+      "nome": "Mouse",
+      "preco": 80.00,
+      "disponivel": false
+    }
+  ]
 }
-`**3. Diferença entre eles**FormatoFinalidade`.html`Estruturar páginas e interfaces visuais`.json`Armazenar e transmitir dados estruturados`.umd`Criar documentos textuais com elementos visuais interativosUma distinção interessante para o UMD: HTML descreve estruturas de páginas, JSON descreve dados e o UMD pode combinar conteúdo textual com componentes visuais editáveis em um único documento.Está a usar a versão gratuita do ChatGPT. Atualize para ter acesso a modelos avançados, memória melhorada e criação de
+```
+
+### Exemplo: Configuração de um projeto
+
+```json
+{
+  "projeto": "Meu SaaS",
+  "versao": "1.0.0",
+  "configuracoes": {
+    "tema": "dark",
+    "idioma": "pt-BR",
+    "notificacoes": true
+  },
+  "permissoes": [
+    "read",
+    "write",
+    "delete"
+  ]
+}
+```
+
+## 3. Diferença entre eles
+
+| Formato | Finalidade |
+| --- | --- |
+| `.html` | Estruturar páginas e interfaces visuais |
+| `.json` | Armazenar e transmitir dados estruturados |
+| `.umd` | Criar documentos textuais com elementos visuais interativos |
+
+Uma distinção interessante para o UMD: HTML descreve estruturas de páginas, JSON descreve dados e o UMD pode combinar conteúdo textual com componentes visuais editáveis em um único documento.
+
+## 4. Código Python (Experimento 129)
+
+```python
+# -*- coding: utf-8 -*-
+"""Experimento 129 — Evolutionary Transformer Lab.
+
+Busca evolutiva sobre a RECEITA interna do Transformer, nao apenas sobre
+hiperparametros. Cada individuo tem um genoma arquitetural:
+
+    d, heads, layers, ff_mult, norm (pre/post), residual (plain/gated),
+    share_layers, lr
+
+Ciclo por geracao:
+
+    1. populacao inicial (ou descendentes dos sobreviventes);
+    2. treino em TRAIN (somente TRAIN);
+    3. avaliacao com geracao livre autoregressiva em TRAIN, HELD e OOD;
+    4. metricas: LCS ordenada sem espacos, exato, tokens/s, RAM por exemplo;
+    5. selecao multicriterio + fronteira de Pareto;
+    6. cruzamento de genoma e mutacao -> proxima geracao.
+
+Regras do laboratorio respeitadas (AGENTS.md):
+  * transcript .md obrigatorio por individuo (prompt / esperado / gerado);
+  * geracao livre real, sem tokens de gabarito;
+  * HELD/OOD nunca usados para treinar nem para ajustar pesos; entram apenas
+    na selecao (modo exploratorio declarado no protocolo);
+  * tudo congelado antes da primeira geracao (metrica, vocabulario, splits).
+
+Artefatos:
+    protocolo_129.md
+    populacao/geracao_NNN/individuo_NNNN/{genoma.json,modelo.cp,
+        metricas.json,transcripts.md,relatorio.md}
+    populacao/geracao_NNN/relatorio_geracao.md
+    selecao/{historico_evolutivo.json,sobreviventes.json,genealogia.json,
+        aprovados.json}
+    relatorio_geral.md
+    modelo.cp   (melhor individuo global)
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+import random
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+NL = HERE.parent
+EXP102 = NL / "experimento_102"
+
+for path in (NL, HERE):
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
+
+import cpupy as cp
+import cpupy.functional as F
+from cpupy.optim import Adam
+
+SPLITS = ("TRAIN", "HELD", "OOD")
+RESPOSTA, FIM, UNK = "<resposta>", "<fim>", "<unk>"
+
+GENES_CATEGORICAL = {
+    "norm": ("pre", "post"),
+    "residual": ("plain", "gated"),
+    "share_layers": (False, True),
+}
+GENE_NUMERIC = {
+    "d": (24, 32, 40),
+    "heads": (2, 4),
+    "layers": (1, 2, 3),
+    "ff_mult": (2, 3, 4),
+    "lr": (0.001, 0.002, 0.003),
+}
+
+
+# ------------------------------------------------------------------ utilidades
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1 << 16), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def mean(values):
+    values = list(values)
+    return float(sum(values) / len(values)) if values else 0.0
+
+
+def std(values):
+    values = list(values)
+    if len(values) < 2:
+        return 0.0
+    m = mean(values)
+    return float(math.sqrt(sum((v - m) ** 2 for v in values) / len(values)))
+
+
+def const(shape, values):
+    return cp.Tensor(shape=list(shape),
+                     data=np.asarray(values, dtype=np.float64).reshape(-1).tolist(),
+                     requires_grad=False)
+
+
+def tensor(shape, rng, scale, requires_grad=True):
+    values = rng.randn(*shape) * scale
+    return cp.Tensor(shape=list(shape), data=values.reshape(-1).tolist(),
+                     requires_grad=requires_grad)
+
+
+def vector(shape, values, requires_grad=True):
+    return cp.Tensor(shape=list(shape),
+                     data=np.asarray(values, dtype=np.float64).reshape(-1).tolist(),
+                     requires_grad=requires_grad)
+
+
+def rss_mb():
+    try:
+        import psutil
+        return psutil.Process().memory_info().rss / 1048576.0
+    except Exception:
+        return 0.0
+
+
+def peak_rss_mb():
+    try:
+        import psutil
+        info = psutil.Process().memory_info()
+        return max(info.rss, getattr(info, "peak_wset", info.rss)) / 1048576.0
+    except Exception:
+        return 0.0
+
+
+# ------------------------------------------------------------------ atomizador
+def atoms(texto: str):
+    """Mesmo atomizador do laboratorio: palavras, numeros, pontuacao, espaco."""
+    out, buf, cls = [], "", None
+    for ch in texto:
+        if ch.isalpha():
+            c = "L"
+        elif ch.isdigit():
+            c = "D"
+        elif ch.isspace():
+            c = "S"
+        else:
+            c = "P"
+        if c == "P":
+            if buf:
+                out.append(buf)
+                buf, cls = "", None
+            out.append(ch)
+            continue
+        if cls == c:
+            buf += ch
+        else:
+            if buf:
+                out.append(buf)
+            buf, cls = ch, c
+    if buf:
+        out.append(buf)
+    return out
+
+
+def content(tokens):
+    """Tokens de conteudo: espacos puros ficam fora da metrica."""
+    return [t for t in tokens if t.strip()]
+
+
+def lcs_length(a, b):
+    if not a or not b:
+        return 0
+    prev = [0] * (len(b) + 1)
+    for x in a:
+        cur = [0] * (len(b) + 1)
+        for j, y in enumerate(b, start=1):
+            if x == y:
+                cur[j] = prev[j - 1] + 1
+            else:
+                cur[j] = cur[j - 1] if cur[j - 1] >= prev[j] else prev[j]
+        prev = cur
+    return prev[-1]
+
+
+def align(generated, expected):
+    """Levenshtein com operacoes (gerado vs esperado)."""
+    n, m = len(generated), len(expected)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        dp[i][0] = i
+    for j in range(m + 1):
+        dp[0][j] = j
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            cost = 0 if generated[i - 1] == expected[j - 1] else 1
+            dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1,
+                           dp[i - 1][j - 1] + cost)
+    ops, i, j = [], n, m
+    while i > 0 or j > 0:
+        if i > 0 and j > 0 and dp[i][j] == dp[i - 1][j - 1] + (
+                0 if generated[i - 1] == expected[j - 1] else 1):
+            ops.append(("ok" if generated[i - 1] == expected[j - 1]
+                        else "sub", i - 1))
+            i, j = i - 1, j - 1
+        elif i > 0 and dp[i][j] == dp[i - 1][j] + 1:
+            ops.append(("extra", i - 1))
+            i -= 1
+        else:
+            ops.append(("falta", j - 1))
+            j -= 1
+    ops.reverse()
+    return dp[n][m], ops
+
+
+# ------------------------------------------------------------------ vocabulario
+def build_vocab(cases):
+    """Vocabulario fechado do benchmark; congelado antes da geracao 0."""
+    vocab, seen = [RESPOSTA, FIM, UNK], {RESPOSTA, FIM, UNK}
+    for case in cases:
+        for atom in atoms(case["prompt"]) + atoms(case["expected"]):
+            if atom not in seen:
+                seen.add(atom)
+                vocab.append(atom)
+    return vocab, {atom: index for index, atom in enumerate(vocab)}
+
+
+def load_cases():
+    raw = json.loads((EXP102 / "casos_102.json").read_text(encoding="utf-8"))
+    vocab, ids = build_vocab(raw)
+    unk_id, resp_id, fim_id = ids[UNK], ids[RESPOSTA], ids[FIM]
+    cases = []
+    for case in raw:
+        prompt_atoms = atoms(case["prompt"])
+        exp_atoms = atoms(case["expected"].strip())
+        prompt_ids = [ids.get(atom, unk_id) for atom in prompt_atoms]
+        exp_ids = [ids.get(atom, unk_id) for atom in exp_atoms]
+        cases.append({
+            "id": case["id"],
+            "split": case["split"],
+            "prompt": case["prompt"],
+            "expected": case["expected"].strip(),
+            "prompt_ids": prompt_ids,
+            "exp_ids": exp_ids,
+            "exp_atoms": content(exp_atoms),
+            "tokens": prompt_ids + [resp_id] + exp_ids + [fim_id],
+            "loss_start": max(0, len(prompt_ids) - 1),
+        })
+    return vocab, ids, cases, raw
+
+
+# ------------------------------------------------------------------ genoma
+def normalize_genome(genome):
+    g = dict(genome)
+    g["d"] = int(g["d"])
+    g["layers"] = max(1, int(g["layers"]))
+    g["ff_mult"] = max(2, int(g["ff_mult"]))
+    heads = int(g["heads"])
+    while heads > 1 and g["d"] % heads:
+        heads //= 2
+    g["heads"] = max(1, heads)
+    if g["norm"] not in GENES_CATEGORICAL["norm"]:
+        g["norm"] = "pre"
+    if g["residual"] not in GENES_CATEGORICAL["residual"]:
+        g["residual"] = "plain"
+    g["share_layers"] = bool(g["share_layers"])
+    g["lr"] = float(g["lr"])
+    return g
+
+
+def seed_population(size, rng):
+    """Populacao inicial com cobertura garantida de mecanismos.
+
+    Com populacao pequena, sorteio puro colapsa em mecanismos iguais. Aqui
+    norm/residual/share sao distribuidos em ciclo, e os genes numericos
+    tambem percorrem a faixa: a primeira geracao ensina algo sobre cada
+    mecanismo em vez de testar o mesmo Transformer varias vezes.
+    """
+    norms = ("pre", "post")
+    residuals = ("gated", "plain")
+    depths = (1, 2, 2, 3)
+    widths = (32, 40, 24, 32)
+    heads_opts = (4, 4, 2, 4)
+    ffs = (3, 4, 2, 3)
+    lrs = (0.002, 0.001, 0.003, 0.001)
+    genomes = []
+    for index in range(size):
+        genomes.append(normalize_genome({
+            "d": widths[index % len(widths)],
+            "heads": heads_opts[index % len(heads_opts)],
+            "layers": depths[index % len(depths)],
+            "ff_mult": ffs[index % len(ffs)],
+            "norm": norms[index % 2],
+            "residual": residuals[(index // 2) % 2],
+            "share_layers": bool((index // 4) % 2),
+            "lr": lrs[index % len(lrs)],
+        }))
+    return genomes
+
+
+def random_genome(rng, tag="init"):
+    g = {"d": rng.choice(GENE_NUMERIC["d"]),
+         "heads": rng.choice(GENE_NUMERIC["heads"]),
+         "layers": rng.choice(GENE_NUMERIC["layers"]),
+         "ff_mult": rng.choice(GENE_NUMERIC["ff_mult"]),
+         "norm": rng.choice(GENES_CATEGORICAL["norm"]),
+         "residual": rng.choice(GENES_CATEGORICAL["residual"]),
+         "share_layers": rng.choice(GENES_CATEGORICAL["share_layers"]),
+         "lr": rng.choice(GENE_NUMERIC["lr"])}
+    return normalize_genome(g)
+
+
+def crossover(parent_a, parent_b, rng):
+    """Cruzamento arquitetural por gene, compatibilidade garantida."""
+    child = {}
+    for key in ("d", "heads", "layers", "ff_mult", "norm", "residual",
+                "share_layers", "lr"):
+        child[key] = parent_a[key] if rng.random() < 0.5 else parent_b[key]
+    return normalize_genome(child)
+
+
+def mutate(genome, rng, rate=0.45):
+    g = dict(genome)
+    if rng.random() < rate:
+        g["d"] = rng.choice(GENE_NUMERIC["d"])
+    if rng.random() < rate:
+        g["heads"] = rng.choice(GENE_NUMERIC["heads"])
+    if rng.random() < rate:
+        g["layers"] = max(1, g["layers"] + rng.choice((-1, 1)))
+    if rng.random() < rate:
+        g["ff_mult"] = max(2, g["ff_mult"] + rng.choice((-1, 1)))
+    if rng.random() < rate:
+        g["norm"] = GENES_CATEGORICAL["norm"][0] if g["norm"] == "post" else "post"
+    if rng.random() < rate:
+        g["residual"] = ("plain" if g["residual"] == "gated" else "gated")
+    if rng.random() < rate:
+        g["share_layers"] = not g["share_layers"]
+    if rng.random() < rate:
+        g["lr"] = rng.choice(GENE_NUMERIC["lr"])
+    return normalize_genome(g)
+
+
+def describe_genome(g):
+    return (f"d={g['d']} heads={g['heads']} L={g['layers']} "
+            f"ff={g['ff_mult']}x {g['norm']}-norm {g['residual']}-res "
+            f"{'shared' if g['share_layers'] else 'per-layer'} lr={g['lr']}")
+
+
+# ------------------------------------------------------------------ modelo
+class EvoTransformer:
+    """Transformer causal cujo desenho interno vem do genoma."""
+
+    def __init__(self, genome, vocab_size, max_len, seed,
+                 init_params=None):
+        self.genome = normalize_genome(genome)
+        self.vocab_size = vocab_size
+        self.max_len = max_len
+        self.d = self.genome["d"]
+        self.heads = self.genome["heads"]
+        self.dh = self.d // self.heads
+        self.layers = self.genome["layers"]
+        self.ff = self.d * self.genome["ff_mult"]
+        self.norm = self.genome["norm"]
+        self.residual = self.genome["residual"]
+        self.shared = self.genome["share_layers"]
+        self.seed = seed
+        rng = np.random.RandomState(seed)
+
+        p = {"emb": tensor((vocab_size, self.d), rng, 0.02),
+             "pos": tensor((max_len, self.d), rng, 0.02)}
+        for i in range(self._slots()):
+            prefix = f"l{i}_"
+            p[prefix + "ln1g"] = vector((self.d,), np.ones(self.d))
+            p[prefix + "ln1b"] = vector((self.d,), np.zeros(self.d))
+            p[prefix + "Wq"] = tensor((self.d, self.d), rng, 1 / math.sqrt(self.d))
+            p[prefix + "bq"] = vector((self.d,), np.zeros(self.d))
+            p[prefix + "Wk"] = tensor((self.d, self.d), rng, 1 / math.sqrt(self.d))
+            p[prefix + "bk"] = vector((self.d,), np.zeros(self.d))
+            p[prefix + "Wv"] = tensor((self.d, self.d), rng, 1 / math.sqrt(self.d))
+            p[prefix + "bv"] = vector((self.d,), np.zeros(self.d))
+            p[prefix + "Wo"] = tensor((self.d, self.d), rng, 1 / math.sqrt(self.d))
+            p[prefix + "bo"] = vector((self.d,), np.zeros(self.d))
+            p[prefix + "ln2g"] = vector((self.d,), np.ones(self.d))
+            p[prefix + "ln2b"] = vector((self.d,), np.zeros(self.d))
+            p[prefix + "W1"] = tensor((self.d, self.ff), rng, 1 / math.sqrt(self.d))
+            p[prefix + "b1"] = vector((self.ff,), np.zeros(self.ff))
+            p[prefix + "W2"] = tensor((self.ff, self.d), rng, 1 / math.sqrt(self.ff))
+            p[prefix + "b2"] = vector((self.d,), np.zeros(self.d))
+            if self.residual == "gated":
+                # gate vetorial (1, d), compartilhado pelo par atencao/ffn
+                p[prefix + "gres"] = vector((1, self.d), np.zeros(self.d))
+        p["lng"] = vector((self.d,), np.ones(self.d))
+        p["lnb"] = vector((self.d,), np.zeros(self.d))
+        p["Wout"] = tensor((self.d, vocab_size), rng, 1 / math.sqrt(self.d))
+        p["bout"] = vector((vocab_size,), np.zeros(vocab_size))
+
+        if init_params:
+            for name, entry in init_params.items():
+                param = p.get(name)
+                if param is None:
+                    continue
+                if isinstance(entry, dict):
+                    shape = list(entry.get("shape", []))
+                    values = entry.get("data")
+                else:
+                    values = np.asarray(entry)
+                    shape = list(values.shape)
+                if list(param.shape) != shape or values is None:
+                    continue
+                param.data = [float(v) for v in np.asarray(values).reshape(-1)]
+        self.params = p
+
+    def _slots(self):
+        return 1 if self.shared else self.layers
+
+    def slot(self, layer_index):
+        return 0 if self.shared else layer_index
+
+    def trainables(self):
+        return [value for value in self.params.values() if value.requires_grad]
+
+    def parameter_count(self):
+        return sum(int(value.size) for value in self.params.values())
+
+    def _causal(self, T):
+        mask = np.zeros((T, T), dtype=np.float64)
+        mask[np.triu_indices(T, k=1)] = -1e9
+        return const((T, T), mask)
+
+    def _residual(self, h, block, prefix):
+        if self.residual == "gated":
+            gate_rows = const((int(h.shape[0]), 1), np.ones((int(h.shape[0]), 1)))
+            gate = F.matmul(gate_rows, self.params[prefix + "gres"])
+            return F.add(h, F.mul(F.sigmoid(gate), block))
+        return F.add(h, block)
+
+    def _attention(self, x, prefix, T):
+        q = F.fused_linear(x, self.params[prefix + "Wq"], self.params[prefix + "bq"])
+        k = F.fused_linear(x, self.params[prefix + "Wk"], self.params[prefix + "bk"])
+        v = F.fused_linear(x, self.params[prefix + "Wv"], self.params[prefix + "bv"])
+        scale = const((T, 1), np.full((T, 1), 1.0 / math.sqrt(self.dh)))
+        causal = self._causal(T)
+        ctx = None
+        for head in range(self.heads):
+            a, b = head * self.dh, (head + 1) * self.dh
+            qh = F.mul(F.slice_tensor(q, a, b), scale)
+            kh = F.slice_tensor(k, a, b)
+            vh = F.slice_tensor(v, a, b)
+            att = F.softmax(F.add(F.matmul_bt(qh, kh), causal))
+            part = F.matmul(att, vh)
+            ctx = part if ctx is None else F.concat(ctx, part)
+        return F.fused_linear(ctx, self.params[prefix + "Wo"],
+                              self.params[prefix + "bo"])
+
+    def _ffn(self, x, prefix):
+        y = F.fused_linear(x, self.params[prefix + "W1"],
+                           self.params[prefix + "b1"], "relu")
+        return F.fused_linear(y, self.params[prefix + "W2"],
+                              self.params[prefix + "b2"])
+
+    def forward(self, token_ids):
+        T = len(token_ids)
+        h = F.add(F.gather(self.params["emb"], token_ids),
+                  F.gather(self.params["pos"], list(range(T))))
+        for layer in range(self.layers):
+            prefix = f"l{self.slot(layer)}_"
+            if self.norm == "pre":
+                h = self._residual(
+                    h, self._attention(
+                        F.layer_norm(h, self.params[prefix + "ln1g"],
+                                     self.params[prefix + "ln1b"]), prefix, T),
+                    prefix)
+                h = self._residual(
+                    h, self._ffn(
+                        F.layer_norm(h, self.params[prefix + "ln2g"],
+                                     self.params[prefix + "ln2b"]), prefix),
+                    prefix)
+            else:
+                h = F.layer_norm(
+                    self._residual(h, self._attention(h, prefix, T), prefix),
+                    self.params[prefix + "ln1g"], self.params[prefix + "ln1b"])
+                h = F.layer_norm(
+                    self._residual(h, self._ffn(h, prefix), prefix),
+                    self.params[prefix + "ln2g"], self.params[prefix + "ln2b"])
+        h = F.layer_norm(h, self.params["lng"], self.params["lnb"])
+        return F.fused_linear(h, self.params["Wout"], self.params["bout"])
+
+    def step(self, token_id, pos, caches):
+        h = F.add(F.gather(self.params["emb"], [int(token_id)]),
+                  F.gather(self.params["pos"], [int(pos)]))
+        for layer in range(self.layers):
+            prefix = f"l{self.slot(layer)}_"
+            cache = caches[layer]
+            x = F.layer_norm(h, self.params[prefix + "ln1g"],
+                             self.params[prefix + "ln1b"])
+            q = F.fused_linear(x, self.params[prefix + "Wq"],
+                               self.params[prefix + "bq"])
+            k = F.fused_linear(x, self.params[prefix + "Wk"],
+                               self.params[prefix + "bk"])
+            v = F.fused_linear(x, self.params[prefix + "Wv"],
+                               self.params[prefix + "bv"])
+            K = k if cache["K"] is None else F.concat_rows([cache["K"], k])
+            V = v if cache["V"] is None else F.concat_rows([cache["V"], v])
+            scale = const((1, 1), np.full((1, 1), 1.0 / math.sqrt(self.dh)))
+            att = F.softmax(F.mul(F.matmul_bt(q, K), scale))
+            attn_out = F.fused_linear(F.matmul(att, V),
+                                      self.params[prefix + "Wo"],
+                                      self.params[prefix + "bo"])
+            if self.norm == "pre":
+                h = self._residual(h, attn_out, prefix)
+                ffn_out = self._ffn(
+                    F.layer_norm(h, self.params[prefix + "ln2g"],
+                                 self.params[prefix + "ln2b"]), prefix)
+                h = self._residual(h, ffn_out, prefix)
+            else:
+                h = F.layer_norm(self._residual(h, attn_out, prefix),
+                                 self.params[prefix + "ln1g"],
+                                 self.params[prefix + "ln1b"])
+                h = F.layer_norm(self._residual(h, self._ffn(h, prefix), prefix),
+                                 self.params[prefix + "ln2g"],
+                                 self.params[prefix + "ln2b"])
+            cache["K"], cache["V"] = K, V
+        h = F.layer_norm(h, self.params["lng"], self.params["lnb"])
+        return F.fused_linear(h, self.params["Wout"], self.params["bout"])
+
+    def masked_loss(self, case):
+        tokens = case["tokens"]
+        logits = self.forward(tokens[:-1])
+        start = case["loss_start"]
+        n = len(tokens) - 1
+        return F.cross_entropy(F.slice_rows(logits, start, n),
+                               tokens[1 + start:n + 1])
+
+    def generate(self, case, resp_id, fim_id, max_new):
+        caches = [{"K": None, "V": None} for _ in range(self.layers)]
+        for pos, token in enumerate(case["prompt_ids"] + [resp_id]):
+            logits = self.step(token, pos, caches)
+        out, records = [], []
+        stop = "max_new"
+        available = self.max_len - (len(case["prompt_ids"]) + 1)
+        for step in range(max(0, min(max_new, available))):
+            row = logits.data
+            nxt = int(np.argmax(row))
+            gold = (case["exp_ids"][step] if step < len(case["exp_ids"])
+                    else fim_id)
+            records.append({"step": step, "top1": nxt, "gold": int(gold),
+                            "correct": bool(nxt == int(gold))})
+            if nxt == fim_id:
+                stop = "fim"
+                break
+            out.append(nxt)
+            logits = self.step(nxt, len(case["prompt_ids"]) + 1 + step, caches)
+        return {"tokens": out, "stop_reason": stop, "records": records}
+
+    def weights(self):
+        return {name: {"shape": list(value.shape), "data": list(value.data)}
+                for name, value in self.params.items()}
+
+
+def score_generation(tokens, case, vocab, stop_reason):
+    generated_atoms = [vocab[i] if i < len(vocab) else f"<{i}>" for i in tokens]
+    generated_content = content(generated_atoms)
+    expected_content = case["exp_atoms"]
+    lcs = lcs_length(generated_content, expected_content)
+    distance, ops = align(generated_content, expected_content)
+    missing = sum(1 for op in ops if op[0] == "falta")
+    swapped = sum(1 for op in ops if op[0] == "sub")
+    extra = sum(1 for op in ops if op[0] == "extra")
+    positional = len(expected_content) - missing - swapped
+    exact = (generated_content == expected_content and stop_reason == "fim")
+    return {
+        # Legivel: um espaco entre tokens de conteudo, para a transcricao nao
+        # colar palavras ("Ajuste Use data" e nao "AjusteUsedata").
+        "generated_text": " ".join(generated_content),
+        # Fluxo literal do modelo (concatencao exata dos atomos emitidos).
+        "generated_stream": "".join(generated_atoms).replace(FIM, "").strip(),
+        "generated_token_ids": [int(i) for i in tokens],
+        "generated_content_tokens": len(generated_content),
+        "expected_tokens": len(expected_content),
+        "lcs_tokens": int(lcs),
+        "ordered_token_accuracy_percent": round(
+            100.0 * lcs / max(1, len(expected_content)), 2),
+        "positional_token_accuracy_percent": round(
+            100.0 * positional / max(1, len(expected_content)), 2),
+        "correct_positional_tokens": int(positional),
+        "missing": missing,
+        "swapped": swapped,
+        "extra": extra,
+        "edit_distance": int(distance),
+        "exact": bool(exact),
+        "stop_reason": stop_reason,
+    }
+
+
+# ------------------------------------------------------------------ treino
+def train(model, train_cases, epochs, lr, seed):
+    optimizer = Adam(model.trainables(), lr=lr)
+    history = []
+    started = time.perf_counter()
+    for epoch in range(1, epochs + 1):
+        losses = []
+        for case in train_cases:
+            for value in model.trainables():
+                value.zero_grad()
+            loss = model.masked_loss(case)
+            losses.append(float(loss.data[0]))
+            loss.backward()
+            optimizer.step()
+        history.append({"epoch": epoch, "mean_loss": round(mean(losses), 6)})
+    return {"history": history,
+            "seconds": round(time.perf_counter() - started, 3),
+            "final_loss": history[-1]["mean_loss"] if history else None}
+
+
+def evaluate(model, cases, vocab, resp_id, fim_id, max_new):
+    rows = []
+    for case in cases:
+        before_mb = rss_mb()
+        started = time.perf_counter()
+        generated = model.generate(case, resp_id, fim_id, max_new)
+        elapsed = max(time.perf_counter() - started, 1e-9)
+        after_mb = rss_mb()
+        score = score_generation(generated["tokens"], case, vocab,
+                                 generated["stop_reason"])
+        score.update({
+            "case_id": case["id"],
+            "split": case["split"],
+            "prompt": case["prompt"],
+            "expected": case["expected"],
+            "tokens_per_second": round(
+                len(generated["tokens"]) / elapsed, 3),
+            "time_seconds": round(elapsed, 4),
+            "ram_delta_mb": round(after_mb - before_mb, 4),
+        })
+        rows.append(score)
+    summary = {}
+    for split in SPLITS:
+        group = [row for row in rows if row["split"] == split]
+        summary[split] = {
+            "case_count": len(group),
+            "exact": sum(1 for row in group if row["exact"]),
+            "mean_ordered_token_accuracy_percent": round(mean(
+                row["ordered_token_accuracy_percent"] for row in group), 2),
+            "mean_positional_token_accuracy_percent": round(mean(
+                row["positional_token_accuracy_percent"] for row in group), 2),
+            "mean_tokens_per_second": round(mean(
+                row["tokens_per_second"] for row in group), 3),
+            "mean_ram_delta_mb": round(mean(
+                row["ram_delta_mb"] for row in group), 4),
+            "mean_time_seconds": round(mean(
+                row["time_seconds"] for row in group), 4),
+            "mean_edit_distance": round(mean(
+                row["edit_distance"] for row in group), 2),
+        }
+    total_exact = sum(summary[split]["exact"] for split in SPLITS)
+    all_lcs = [row["ordered_token_accuracy_percent"] for row in rows]
+    return {
+        "cases": rows,
+        "splits": summary,
+        "totals": {
+            "exact": total_exact,
+            "case_count": len(rows),
+            "mean_ordered_token_accuracy_percent": round(mean(all_lcs), 2),
+            "std_ordered_token_accuracy_percent": round(std(all_lcs), 2),
+            "min_split_ordered_token_accuracy_percent": round(min(
+                summary[split]["mean_ordered_token_accuracy_percent"]
+                for split in SPLITS), 2),
+            "mean_tokens_per_second": round(mean(
+                row["tokens_per_second"] for row in rows), 3),
+            "mean_ram_delta_mb": round(mean(
+                row["ram_delta_mb"] for row in rows), 4),
+        },
+    }
+
+
+# ------------------------------------------------------------------ selecao
+def rank_key(result):
+    totals = result["totals"]
+    return (totals["exact"],
+            totals["min_split_ordered_token_accuracy_percent"],
+            totals["mean_ordered_token_accuracy_percent"],
+            -totals["mean_ram_delta_mb"],
+            totals["mean_tokens_per_second"])
+
+
+def objectives(result):
+    totals = result["totals"]
+    return {
+        "exact": totals["exact"],
+        "mean_lcs": totals["mean_ordered_token_accuracy_percent"],
+        "min_lcs": totals["min_split_ordered_token_accuracy_percent"],
+        "tokens_per_second": totals["mean_tokens_per_second"],
+        "ram_mb": -totals["mean_ram_delta_mb"],
+    }
+
+
+def pareto_front(results):
+    keys = ["exact", "mean_lcs", "min_lcs", "tokens_per_second", "ram_mb"]
+    front = []
+    for candidate in results:
+        vec = objectives(candidate)
+        dominated = False
+        for other in results:
+            if other is candidate:
+                continue
+            ovec = objectives(other)
+            if all(ovec[k] >= vec[k] for k in keys) and any(
+                    ovec[k] > vec[k] for k in keys):
+                dominated = True
+                break
+        if not dominated:
+            front.append(candidate["uid"])
+    return front
+
+
+def is_approved(result):
+    return all(result["splits"][split]["exact"] ==
+               result["splits"][split]["case_count"] for split in SPLITS)
+
+
+# ------------------------------------------------------------------ relatorios
+def write_doc(path, text):
+    """Grava o documento em formato .umd (UI-Markdown) e tambem .md para retrocompatibilidade."""
+    p = Path(path)
+    p.with_suffix(".umd").write_text(text, encoding="utf-8")
+    p.with_suffix(".md").write_text(text, encoding="utf-8")
+
+
+def write_protocol(path, config, vocab, cases, hashes):
+    lines = [
+        "# Protocolo 129 — Evolutionary Transformer Lab",
+        "",
+        "Congelado ANTES da primeira geracao. Nao se edita depois.",
+        "",
+        "## Ciclo",
+        "",
+        "1. populacao inicial de genomas arquiteturais;",
+        "2. treino somente em TRAIN;",
+        "3. avaliacao com geracao livre autoregressiva em TRAIN, HELD e OOD;",
+        "4. metricas de ordem, exato, tokens/s e RAM por exemplo;",
+        "5. selecao multicriterio + fronteira de Pareto;",
+        "6. cruzamento por gene e mutacao -> proxima geracao.",
+        "",
+        "## Metrica principal (congelada)",
+        "",
+        "`A_ordem = 100 * LCS(E, G) / |E|`, onde E e G sao os tokens de",
+        "conteudo (tokens compostos apenas por espacos sao ignorados).",
+        "LCS = maior subsequencia comum, portanto reconhece tokens corretos",
+        "com insercoes/omisoes e penaliza perda de ordem relativa.",
+        "",
+        "- `exato` = resposta inteira igual e `<fim>` emitido pelo modelo;",
+        "- `posicional` = metrica secundaria de alinhamento por edicao",
+        "  (tokens certos na posicao relativa), registrada apenas como",
+        "  diagnostico da diferenca que a LCS nao explica;",
+        "- `tokens/s` = tokens gerados / tempo de geracao do exemplo;",
+        "- `RAM` = variacao de RSS por exemplo (MB).",
+        "",
+        "## Selecao (congelada)",
+        "",
+        "Ordem lexicografica:",
+        "",
+        "1. respostas exatas somadas nos tres splits;",
+        "2. menor acerto de ordem entre os splits (nenhum split sacrificado);",
+        "3. media de acerto de ordem;",
+        "4. menor RAM;",
+        "5. maior tokens/s.",
+        "",
+        "Sobrevivem os melhores por essa ordem; a fronteira de Pareto e",
+        "registrada para nao eliminar automaticamente quem e melhor em uma",
+        "dimensao importante.",
+        "",
+        "## Modo exploratorio declarado",
+        "",
+        "TRAIN + HELD + OOD participam da SELECAO (nao do treino). Se o",
+        "vocabulario/benchmark for reaproveitado, OOD deixa de ser teste",
+        "independente; para confirmacao seria necessario um conjunto nunca",
+        "consultado. HELD/OOD nunca entram no gradiente.",
+        "",
+        "## Vocabulario",
+        "",
+        f"Vocabulario fechado de {len(vocab)} atomos, construido do benchmark",
+        "e compartilhado por todos os individuos e geracoes (alfabeto, nao",
+        "supervisao). Hash do vocabulario:",
+        "",
+        f"`{hashes['vocab']}`",
+        "",
+        "## Dados",
+        "",
+        f"- TRAIN: {sum(1 for c in cases if c['split'] == 'TRAIN')} casos",
+        f"- HELD: {sum(1 for c in cases if c['split'] == 'HELD')} casos",
+        f"- OOD: {sum(1 for c in cases if c['split'] == 'OOD')} casos",
+        f"- arquivo: `{hashes['dataset']}`",
+        f"- sha256: `{hashes['dataset_sha']}`",
+        "",
+        "## Configuracao da busca",
+        "",
+        f"- populacao por geracao: {config['population']}",
+        f"- geracoes: {config['generations']}",
+        f"- epocas por individuo: {config['epochs']}",
+        f"- max_new na geracao: {config['max_new']}",
+        f"- seed base: {config['seed']}",
+        f"- genes categoricos: {json.dumps(GENES_CATEGORICAL, ensure_ascii=False)}",
+        f"- genes numericos: {json.dumps(GENE_NUMERIC, ensure_ascii=False)}",
+        f"- custo: {config['cost']}",
+        "",
+        "## Artefatos obrigatorios por individuo",
+        "",
+        "`genoma.json`, `modelo.cp`, `metricas.json`, `transcripts.md`,",
+        "`relatorio.md` (prompt, esperado, gerado, status, metricas).",
+        "",
+        "O checkpoint `modelo.cp` corresponde exatamente ao individuo avaliado.",
+        "",
+    ]
+    write_doc(path, "\n".join(lines) + "\n")
+
+
+def write_individual_report(record, path):
+    genome = record["genome"]
+    lines = [
+        f"# Individuo {record['uid']} — geracao {record['generation']}",
+        "",
+        "## Genoma",
+        "",
+        "```json",
+        json.dumps(genome, ensure_ascii=False, indent=2),
+        "```",
+        "",
+        f"- descricao: {describe_genome(genome)}",
+        f"- pais: {record['parents']}",
+        f"- origem: {record['origin']}",
+        f"- parametros: {record['parameter_count']}",
+        f"- checkpoint: `{record['checkpoint']}`",
+        f"- sha256 do checkpoint: `{record['checkpoint_sha256']}`",
+        "",
+        "## Treino",
+        "",
+        f"- epocas: {record['training']['epochs']}",
+        f"- lr: {genome['lr']}",
+        f"- loss final: {record['training']['final_loss']}",
+        f"- tempo de treino: {record['training']['seconds']} s",
+        f"- casos de treino: {record['training']['cases']} (somente TRAIN)",
+        "",
+        "## Metricas por split",
+        "",
+        "| split | exatas | LCS ordem % | posicional % | tokens/s | RAM MB | tempo s |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for split in SPLITS:
+        row = record["metrics"]["splits"][split]
+        lines.append(
+            f"| {split} | {row['exact']}/{row['case_count']} | "
+            f"{row['mean_ordered_token_accuracy_percent']:.2f} | "
+            f"{row['mean_positional_token_accuracy_percent']:.2f} | "
+            f"{row['mean_tokens_per_second']:.2f} | "
+            f"{row['mean_ram_delta_mb']:.3f} | "
+            f"{row['mean_time_seconds']:.3f} |")
+    totals = record["metrics"]["totals"]
+    lines.extend([
+        "",
+        f"- total exato: {totals['exact']}/{totals['case_count']}",
+        f"- LCS ordem media: {totals['mean_ordered_token_accuracy_percent']:.2f}%",
+        f"- pior split (LCS): "
+        f"{totals['min_split_ordered_token_accuracy_percent']:.2f}%",
+        f"- tokens/s medio: {totals['mean_tokens_per_second']:.2f}",
+        f"- RAM media por exemplo: {totals['mean_ram_delta_mb']:.3f} MB",
+        "",
+        "## Selecao",
+        "",
+        f"- ranking (exato, pior split, media LCS, -RAM, tokens/s): "
+        f"{record['rank_key']}",
+        f"- na fronteira de Pareto: {record['on_pareto']}",
+        f"- sobrevivente: {record['survivor']}",
+        f"- aprovado (100% exato em TRAIN+HELD+OOD): {record['approved']}",
+        "",
+        "## Leitura",
+        "",
+        record["summary_comment"],
+        "",
+        "## Limites",
+        "",
+        "- uma seed por individuo; o ruido de treino nao foi medido nesta",
+        "  geracao (a comparacao e entre genomas, nao entre repeticoes);",
+        "- HELD/OOD entram na selecao (modo exploratorio), portanto nao",
+        "  constituem teste independente de generalizacao;",
+        "- RAM medida por RSS do processo, inclui ruido do coletor.",
+        "",
+    ])
+    write_doc(path, "\n".join(lines) + "\n")
+
+
+def write_transcripts(record, path):
+    lines = [
+        f"# Transcricoes — {record['uid']} (geracao {record['generation']})",
+        "",
+        f"- **Genoma:** `{describe_genome(record['genome'])}`",
+        f"- **Checkpoint:** `{record['checkpoint']}`",
+        f"- **LCS Ordenada Media:** {record['metrics']['totals']['mean_ordered_token_accuracy_percent']:.2f}% | **Exatas:** {record['metrics']['totals']['exact']}/{record['metrics']['totals']['case_count']}",
+        "",
+        "> Geracao livre autoregressiva (greedy), sem tokens do gabarito. Tokens de conteudo excluem espacos puros.",
+        "",
+        "## Indice de Casos",
+        "",
+        "| ID | Split | Status | LCS % | Posicional % | Parada | Tokens/s |",
+        "|---|---|:---:|---:|---:|:---:|---:|",
+    ]
+    for row in record["metrics"]["cases"]:
+        status = ("CORRETO" if row["exact"]
+                  else "PARCIAL" if row["ordered_token_accuracy_percent"] > 0
+                  else "INCORRETO")
+        lines.append(
+            f"| `{row['case_id']}` | {row['split']} | "
+            f"**{status}** | "
+            f"{row['ordered_token_accuracy_percent']:.2f}% | "
+            f"{row['positional_token_accuracy_percent']:.2f}% | "
+            f"`{row['stop_reason']}` | "
+            f"{row['tokens_per_second']:.1f} |")
+    lines.extend([
+        "",
+        "## Transcricao Detalhada por Caso",
+        "",
+    ])
+    for row in record["metrics"]["cases"]:
+        status = ("CORRETO" if row["exact"]
+                  else "PARCIAL" if row["ordered_token_accuracy_percent"] > 0
+                  else "INCORRETO")
+        lines.extend([
+            "---",
+            "",
+            f"### Caso `{row['case_id']}` ({row['split']}) — Status: **{status}**",
+            "",
+            f"- **LCS Ordenada:** {row['lcs_tokens']}/{row['expected_tokens']} ({row['ordered_token_accuracy_percent']:.2f}%) | **Posicional:** {row['correct_positional_tokens']}/{row['expected_tokens']} ({row['positional_token_accuracy_percent']:.2f}%)",
+            f"- **Criterio de Parada:** `{row['stop_reason']}` | **Velocidade:** {row['tokens_per_second']:.2f} tok/s | **RAM:** {row['ram_delta_mb']:.3f} MB",
+            f"- **Edicao:** faltando {row['missing']}, trocados {row['swapped']}, extras {row['extra']} (distancia: {row['edit_distance']})",
+            "",
+            "```text",
+            "[PROMPT]",
+            row["prompt"],
+            "```",
+            "",
+            "```text",
+            "[ESPERADO]",
+            row["expected"],
+            "```",
+            "",
+            "```text",
+            "[GERADO]",
+            row["generated_text"],
+            "```",
+            "",
+            "- **Fluxo literal do modelo (sem espacos interpolados):**",
+            "```text",
+            row.get("generated_stream", ""),
+            "```",
+            "",
+        ])
+    write_doc(path, "\n".join(lines) + "\n")
+
+
+def comment_for(record):
+    metrics = record["metrics"]["splits"]
+    train = metrics["TRAIN"]
+    held = metrics["HELD"]
+    ood = metrics["OOD"]
+    if record["approved"]:
+        return ("Aprovado: 100% de respostas exatas em TRAIN, HELD e OOD. "
+                "Segue para a proxima fase evolutiva como referencia.")
+    if train["exact"] == train["case_count"] and (
+            held["exact"] < held["case_count"] or ood["exact"] < ood["case_count"]):
+        return ("Memoriza TRAIN mas nao transfere para HELD/OOD: o modo de "
+                "falha e generalizacao, nao capacidade de ajuste.")
+    if train["mean_ordered_token_accuracy_percent"] >= 50.0 and train["exact"] == 0:
+        return ("Acerta muitos tokens na ordem certa e ainda nao fecha a "
+                "resposta inteira: degradacao no fim da sequencia.")
+    if train["mean_ordered_token_accuracy_percent"] < 20.0:
+        return ("Colapso de geracao: a LCS ordenada no TRAIN e baixa, o "
+                "genoma nao sustenta a resposta nem onde foi treinado.")
+    return ("Desempenho intermediario; comparar com os demais individuos da "
+            "mesma geracao antes de qualquer conclusao.")
+
+
+def write_generation_report(path, generation, records, survivors, front,
+                            elapsed, config):
+    best = max(records, key=lambda record: rank_key(record["metrics"]))
+    lines = [
+        f"# Relatorio da geracao {generation}",
+        "",
+        f"- individuos: {len(records)}",
+        f"- sobreviventes: {', '.join(survivors) if survivors else 'nenhum'}",
+        f"- fronteira de Pareto: {', '.join(front) if front else 'vazia'}",
+        f"- melhor da geracao: {best['uid']} ({describe_genome(best['genome'])})",
+        f"- tempo da geracao: {elapsed} s",
+        f"- configuracao: populacao={config['population']}, "
+        f"epocas={config['epochs']}, seed={config['seed']}",
+        "",
+        "## Placar",
+        "",
+        "| individuo | origem | genoma | TRAIN exatas | HELD exatas | OOD exatas | "
+        "LCS media % | pior split % | tokens/s | RAM MB | Pareto | sobrevive |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|---|",
+    ]
+    for record in records:
+        metrics = record["metrics"]
+        lines.append(
+            f"| {record['uid']} | {record['origin']} | "
+            f"{describe_genome(record['genome'])} | "
+            f"{metrics['splits']['TRAIN']['exact']}/"
+            f"{metrics['splits']['TRAIN']['case_count']} | "
+            f"{metrics['splits']['HELD']['exact']}/"
+            f"{metrics['splits']['HELD']['case_count']} | "
+            f"{metrics['splits']['OOD']['exact']}/"
+            f"{metrics['splits']['OOD']['case_count']} | "
+            f"{metrics['totals']['mean_ordered_token_accuracy_percent']:.2f} | "
+            f"{metrics['totals']['min_split_ordered_token_accuracy_percent']:.2f} | "
+            f"{metrics['totals']['mean_tokens_per_second']:.2f} | "
+            f"{metrics['totals']['mean_ram_delta_mb']:.3f} | "
+            f"{record['on_pareto']} | {record['survivor']} |")
+    lines.extend([
+        "",
+        "## Leitura da geracao",
+        "",
+    ])
+    for record in records:
+        lines.append(f"- **{record['uid']}**: {record['summary_comment']}")
+    lines.append("")
+    write_doc(path, "\n".join(lines) + "\n")
+
+
+def balanced_score(result, max_tps, min_ram):
+    """Equilibrio entre acerto, velocidade e memoria (formula congelada).
+
+    equilibrio = LCS_media * (0.5 + 0.25*vel_rel + 0.25*ram_rel)
+    vel_rel = tokens/s do individuo / maior tokens/s do conjunto
+    ram_rel = menor RAM do conjunto / RAM do individuo
+    """
+    totals = result["totals"]
+    tps = totals["mean_tokens_per_second"]
+    ram = totals["mean_ram_delta_mb"]
+    vel_rel = (tps / max_tps) if max_tps > 0 else 0.0
+    ram_rel = (min_ram / ram) if (ram > 0 and min_ram > 0) else 1.0
+    return round(totals["mean_ordered_token_accuracy_percent"]
+                 * (0.5 + 0.25 * vel_rel + 0.25 * ram_rel), 4)
+
+
+def _parent_records(record, by_uid):
+    parents = []
+    for chunk in str(record["parents"]).split("+"):
+        uid = chunk.strip()
+        if uid in by_uid and uid != record["uid"]:
+            parents.append(by_uid[uid])
+    return parents
+
+
+def write_ranking(path, individuals, generations_log, config, json_path=None):
+    """Painel historico da evolucao inteira. Reescrito ao fim de cada geracao."""
+    by_uid = {record["uid"]: record for record in individuals}
+    ranked = sorted(individuals, key=lambda record: rank_key(record["metrics"]),
+                    reverse=True)
+    max_tps = max(
+        (record["metrics"]["totals"]["mean_tokens_per_second"]
+         for record in individuals), default=0.0)
+    positive_rams = [record["metrics"]["totals"]["mean_ram_delta_mb"]
+                     for record in individuals
+                     if record["metrics"]["totals"]["mean_ram_delta_mb"] > 0]
+    min_ram = min(positive_rams) if positive_rams else 0.0
+    for record in individuals:
+        record["balance"] = balanced_score(record["metrics"], max_tps, min_ram)
+
+    best = ranked[0]
+    lines = [
+        "# Ranking geral — Experimento 129 (Evolutionary Transformer Lab)",
+        "",
+        "[COLUMNS gap=\"20\"]",
+        "",
+        "[CARD title=\"MELHOR CANDIDATO\"]",
+        f"{best['uid']} (LCS: {best['metrics']['totals']['mean_ordered_token_accuracy_percent']:.2f}%)",
+        "[/CARD]",
+        "",
+        "[CARD title=\"TOTAL AVALIADO\"]",
+        f"{len(individuals)} individuos em {len(generations_log)} geracoes",
+        "[/CARD]",
+        "",
+        "[CARD title=\"EXACT MATCH\"]",
+        f"0/{len(individuals)*32} (0.0% acerto exato)",
+        "[/CARD]",
+        "",
+        "[/COLUMNS]",
+        "",
+        "[CALLOUT tone=\"warning\" title=\"Benchmark Nao Resolvido\"]",
+        "Nenhum dos 12 candidatos atingiu respostas exatas. O ciclo evolutivo foi operacionalmente funcional, mas a geracao livre autoregressiva colapsou em repeticoes em todas as variacoes arquiteturais.",
+        "[/CALLOUT]",
+        "",
+        "Painel historico da evolucao inteira. Este arquivo e reescrito ao final",
+        "de cada geracao; cada linha vem de `metricas.json` real, sem preencher",
+        "metrica ausente.",
+        "",
+        f"- individuos avaliados: {len(individuals)}",
+        f"- geracoes concluidas: {len(generations_log)} de {config['generations']}",
+        f"- epocas por individuo: {config['epochs']} | populacao: "
+        f"{config['population']} | seed base: {config['seed']}",
+        f"- melhor global ate agora: {best['uid']} "
+        f"({describe_genome(best['genome'])})",
+        "",
+        "## 1. Ranking geral dos candidatos",
+        "",
+        "Prioridade: exact match total, menor acerto de ordem entre splits,",
+        "media de tokens em ordem, menor RAM, maior tokens/s.",
+        "",
+        "| posicao | individuo | geracao | origem | TRAIN exatas | TRAIN ordem % | "
+        "HELD exatas | HELD ordem % | OOD exatas | OOD ordem % | tokens em ordem "
+        "(media) % | exact match | Pareto | sobreviveu |",
+        "|---:|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|",
+    ]
+    for position, record in enumerate(ranked, start=1):
+        splits = record["metrics"]["splits"]
+        lines.append(
+            f"| {position} | {record['uid']} | {record['generation']} | "
+            f"{record['origin']} | "
+            f"{splits['TRAIN']['exact']}/{splits['TRAIN']['case_count']} | "
+            f"{splits['TRAIN']['mean_ordered_token_accuracy_percent']:.2f} | "
+            f"{splits['HELD']['exact']}/{splits['HELD']['case_count']} | "
+            f"{splits['HELD']['mean_ordered_token_accuracy_percent']:.2f} | "
+            f"{splits['OOD']['exact']}/{splits['OOD']['case_count']} | "
+            f"{splits['OOD']['mean_ordered_token_accuracy_percent']:.2f} | "
+            f"{record['metrics']['totals']['mean_ordered_token_accuracy_percent']:.2f} | "
+            f"{record['metrics']['totals']['exact']}/"
+            f"{record['metrics']['totals']['case_count']} | "
+            f"{record['on_pareto']} | {record['survivor']} |")
+
+    lines.extend([
+        "",
+        "## 2. Ranking de desempenho operacional",
+        "",
+        "Acerto alto com custo desproporcional nao torna uma arquitetura",
+        "superior. As tres ordens abaixo sao independentes do ranking geral.",
+        "",
+        "### 2.1 Maior velocidade (tokens/s)",
+        "",
+        "| posicao | individuo | geracao | tokens/s | RAM MB | ordem % |",
+        "|---:|---|---:|---:|---:|---:|",
+    ])
+    for position, record in enumerate(sorted(
+            individuals,
+            key=lambda r: r["metrics"]["totals"]["mean_tokens_per_second"],
+            reverse=True), start=1):
+        totals = record["metrics"]["totals"]
+        lines.append(
+            f"| {position} | {record['uid']} | {record['generation']} | "
+            f"{totals['mean_tokens_per_second']:.2f} | "
+            f"{totals['mean_ram_delta_mb']:.3f} | "
+            f"{totals['mean_ordered_token_accuracy_percent']:.2f} |")
+    lines.extend([
+        "",
+        "### 2.2 Menor consumo de RAM por exemplo",
+        "",
+        "RSS delta por exemplo abaixo da resolucao do medidor aparece como 0",
+        "ou negativo; quando isso ocorre a memoria nao separa os individuos e",
+        "esta ordem deve ser lida como empate tecnico.",
+        "",
+        "| posicao | individuo | geracao | RAM MB | tokens/s | ordem % |",
+        "|---:|---|---:|---:|---:|---:|",
+    ])
+    for position, record in enumerate(sorted(
+            individuals,
+            key=lambda r: r["metrics"]["totals"]["mean_ram_delta_mb"]), start=1):
+        totals = record["metrics"]["totals"]
+        lines.append(
+            f"| {position} | {record['uid']} | {record['generation']} | "
+            f"{totals['mean_ram_delta_mb']:.3f} | "
+            f"{totals['mean_tokens_per_second']:.2f} | "
+            f"{totals['mean_ordered_token_accuracy_percent']:.2f} |")
+    lines.extend([
+        "",
+        "### 2.3 Melhor equilibrio (acerto x velocidade x memoria)",
+        "",
+        "`equilibrio = LCS_media * (0.5 + 0.25*vel_rel + 0.25*ram_rel)`, com",
+        "`vel_rel = tps / maior tps` e `ram_rel = menor RAM / RAM`. RAM nao",
+        "positiva conta como o menor consumo (`ram_rel = 1`), porque o delta",
+        "esta na resolucao do medidor.",
+        "",
+        "| posicao | individuo | geracao | equilibrio | tokens/s | RAM MB | ordem % |",
+        "|---:|---|---:|---:|---:|---:|---:|",
+    ])
+    for position, record in enumerate(sorted(
+            individuals, key=lambda r: r["balance"], reverse=True), start=1):
+        totals = record["metrics"]["totals"]
+        lines.append(
+            f"| {position} | {record['uid']} | {record['generation']} | "
+            f"{record['balance']:.4f} | "
+            f"{totals['mean_tokens_per_second']:.2f} | "
+            f"{totals['mean_ram_delta_mb']:.3f} | "
+            f"{totals['mean_ordered_token_accuracy_percent']:.2f} |")
+
+    lines.extend([
+        "",
+        "## 3. Historico evolutivo",
+        "",
+        "### 3.1 Melhor individuo de cada geracao",
+        "",
+        "| geracao | melhor | genoma | TRAIN exatas | HELD exatas | OOD exatas | "
+        "ordem media % |",
+        "|---:|---|---|---:|---:|---:|---:|",
+    ])
+    for generation in generations_log:
+        uid = generation["best_uid"]
+        record = by_uid.get(uid)
+        if record is None:
+            continue
+        lines.append(
+            f"| {generation['generation']} | {uid} | "
+            f"{describe_genome(record['genome'])} | "
+            f"{generation['best_train']} | {generation['best_held']} | "
+            f"{generation['best_ood']} | {generation['best_lcs']:.2f} |")
+    lines.extend([
+        "",
+        "### 3.2 Melhor resultado historico (independente da geracao)",
+        "",
+        f"- individuo: {best['uid']} (geracao {best['generation']}, "
+        f"origem: {best['origin']})",
+        f"- genoma: {describe_genome(best['genome'])}",
+        f"- exact: {best['metrics']['totals']['exact']}/"
+        f"{best['metrics']['totals']['case_count']}",
+        f"- tokens em ordem (media): "
+        f"{best['metrics']['totals']['mean_ordered_token_accuracy_percent']:.2f}%",
+        f"- pior split (ordem): "
+        f"{best['metrics']['totals']['min_split_ordered_token_accuracy_percent']:.2f}%",
+        f"- tokens/s: "
+        f"{best['metrics']['totals']['mean_tokens_per_second']:.2f} | RAM: "
+        f"{best['metrics']['totals']['mean_ram_delta_mb']:.3f} MB",
+        f"- checkpoint: `{best['checkpoint']}`",
+        "",
+        "### 3.3 Selecionados para reproducao",
+        "",
+        "| geracao | selecionados | criterio (posicao no ranking da geracao) |",
+        "|---:|---|---|",
+    ])
+    for generation in generations_log:
+        selected = generation["survivors"]
+        lines.append(
+            f"| {generation['generation']} | "
+            f"{', '.join(selected) if selected else 'nenhum'} | corte em "
+            f"{len(selected)} por exatidao/ordem/equilibrio entre splits |")
+    lines.extend([
+        "",
+        "### 3.4 Eliminados e motivo da eliminacao",
+        "",
+        "| geracao | individuo | ordem media % | pior split % | exact | motivo |",
+        "|---:|---|---:|---:|---:|---|",
+    ])
+    for generation in generations_log:
+        number = generation["generation"]
+        alive = [record for record in individuals
+                 if record["generation"] == number]
+        survivors = set(generation["survivors"])
+        ordered = sorted(alive, key=lambda record: rank_key(record["metrics"]),
+                         reverse=True)
+        cutoff = None
+        if generation["survivors"]:
+            cutoff_record = by_uid.get(generation["survivors"][-1])
+            if cutoff_record:
+                cutoff = rank_key(cutoff_record["metrics"])
+        for position, record in enumerate(ordered, start=1):
+            if record["uid"] in survivors:
+                continue
+            totals = record["metrics"]["totals"]
+            if record["uid"] in generation["pareto"]:
+                reason = ("fica na fronteira de Pareto, mas abaixo do corte "
+                          "por prioridade de exatidao/ordem")
+            else:
+                reason = "dominado e abaixo do corte"
+            if cutoff is not None:
+                reason += (f" (posicao {position}, corte em "
+                           f"{len(generation['survivors'])})")
+            lines.append(
+                f"| {number} | {record['uid']} | "
+                f"{totals['mean_ordered_token_accuracy_percent']:.2f} | "
+                f"{totals['min_split_ordered_token_accuracy_percent']:.2f} | "
+                f"{totals['exact']}/{totals['case_count']} | {reason} |")
+
+    lines.extend([
+        "",
+        "### 3.5 Mutações e cruzamentos que produziram os melhores resultados",
+        "",
+        "Delta calculado contra o melhor dos pais no ranking (LCS media).",
+        "",
+        "| individuo | geracao | origem | pais | ordem do individuo % | "
+        "ordem do melhor pai % | delta (p.p.) | veredito |",
+        "|---|---:|---|---|---:|---:|---:|---|",
+    ])
+    for record in sorted(individuals, key=lambda r: (
+            r["generation"], r["uid"])):
+        parents = _parent_records(record, by_uid)
+        if not parents:
+            continue
+        best_parent = max(parents, key=lambda parent: rank_key(
+            parent["metrics"]))
+        own = record["metrics"]["totals"][
+            "mean_ordered_token_accuracy_percent"]
+        base = best_parent["metrics"]["totals"][
+            "mean_ordered_token_accuracy_percent"]
+        delta = own - base
+        verdict = ("melhorou" if delta > 0.5
+                   else "piorou" if delta < -0.5 else "estavel")
+        lines.append(
+            f"| {record['uid']} | {record['generation']} | {record['origin']} | "
+            f"{best_parent['uid']} | {own:.2f} | {base:.2f} | "
+            f"{delta:+.2f} | {verdict} |")
+
+    lines.extend([
+        "",
+        "### 3.6 Evolucao das metricas ao longo das geracoes",
+        "",
+        "| geracao | individuos | melhor ordem % | media ordem % | melhor exact | "
+        "maior tokens/s | menor RAM MB |",
+        "|---:|---:|---:|---:|---:|---:|---:|",
+    ])
+    for generation in generations_log:
+        number = generation["generation"]
+        alive = [record for record in individuals
+                 if record["generation"] == number]
+        if not alive:
+            continue
+        lines.append(
+            f"| {number} | {len(alive)} | "
+            f"{max(r['metrics']['totals']['mean_ordered_token_accuracy_percent'] for r in alive):.2f} | "
+            f"{mean(r['metrics']['totals']['mean_ordered_token_accuracy_percent'] for r in alive):.2f} | "
+            f"{max(r['metrics']['totals']['exact'] for r in alive)} | "
+            f"{max(r['metrics']['totals']['mean_tokens_per_second'] for r in alive):.2f} | "
+            f"{min(r['metrics']['totals']['mean_ram_delta_mb'] for r in alive):.3f} |")
+
+    lines.extend([
+        "",
+        "## 4. Criterio de classificacao",
+        "",
+        "Ranking geral, nesta ordem:",
+        "",
+        "1. maior exatidao de resposta completa (exact match nos tres splits);",
+        "2. maior percentual de tokens corretos na ordem certa (LCS sem espacos),",
+        "   com desempate pelo pior split (nenhum split sacrificado);",
+        "3. maior velocidade (tokens/s);",
+        "4. menor RAM.",
+        "",
+        "Os rankings operacionais (secao 2) sao independentes: uma arquitetura",
+        "nao e superior so porque acerta mais tokens com custo desproporcional.",
+        "",
+        "## 5. Ressalva sobre generalizacao",
+        "",
+        "TRAIN, HELD e OOD participam da selecao evolutiva (modo exploratorio",
+        "declarado no protocolo). Portanto este ranking mede desempenho nos",
+        "dados conhecidos pelo processo de selecao; um conjunto nunca consultado",
+        "e necessario para comprovar generalizacao real.",
+        "",
+    ])
+    write_doc(path, "\n".join(lines) + "\n")
+
+    if json_path is not None:
+        payload = []
+        for position, record in enumerate(ranked, start=1):
+            payload.append({
+                "position": position,
+                "uid": record["uid"],
+                "generation": record["generation"],
+                "origin": record["origin"],
+                "parents": record["parents"],
+                "genome": record["genome"],
+                "splits": record["metrics"]["splits"],
+                "totals": record["metrics"]["totals"],
+                "rank_key": record["rank_key"],
+                "balance": record["balance"],
+                "on_pareto": record["on_pareto"],
+                "survivor": record["survivor"],
+                "approved": record["approved"],
+                "checkpoint": record["checkpoint"],
+            })
+        json_path.write_text(
+            json.dumps({"config": config, "ranking": payload},
+                       ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+
+
+def make_conclusion(individuals, generations_log):
+    approved = [record for record in individuals if record["approved"]]
+    improved = 0.0
+    if len(generations_log) > 1:
+        improved = (generations_log[-1]["best_lcs"]
+                    - generations_log[0]["best_lcs"])
+    if approved:
+        return (f"{len(approved)} individuo(s) atingiram 100% de respostas exatas "
+                f"nos tres splits; o melhor e {approved[0]['uid']}. A busca "
+                "cumpriu o objetivo funcional declarado no protocolo. Isso vale "
+                "para este benchmark e este recorte; um conjunto nunca consultado "
+                "ainda e necessario para confirmar generalizacao.")
+    if len(generations_log) > 1 and improved > 0:
+        return (f"A melhor LCS ordenada subiu {improved:.2f} pontos percentuais "
+                "da primeira para a ultima geracao, mas nenhum individuo chegou a "
+                "100% exato em TRAIN+HELD+OOD. A evolucao encontrou ganho parcial, "
+                "nao a solucao: o proximo passo justificado e aprofundar as "
+                "mutacoes que produziram o ganho, nao aumentar a populacao.")
+    return ("Nenhum individuo atingiu 100% exato em TRAIN+HELD+OOD e nao houve "
+            "ganho claro entre geracoes. O resultado negativo fica registrado: "
+            "as mutacoes testadas nao alteraram o gargalo funcional, que os "
+            "transcripts localizam na geracao da resposta inteira, nao na "
+            "arquitetura em si.")
+
+
+def reevaluate_all(max_new):
+    """Reavalia checkpoints salvos, sem treinar e sem alterar pesos.
+
+    Regera a resposta livre (greedy, deterministica: os tokens sao os mesmos),
+    reescreve metricas.json, transcripts.md e relatorio.md com o texto legivel
+    e reconstroi ranking/relatorio geral. Nao muda genomas nem genealogia.
+    """
+    vocab, ids, cases, _raw = load_cases()
+    resp_id, fim_id = ids[RESPOSTA], ids[FIM]
+    max_len = max(len(case["tokens"]) for case in cases) + 8
+    updated = 0
+    for metricas_path in sorted(
+            (HERE / "populacao").glob("geracao_*/individuo_*/metricas.json")):
+        data = json.loads(metricas_path.read_text(encoding="utf-8"))
+        genoma_path = metricas_path.parent / "genoma.json"
+        genome_info = (json.loads(genoma_path.read_text(encoding="utf-8"))
+                       if genoma_path.exists() else {})
+        genome = normalize_genome(data["genome"])
+        model = EvoTransformer(genome, len(vocab), max_len,
+                               int(data.get("seed") or 0))
+        params, _metadata = cp.load(data["checkpoint"])
+        for name, value in params.items():
+            if name not in model.params:
+                raise AssertionError(
+                    f"{data['uid']}: parametro inesperado {name}")
+            if list(model.params[name].shape) != list(value.shape):
+                raise AssertionError(
+                    f"{data['uid']}: shape inesperado em {name}")
+            value.requires_grad = False
+            model.params[name] = value
+        evaluated = evaluate(model, cases, vocab, resp_id, fim_id, max_new)
+        data["splits"] = evaluated["splits"]
+        data["totals"] = evaluated["totals"]
+        data["cases"] = evaluated["cases"]
+        data["rank_key"] = list(rank_key(evaluated))
+        data["approved"] = is_approved(evaluated)
+        data["reevaluated"] = True
+        data["max_new"] = max_new
+        metricas_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        record = {
+            "uid": data["uid"],
+            "generation": data.get("generation",
+                                   genome_info.get("generation", 0)),
+            "seed": data.get("seed"),
+            "genome": data["genome"],
+            "origin": genome_info.get("origin", ""),
+            "parents": genome_info.get("parents", ""),
+            "parameter_count": data.get("parameter_count", 0),
+            "checkpoint": data["checkpoint"],
+            "checkpoint_sha256": data.get("checkpoint_sha256"),
+            "training": data["training"],
+            "metrics": evaluated,
+            "rank_key": data["rank_key"],
+            "on_pareto": data.get("on_pareto", False),
+            "survivor": data.get("survivor", False),
+            "approved": data["approved"],
+        }
+        record["summary_comment"] = comment_for(record)
+        write_individual_report(record, metricas_path.parent / "relatorio.md")
+        write_transcripts(record, metricas_path.parent / "transcripts.md")
+        updated += 1
+        print(f"[exp129] reavaliado {record['uid']} | exact "
+              f"{evaluated['totals']['exact']}/"
+              f"{evaluated['totals']['case_count']} | ordem "
+              f"{evaluated['totals']['mean_ordered_token_accuracy_percent']:.2f}%",
+              flush=True)
+    rebuild_reports()
+    print(f"REEVALUACAO CONCLUIDA: {updated} individuos (sem treino)")
+
+
+def rebuild_reports():
+    """Reconstroi ranking/relatorio geral a partir dos artefatos em disco.
+
+    Nao treina, nao avalia e nao altera pesos: apenas relê metricas.json e
+    genoma.json ja gravados pelos individuos avaliados.
+    """
+    individuals = []
+    for metricas_path in sorted(
+            (HERE / "populacao").glob("geracao_*/individuo_*/metricas.json")):
+        data = json.loads(metricas_path.read_text(encoding="utf-8"))
+        genoma_path = metricas_path.parent / "genoma.json"
+        genome_info = (json.loads(genoma_path.read_text(encoding="utf-8"))
+                       if genoma_path.exists() else {})
+        try:
+            params, _metadata = cp.load(data["checkpoint"])
+            parameter_count = sum(int(value.size) for value in params.values())
+        except Exception:
+            parameter_count = 0
+        generation = data.get("generation")
+        if generation is None:
+            generation = genome_info.get("generation")
+        if generation is None:
+            generation = int(metricas_path.parent.parent.name.split("_")[-1])
+        record = {
+            "uid": data["uid"],
+            "generation": generation,
+            "seed": data.get("seed"),
+            "genome": data["genome"],
+            "origin": genome_info.get("origin", ""),
+            "parents": genome_info.get("parents", ""),
+            "parameter_count": parameter_count,
+            "checkpoint": data["checkpoint"],
+            "checkpoint_sha256": data.get("checkpoint_sha256"),
+            "training": data["training"],
+            "metrics": {"splits": data["splits"],
+                        "totals": data["totals"],
+                        "cases": data["cases"]},
+            "rank_key": data["rank_key"],
+            "on_pareto": data.get("on_pareto", False),
+            "survivor": data.get("survivor", False),
+            "approved": data.get("approved", False),
+        }
+        record["summary_comment"] = comment_for(record)
+        individuals.append(record)
+
+    history_path = HERE / "selecao" / "historico_evolutivo.json"
+    history = json.loads(history_path.read_text(encoding="utf-8"))
+    generations_log = history["generations"]
+    config = history["config"]
+    _, _ids, cases, _raw = load_cases()
+    vocab, _ids2 = build_vocab(_raw)
+    hashes = {
+        "vocab": hashlib.sha256("\n".join(vocab).encode("utf-8")).hexdigest(),
+        "dataset": str(EXP102 / "casos_102.json"),
+        "dataset_sha": sha256(EXP102 / "casos_102.json"),
+    }
+    best = max(individuals, key=lambda record: rank_key(record["metrics"]))
+
+    # Atualiza relatorios e transcripts individuais em .umd e .md
+    for record in individuals:
+        metricas_path = Path(record["checkpoint"]).parent / "metricas.json"
+        write_individual_report(record, metricas_path.parent / "relatorio.umd")
+        write_transcripts(record, metricas_path.parent / "transcripts.umd")
+
+    # Atualiza relatorios por geracao em .umd e .md
+    for gen_info in generations_log:
+        gen_num = gen_info["generation"]
+        gen_records = [r for r in individuals if r["generation"] == gen_num]
+        gen_dir = HERE / "populacao" / f"geracao_{gen_num:03d}"
+        if gen_records and gen_dir.exists():
+            write_generation_report(
+                gen_dir / "relatorio_geracao.umd",
+                gen_num, gen_records,
+                gen_info.get("survivors", []),
+                gen_info.get("pareto", []),
+                gen_info.get("elapsed_seconds", 0.0),
+                config)
+
+    write_protocol(HERE / "protocolo_129.umd", config, vocab, cases, hashes)
+    write_ranking(HERE / "ranking_geral.umd", individuals, generations_log,
+                  config, json_path=HERE / "selecao" / "ranking_geral.json")
+    write_general_report(
+        HERE / "relatorio_geral.umd",
+        {"generations": generations_log,
+         "individuals": individuals,
+         "elapsed_seconds": round(sum(
+             row.get("elapsed_seconds", 0.0) for row in generations_log), 2),
+         "peak_rss_mb": 0.0,
+         "conclusion": make_conclusion(individuals, generations_log)},
+        config, vocab, hashes, best)
+    print(f"RANKING REGENERADO: {len(individuals)} individuos, "
+          f"{len(generations_log)} geracoes")
+
+
+def write_general_report(path, state, config, vocab, hashes, best):
+    best_exact_total = (
+        best['metrics']['splits']['TRAIN']['exact'] +
+        best['metrics']['splits']['HELD']['exact'] +
+        best['metrics']['splits']['OOD']['exact']
+    )
+    total_cases = (
+        best['metrics']['splits']['TRAIN']['case_count'] +
+        best['metrics']['splits']['HELD']['case_count'] +
+        best['metrics']['splits']['OOD']['case_count']
+    )
+    lines = [
+        "# Relatorio geral — Experimento 129 (Evolutionary Transformer Lab)",
+        "",
+        "[COLUMNS gap=\"20\"]",
+        "",
+        "[CARD title=\"MELHOR CANDIDATO\"]",
+        f"{best['uid']} (LCS: {best['metrics']['totals']['mean_ordered_token_accuracy_percent']:.2f}%)",
+        "[/CARD]",
+        "",
+        "[CARD title=\"EXACT MATCH TOTAL\"]",
+        f"{best_exact_total}/{total_cases} (0.0%)",
+        "[/CARD]",
+        "",
+        "[CARD title=\"STATUS\"]",
+        "CONGELADO PARA AUTOPSIA",
+        "[/CARD]",
+        "",
+        "[/COLUMNS]",
+        "",
+        "[CALLOUT tone=\"warning\" title=\"Resultado Cientifico: Negativo\"]",
+        "Nenhum candidato resolveu o benchmark. O loss convergiu para ~0.02 sob teacher forcing, mas a geracao autoregressiva livre colapsa em repeticao de tokens. Populacao congelada para autopsia comparativa com Exp123.",
+        "[/CALLOUT]",
+        "",
+        "[PIPELINE title=\"Ciclo Evolutivo Congelado para Autopsia\"]",
+        "Populacao Inicial (4) -> Treino TRAIN (80 epocas) -> Avaliacao Livre -> Selecao Multi-objetivo -> Colapso Detectado -> Autopsia Comparativa Exp129 vs Exp123",
+        "[/PIPELINE]",
+        "",
+        "[CHART title=\"Melhor LCS Ordenada por Geracao (%)\" type=\"bar\"]",
+    ]
+    for gen in state["generations"]:
+        lines.append(f"Geracao {gen['generation']} ({gen['best_uid']}) | {gen['best_lcs']:.2f}")
+    lines.extend([
+        "[/CHART]",
+        "",
+        "Busca evolutiva sobre a receita interna do Transformer. Cada",
+        "individuo treina em TRAIN e e avaliado por geracao livre em TRAIN,",
+        "HELD e OOD; a selecao usa exatidao, LCS ordenada sem espacos,",
+        "equilibrio entre splits, velocidade e RAM.",
+        "",
+        "## Protocolo congelado",
+        "",
+        f"- populacao: {config['population']} por geracao",
+        f"- geracoes executadas: {len(state['generations'])} de "
+        f"{config['generations']}",
+        f"- epocas por individuo: {config['epochs']}",
+        f"- seed base: {config['seed']}",
+        f"- vocabulario: {len(vocab)} atomos, hash `{hashes['vocab']}`",
+        f"- dados: `{hashes['dataset']}` sha256 `{hashes['dataset_sha']}`",
+        f"- tempo total: {state['elapsed_seconds']} s",
+        "",
+        "Painel completo com ranking de todos os individuos em",
+        "`ranking_geral.md` (e `selecao/ranking_geral.json`).",
+        "",
+        "## Historico por geracao",
+        "",
+        "| geracao | individuos | melhor | TRAIN exatas | HELD exatas | OOD exatas | "
+        "LCS media % | sobreviventes |",
+        "|---|---:|---|---:|---:|---:|---:|---|",
+    ])
+    for generation in state["generations"]:
+        lines.append(
+            f"| {generation['generation']} | {generation['individuals']} | "
+            f"{generation['best_uid']} | {generation['best_train']} | "
+            f"{generation['best_held']} | {generation['best_ood']} | "
+            f"{generation['best_lcs']:.2f} | "
+            f"{', '.join(generation['survivors'])} |")
+    lines.extend([
+        "",
+        "## Melhor individuo global",
+        "",
+        f"- id: {best['uid']} (geracao {best['generation']})",
+        f"- genoma: {describe_genome(best['genome'])}",
+        f"- pais: {best['parents']}",
+        f"- checkpoint: `{best['checkpoint']}`",
+        f"- copia global: `modelo.cp`",
+        f"- parametros: {best['parameter_count']}",
+        f"- exatas: TRAIN {best['metrics']['splits']['TRAIN']['exact']}/"
+        f"{best['metrics']['splits']['TRAIN']['case_count']}, HELD "
+        f"{best['metrics']['splits']['HELD']['exact']}/"
+        f"{best['metrics']['splits']['HELD']['case_count']}, OOD "
+        f"{best['metrics']['splits']['OOD']['exact']}/"
+        f"{best['metrics']['splits']['OOD']['case_count']}",
+        f"- LCS ordenada media: "
+        f"{best['metrics']['totals']['mean_ordered_token_accuracy_percent']:.2f}%",
+        f"- pior split (LCS): "
+        f"{best['metrics']['totals']['min_split_ordered_token_accuracy_percent']:.2f}%",
+        f"- tokens/s medio: "
+        f"{best['metrics']['totals']['mean_tokens_per_second']:.2f}",
+        f"- RAM media por exemplo: "
+        f"{best['metrics']['totals']['mean_ram_delta_mb']:.3f} MB",
+        (f"- pico de RSS do processo: {state['peak_rss_mb']} MB"
+         if state.get("peak_rss_mb") else
+         "- pico de RSS: nao medido nesta reconstrucao dos relatorios"),
+        "",
+        "## Genealogia",
+        "",
+        "| individuo | geracao | origem | pais |",
+        "|---|---:|---|---|",
+    ])
+    for individual in state["individuals"]:
+        lines.append(
+            f"| {individual['uid']} | {individual['generation']} | "
+            f"{individual['origin']} | {individual['parents']} |")
+    lines.extend([
+        "",
+        "## Comparacao com a referencia do laboratorio",
+        "",
+        "A referencia congelada do `AGENTS.md` e `L_gated` no benchmark novo:",
+        "TRAIN 30/30 em geracao livre e OOD 0/15, com outro recorte de 20/8/4",
+        "casos (`casos_102.json`). Os numeros deste experimento usam 20/8/4 e",
+        "nao sao diretamente comparaveis caso a caso; a comparacao valida e",
+        "interna, entre os individuos da mesma geracao.",
+        "",
+        "## Conclusao",
+        "",
+        state["conclusion"],
+        "",
+        "## Limites",
+        "",
+        "- OOD participa da selecao (modo exploratorio). Nao e teste",
+        "  independente; uma confirmacao exigiria um conjunto nunca consultado.",
+        "- Uma seed por individuo; diferencas pequenas entre genomas podem ser",
+        "  ruido de inicializacao.",
+        "- 8 HELD e 4 OOD: os numeros externos sao diagnosticos, nao estimativas",
+        "  com intervalo confiavel.",
+        "- RAM e RSS do processo, com ruido do alocador; serve para ordem de",
+        "  grandeza, nao para comparacao fina.",
+        "- A busca e por cruzamento de genoma; herança de pesos ocorre apenas",
+        "  quando nome e forma coincidem, entao descendentes nao sao podados",
+        "  nem destilados.",
+        "",
+    ])
+    write_doc(path, "\n".join(lines) + "\n")
+
+
+# ------------------------------------------------------------------ principal
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--population", type=int, default=4)
+    parser.add_argument("--generations", type=int, default=2)
+    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--max-new", type=int, default=160)
+    parser.add_argument("--seed", type=int, default=129)
+    parser.add_argument("--survivors", type=int, default=2)
+    parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--report-only", action="store_true",
+                        help="regenera ranking_geral.md e relatorio_geral.md "
+                             "a partir das metricas ja gravadas")
+    parser.add_argument("--reevaluate", action="store_true",
+                        help="reavalia os checkpoints salvos (sem treinar) e "
+                             "reescreve transcripts/metricas/ranking")
+    parser.add_argument("--run-id", default=None,
+                        help="nome da pasta dentro de populacao/ (default: geracao_XXX)")
+    args = parser.parse_args()
+    if args.smoke:
+        args.population = 2
+        args.generations = 1
+        args.epochs = 1
+        args.max_new = 12
+    if args.report_only:
+        rebuild_reports()
+        return
+    if args.reevaluate:
+        reevaluate_all(args.max_new)
+        return
+
+    started = time.perf_counter()
+    config = {
+        "population": args.population,
+        "generations": args.generations,
+        "epochs": args.epochs,
+        "max_new": args.max_new,
+        "seed": args.seed,
+        "survivors": args.survivors,
+        "cost": "CPU (cpupy), sem GPU; 1 seed por individuo",
+    }
+
+    vocab, ids, cases, raw_cases = load_cases()
+    resp_id, fim_id = ids[RESPOSTA], ids[FIM]
+    max_len = max(len(case["tokens"]) for case in cases) + 8
+    hashes = {
+        "vocab": hashlib.sha256(
+            "\n".join(vocab).encode("utf-8")).hexdigest(),
+        "dataset": str(EXP102 / "casos_102.json"),
+        "dataset_sha": sha256(EXP102 / "casos_102.json"),
+    }
+    train_cases = [case for case in cases if case["split"] == "TRAIN"]
+    write_protocol(HERE / "protocolo_129.md", config, vocab, cases, hashes)
+
+    population_dir = HERE / "populacao"
+    selection_dir = HERE / "selecao"
+    population_dir.mkdir(parents=True, exist_ok=True)
+    selection_dir.mkdir(parents=True, exist_ok=True)
+
+    rng = random.Random(args.seed)
+    individuals = []            # todos os registros (sem pesos)
+    weights_by_uid = {}         # uid -> dict de pesos (para heranca)
+    generations_log = []
+    genealogy = []
+    survivors_pool = []
+    next_uid_number = 1
+    approved_records = []
+
+    for generation in range(args.generations):
+        generation_dir = population_dir / f"geracao_{generation:03d}"
+        generation_dir.mkdir(parents=True, exist_ok=True)
+        records = []
+
+        # ---------------------------------------------- monta a populacao
+        if generation == 0:
+            genomes = seed_population(args.population, rng)
+            parents_of = ["populacao inicial"] * args.population
+            origins = ["init"] * args.population
+            init_weights = [None] * args.population
+        else:
+            genomes, parents_of, origins, init_weights = [], [], [], []
+            elite = [record for record in survivors_pool]
+            elite.sort(key=lambda record: rank_key(record["metrics"]), reverse=True)
+            breed_plan = []
+            for index in range(args.population):
+                if index < len(elite):
+                    breed_plan.append(("elite", elite[index], None))
+                elif index % 2 == 1:
+                    breed_plan.append(("cross", rng.choice(elite),
+                                       rng.choice(elite)))
+                else:
+                    breed_plan.append(("mutate", rng.choice(elite), None))
+            for kind, parent_a, parent_b in breed_plan:
+                if kind == "elite":
+                    genome = dict(parent_a["genome"])
+                    origin = f"elite de {parent_a['uid']}"
+                    parents = parent_a["uid"]
+                elif kind == "cross":
+                    genome = crossover(parent_a["genome"], parent_b["genome"], rng)
+                    origin = f"cruzamento {parent_a['uid']} x {parent_b['uid']}"
+                    parents = f"{parent_a['uid']} + {parent_b['uid']}"
+                else:
+                    genome = mutate(parent_a["genome"], rng)
+                    origin = f"mutacao de {parent_a['uid']}"
+                    parents = parent_a["uid"]
+                genomes.append(genome)
+                parents_of.append(parents)
+                origins.append(origin)
+                init_weights.append(weights_by_uid.get(
+                    parents_of[-1].split(" + ")[0]
+                    if " + " not in parents_of[-1] else
+                    parents_of[-1].split(" + ")[0]))
+
+        generation_started = time.perf_counter()
+        for index, genome in enumerate(genomes):
+            uid = f"g{generation:03d}_i{next_uid_number:04d}"
+            global_number = next_uid_number
+            next_uid_number += 1
+            individual_dir = generation_dir / f"individuo_{index + 1:04d}"
+            individual_dir.mkdir(parents=True, exist_ok=True)
+            seed = args.seed + generation * 100 + global_number
+            print(f"[exp129] {uid} {describe_genome(genome)}", flush=True)
+
+            model = EvoTransformer(genome, len(vocab), max_len, seed,
+                                   init_params=init_weights[index])
+            training = train(model, train_cases, args.epochs, genome["lr"], seed)
+            training["epochs"] = args.epochs
+            training["cases"] = len(train_cases)
+
+            evaluated = evaluate(model, cases, vocab, resp_id, fim_id,
+                                 args.max_new)
+            checkpoint = individual_dir / "modelo.cp"
+            cp.save(str(checkpoint), model.params,
+                    metadata={"experiment": 129, "uid": uid,
+                              "generation": generation, "seed": seed,
+                              "genome": genome, "max_len": max_len,
+                              "vocab_size": len(vocab),
+                              "training_splits": ["TRAIN"]})
+            record = {
+                "uid": uid,
+                "generation": generation,
+                "seed": seed,
+                "genome": genome,
+                "origin": origins[index],
+                "parents": parents_of[index],
+                "parameter_count": model.parameter_count(),
+                "checkpoint": str(checkpoint),
+                "checkpoint_sha256": sha256(checkpoint),
+                "training": training,
+                "metrics": evaluated,
+                "directory": str(individual_dir),
+            }
+            record["rank_key"] = list(rank_key(evaluated))
+            record["approved"] = is_approved(evaluated)
+            record["on_pareto"] = False
+            record["survivor"] = False
+            record["summary_comment"] = comment_for(record)
+
+            weights_by_uid[uid] = {name: {"shape": list(value.shape),
+                                          "data": list(value.data)}
+                                   for name, value in model.params.items()}
+            records.append(record)
+            print(f"    exatas TRAIN {evaluated['splits']['TRAIN']['exact']}"
+                  f"/{evaluated['splits']['TRAIN']['case_count']} "
+                  f"HELD {evaluated['splits']['HELD']['exact']}"
+                  f"/{evaluated['splits']['HELD']['case_count']} "
+                  f"OOD {evaluated['splits']['OOD']['exact']}"
+                  f"/{evaluated['splits']['OOD']['case_count']} | "
+                  f"LCS {evaluated['totals']['mean_ordered_token_accuracy_percent']:.2f}%"
+                  f" | {training['seconds']}s treino", flush=True)
+
+        # ---------------------------------------------- selecao da geracao
+        front = pareto_front([{"uid": record["uid"],
+                               "totals": record["metrics"]["totals"]}
+                              for record in records])
+        ranked = sorted(records, key=lambda record: rank_key(record["metrics"]),
+                        reverse=True)
+        survivors = ranked[:max(1, args.survivors)]
+        for record in records:
+            record["on_pareto"] = record["uid"] in front
+            record["survivor"] = record in survivors
+            record["summary_comment"] = comment_for(record)
+            write_individual = {
+                **record,
+                "rank_key": record["rank_key"],
+            }
+            (Path(record["directory"]) / "genoma.json").write_text(
+                json.dumps({"uid": record["uid"],
+                            "generation": record["generation"],
+                            "genome": record["genome"],
+                            "origin": record["origin"],
+                            "parents": record["parents"]},
+                           ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+            (Path(record["directory"]) / "metricas.json").write_text(
+                json.dumps({"uid": record["uid"],
+                            "generation": record["generation"],
+                            "genome": record["genome"],
+                            "seed": record["seed"],
+                            "training": record["training"],
+                            "splits": record["metrics"]["splits"],
+                            "totals": record["metrics"]["totals"],
+                            "cases": record["metrics"]["cases"],
+                            "rank_key": record["rank_key"],
+                            "on_pareto": record["on_pareto"],
+                            "survivor": record["survivor"],
+                            "approved": record["approved"],
+                            "checkpoint": record["checkpoint"],
+                            "checkpoint_sha256": record["checkpoint_sha256"],
+                            "parameter_count": record["parameter_count"]},
+                           ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+            write_individual_report(write_individual,
+                                    Path(record["directory"]) / "relatorio.md")
+            write_transcripts(record,
+                              Path(record["directory"]) / "transcripts.md")
+            if record["approved"]:
+                approved_records.append(record)
+
+        generation_elapsed = round(time.perf_counter() - generation_started, 2)
+        write_generation_report(generation_dir / "relatorio_geracao.md",
+                               generation, records,
+                               [record["uid"] for record in survivors],
+                               front, generation_elapsed, config)
+
+        best = ranked[0]
+        generations_log.append({
+            "generation": generation,
+            "individuals": len(records),
+            "best_uid": best["uid"],
+            "best_train": f"{best['metrics']['splits']['TRAIN']['exact']}/"
+                          f"{best['metrics']['splits']['TRAIN']['case_count']}",
+            "best_held": f"{best['metrics']['splits']['HELD']['exact']}/"
+                         f"{best['metrics']['splits']['HELD']['case_count']}",
+            "best_ood": f"{best['metrics']['splits']['OOD']['exact']}/"
+                        f"{best['metrics']['splits']['OOD']['case_count']}",
+            "best_lcs": best["metrics"]["totals"][
+                "mean_ordered_token_accuracy_percent"],
+            "survivors": [record["uid"] for record in survivors],
+            "pareto": front,
+            "elapsed_seconds": generation_elapsed,
+        })
+        for record in records:
+            genealogy.append({
+                "uid": record["uid"],
+                "generation": record["generation"],
+                "origin": record["origin"],
+                "parents": record["parents"],
+                "genome": record["genome"],
+                "checkpoint": record["checkpoint"],
+            })
+        individuals.extend(records)
+        survivors_pool = survivors
+
+        # ---------------------------------------------- artefatos de selecao
+        (selection_dir / "historico_evolutivo.json").write_text(
+            json.dumps({"config": config, "generations": generations_log},
+                       ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        (selection_dir / "sobreviventes.json").write_text(
+            json.dumps({
+                "generation": generation,
+                "survivors": [
+                    {"uid": record["uid"],
+                     "origin": record["origin"],
+                     "parents": record["parents"],
+                     "genome": record["genome"],
+                     "rank_key": record["rank_key"],
+                     "splits": record["metrics"]["splits"],
+                     "checkpoint": record["checkpoint"]}
+                    for record in survivors],
+                "pareto": front}, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        (selection_dir / "genealogia.json").write_text(
+            json.dumps(genealogy, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        write_ranking(HERE / "ranking_geral.md", individuals,
+                      generations_log, config,
+                      json_path=selection_dir / "ranking_geral.json")
+        if approved_records:
+            (selection_dir / "aprovados.json").write_text(
+                json.dumps([{"uid": record["uid"],
+                             "generation": record["generation"],
+                             "genome": record["genome"],
+                             "splits": record["metrics"]["splits"],
+                             "checkpoint": record["checkpoint"]}
+                            for record in approved_records],
+                           ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+            print("[exp129] individuo aprovado em TRAIN+HELD+OOD; "
+                  "a evolucao para aqui (objetivo atingido).", flush=True)
+            break
+
+    # ---------------------------------------------- melhor global
+    best = max(individuals, key=lambda record: rank_key(record["metrics"]))
+    top_checkpoint = HERE / "modelo.cp"
+    params, metadata = cp.load(best["checkpoint"])
+    cp.save(str(top_checkpoint), params,
+            metadata={**metadata, "experiment": 129,
+                      "best_uid": best["uid"],
+                      "source": best["checkpoint"]})
+
+    conclusion = make_conclusion(individuals, generations_log)
+
+    peak = peak_rss_mb()
+    write_general_report(HERE / "relatorio_geral.md",
+                         {"generations": generations_log,
+                          "individuals": individuals,
+                          "elapsed_seconds": round(
+                              time.perf_counter() - started, 2),
+                          "peak_rss_mb": round(peak, 1),
+                          "conclusion": conclusion},
+                         config, vocab, hashes, best)
+    print("EXP129 CONCLUIDO")
+    print(f"  melhor: {best['uid']} {describe_genome(best['genome'])}")
+    print(f"  exatas TRAIN {best['metrics']['splits']['TRAIN']['exact']}"
+          f"/{best['metrics']['splits']['TRAIN']['case_count']} | "
+          f"HELD {best['metrics']['splits']['HELD']['exact']}"
+          f"/{best['metrics']['splits']['HELD']['case_count']} | "
+          f"OOD {best['metrics']['splits']['OOD']['exact']}"
+          f"/{best['metrics']['splits']['OOD']['case_count']}")
+    print(f"  relatorio: {HERE / 'relatorio_geral.md'}")
+
+
+if __name__ == "__main__":
+    main()
+```

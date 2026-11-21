@@ -610,29 +610,81 @@
   }
 
   .notion-code-block {
-    background: var(--bg-card, rgba(255, 255, 255, 0.04));
-    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin: 8px 0;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--text-main, #e0e0e0);
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    margin: 14px 0;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #d4d4d4;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 
   .notion-code-header {
-    font-size: 10px;
-    text-transform: uppercase;
-    color: var(--text-muted, #888);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 11px;
     font-weight: 600;
-    margin-bottom: 6px;
     user-select: none;
     letter-spacing: 0.5px;
   }
+
+  .code-lang-badge {
+    color: #9cdcfe;
+    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+  }
+
+  .code-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    color: #ccc;
+    font-size: 11px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .code-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+  }
+
+  .notion-code-content {
+    padding: 12px 16px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    outline: none;
+    tab-size: 2;
+  }
+
+  /* Syntax Highlighting Tokens (VS Code Dark+ Palette) */
+  .syn-key { color: #9cdcfe; font-weight: 500; }        /* JSON / Object keys (Light Blue) */
+  .syn-string { color: #ce9178; }                       /* Strings (Orange-Brown) */
+  .syn-number { color: #b5cea8; }                       /* Numbers (Light Green) */
+  .syn-boolean { color: #569cd6; font-weight: 500; }    /* Booleans (Blue) */
+  .syn-null { color: #569cd6; font-style: italic; }     /* null / None (Blue Italic) */
+  .syn-punct { color: #d4d4d4; opacity: 0.85; }         /* Delimiters { } [ ] : , */
+  .syn-tag { color: #569cd6; font-weight: 600; }        /* HTML/XML tags <div> (Blue) */
+  .syn-tag-bracket { color: #808080; }                  /* < > </ /> (Grey) */
+  .syn-attr { color: #9cdcfe; }                         /* HTML attributes (Light Blue) */
+  .syn-keyword { color: #c586c0; font-weight: 500; }    /* def, import, const, function (Purple) */
+  .syn-builtin { color: #4ec9b0; }                      /* print, console, Array (Teal) */
+  .syn-comment { color: #6a9955; font-style: italic; }  /* Comments #, //, <!-- (Green) */
+  .syn-operator { color: #d4d4d4; }                     /* =, +, -, *, / */
 
   /* Bullet List */
   ul.notion-bullet-list {
@@ -2062,27 +2114,216 @@
     }
   }
 
+  function escapeHtmlForCode(str) {
+    return (str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function detectCodeLanguage(code, hint) {
+    if (hint && hint.trim()) {
+      const cleanHint = hint.trim().toLowerCase();
+      if (['json', 'html', 'xml', 'python', 'py', 'javascript', 'js', 'typescript', 'ts', 'css', 'sql', 'bash', 'sh'].includes(cleanHint)) {
+        return cleanHint;
+      }
+    }
+    const trimmed = (code || '').trim();
+    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+      try {
+        JSON.parse(trimmed);
+        return 'json';
+      } catch (e) {
+        if (/^\s*\{[\s\S]*"[^"]+"\s*:/.test(trimmed)) return 'json';
+      }
+    }
+    if (/^<!DOCTYPE\s+html/i.test(trimmed) || /^<html[\s>]/i.test(trimmed) || (trimmed.startsWith('<') && trimmed.endsWith('>') && /<\/[a-z0-9_-]+>$/i.test(trimmed))) {
+      return 'html';
+    }
+    if (/(^|\n)\s*(def\s+\w+|import\s+\w+|from\s+\w+\s+import|class\s+\w+[:\(]|# -\*- coding)/.test(trimmed)) {
+      return 'python';
+    }
+    if (/(^|\n)\s*(const\s+\w+|let\s+\w+|function\s+\w*\(|import\s+.*\s+from\s+['"]|export\s+(default|const))/.test(trimmed)) {
+      return 'javascript';
+    }
+    return hint || 'text';
+  }
+
+  function highlightJSON(code) {
+    let formatted = code;
+    try {
+      const parsed = JSON.parse(code.trim());
+      formatted = JSON.stringify(parsed, null, 2);
+    } catch(e) {}
+
+    const tokenRegex = /("(?:\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*")(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)|([{}[\],:])/g;
+
+    return formatted.replace(tokenRegex, function(match, stringVal, isColon, boolOrNull, numberVal, punctVal) {
+      if (stringVal && isColon) {
+        return '<span class="syn-key">' + escapeHtmlForCode(stringVal) + '</span><span class="syn-punct">:</span>';
+      }
+      if (stringVal) {
+        return '<span class="syn-string">' + escapeHtmlForCode(stringVal) + '</span>';
+      }
+      if (boolOrNull) {
+        if (boolOrNull === 'null') return '<span class="syn-null">' + boolOrNull + '</span>';
+        return '<span class="syn-boolean">' + boolOrNull + '</span>';
+      }
+      if (numberVal) {
+        return '<span class="syn-number">' + numberVal + '</span>';
+      }
+      if (punctVal) {
+        return '<span class="syn-punct">' + escapeHtmlForCode(punctVal) + '</span>';
+      }
+      return escapeHtmlForCode(match);
+    });
+  }
+
+  function highlightHTML(code) {
+    const tagRegex = /(<!--[\s\S]*?-->|<!DOCTYPE[^>]*>|<\/?([a-zA-Z0-9\-]+)((\s+[^=>\s\/]+(\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?)*)\s*\/?>|[^<]+)/g;
+
+    return code.replace(tagRegex, function(match, tagMatch, tagName) {
+      if (match.startsWith('<!--')) {
+        return '<span class="syn-comment">' + escapeHtmlForCode(match) + '</span>';
+      }
+      if (match.toUpperCase().startsWith('<!DOCTYPE')) {
+        return '<span class="syn-tag">' + escapeHtmlForCode(match) + '</span>';
+      }
+      if (match.startsWith('<')) {
+        const isClosing = match.startsWith('</');
+        const isSelfClosing = match.endsWith('/>');
+        let result = '<span class="syn-tag-bracket">' + (isClosing ? '&lt;/' : '&lt;') + '</span>';
+        result += '<span class="syn-tag">' + escapeHtmlForCode(tagName) + '</span>';
+
+        const rawAttrs = match.slice(isClosing ? 2 + tagName.length : 1 + tagName.length, isSelfClosing ? -2 : -1);
+        if (rawAttrs) {
+          const attrRegex = /([a-zA-Z0-9\-_:@\.]+)(\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+          let attrHtml = rawAttrs.replace(attrRegex, function(m, aName, eqVal, q1, q2, bare) {
+            let aOut = ' <span class="syn-attr">' + escapeHtmlForCode(aName) + '</span>';
+            if (eqVal) {
+              aOut += '<span class="syn-punct">=</span>';
+              const val = q1 !== undefined ? '"' + q1 + '"' : (q2 !== undefined ? "'" + q2 + "'" : bare);
+              aOut += '<span class="syn-string">' + escapeHtmlForCode(val) + '</span>';
+            }
+            return aOut;
+          });
+          result += attrHtml;
+        }
+
+        result += '<span class="syn-tag-bracket">' + (isSelfClosing ? '/&gt;' : '&gt;') + '</span>';
+        return result;
+      }
+      return escapeHtmlForCode(match);
+    });
+  }
+
+  const PY_KEYWORDS = new Set(['def', 'class', 'import', 'from', 'return', 'if', 'elif', 'else', 'for', 'while', 'try', 'except', 'finally', 'with', 'as', 'in', 'is', 'not', 'and', 'or', 'lambda', 'yield', 'raise', 'pass', 'break', 'continue', 'async', 'await', 'self']);
+  const JS_KEYWORDS = new Set(['const', 'let', 'var', 'function', 'return', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'default', 'try', 'catch', 'finally', 'throw', 'class', 'extends', 'new', 'this', 'super', 'import', 'export', 'from', 'as', 'async', 'await', 'typeof', 'instanceof', 'void', 'delete']);
+
+  function highlightGeneralCode(code, lang) {
+    const isPy = (lang === 'python' || lang === 'py');
+    const kwSet = isPy ? PY_KEYWORDS : JS_KEYWORDS;
+
+    const lines = code.split('\n');
+    const outLines = lines.map(line => {
+      let commentIdx = isPy ? line.indexOf('#') : line.indexOf('//');
+      let codePart = commentIdx !== -1 ? line.substring(0, commentIdx) : line;
+      let commentPart = commentIdx !== -1 ? line.substring(commentIdx) : '';
+
+      const tokenRegex = /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(\b(?:True|False|None|true|false|null|undefined)\b)|(\b\d+(?:\.\d+)?\b)|(\b[a-zA-Z_]\w*\b)/g;
+
+      let highlighted = codePart.replace(tokenRegex, function(match, strVal, boolVal, numVal, identVal) {
+        if (strVal) {
+          return '<span class="syn-string">' + escapeHtmlForCode(strVal) + '</span>';
+        }
+        if (boolVal) {
+          return '<span class="syn-boolean">' + escapeHtmlForCode(boolVal) + '</span>';
+        }
+        if (numVal) {
+          return '<span class="syn-number">' + numVal + '</span>';
+        }
+        if (identVal) {
+          if (kwSet.has(identVal)) {
+            return '<span class="syn-keyword">' + escapeHtmlForCode(identVal) + '</span>';
+          }
+        }
+        return escapeHtmlForCode(match);
+      });
+
+      if (commentPart) {
+        highlighted += '<span class="syn-comment">' + escapeHtmlForCode(commentPart) + '</span>';
+      }
+      return highlighted;
+    });
+
+    return outLines.join('\n');
+  }
+
+  function highlightSyntax(code, lang) {
+    const norm = (lang || '').toLowerCase();
+    if (norm === 'json') return highlightJSON(code);
+    if (norm === 'html' || norm === 'xml') return highlightHTML(code);
+    if (norm === 'python' || norm === 'py' || norm === 'js' || norm === 'javascript' || norm === 'ts' || norm === 'typescript') {
+      return highlightGeneralCode(code, norm);
+    }
+    const detected = detectCodeLanguage(code, norm);
+    if (detected === 'json') return highlightJSON(code);
+    if (detected === 'html' || detected === 'xml') return highlightHTML(code);
+    if (detected === 'python' || detected === 'javascript') return highlightGeneralCode(code, detected);
+
+    return escapeHtmlForCode(code);
+  }
+
   function createCodeBlock(lang, code) {
     const wrap = createIsolatedWrapper('code-block');
-    wrap.setAttribute('data-lang', lang || 'text');
+    const detectedLang = detectCodeLanguage(code, lang);
+    wrap.setAttribute('data-lang', detectedLang || lang || 'text');
 
     const block = document.createElement('div');
     block.className = 'notion-code-block';
 
-    if (lang) {
-      const header = document.createElement('div');
-      header.className = 'notion-code-header';
-      header.innerText = lang;
-      block.appendChild(header);
-    }
+    const header = document.createElement('div');
+    header.className = 'notion-code-header';
+
+    const langBadge = document.createElement('span');
+    langBadge.className = 'code-lang-badge';
+    langBadge.innerText = (detectedLang || lang || 'CODE').toUpperCase();
+    header.appendChild(langBadge);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'code-copy-btn';
+    copyBtn.setAttribute('type', 'button');
+    copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> <span>Copiar</span>';
+
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const textToCopy = codeEl.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> <span style="color:#4ade80">Copiado!</span>';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> <span>Copiar</span>';
+        }, 2000);
+      });
+    });
+    header.appendChild(copyBtn);
+    block.appendChild(header);
 
     const codeEl = document.createElement('div');
     codeEl.className = 'notion-code-content';
     codeEl.contentEditable = 'true';
-    codeEl.innerText = code || '';
-    codeEl.addEventListener('input', scheduleSave);
-    block.appendChild(codeEl);
+    codeEl.spellcheck = false;
+    codeEl.innerHTML = highlightSyntax(code || '', detectedLang);
 
+    codeEl.addEventListener('input', scheduleSave);
+    codeEl.addEventListener('blur', () => {
+      const rawText = codeEl.innerText;
+      const reDetected = detectCodeLanguage(rawText, wrap.getAttribute('data-lang'));
+      wrap.setAttribute('data-lang', reDetected);
+      langBadge.innerText = reDetected.toUpperCase();
+      codeEl.innerHTML = highlightSyntax(rawText, reDetected);
+    });
+
+    block.appendChild(codeEl);
     wrap.appendChild(block);
     return wrap;
   }
@@ -2961,6 +3202,72 @@
         page.appendChild(createCodeBlock(lang, codeLines.join('\n')));
         i++;
         continue;
+      }
+
+      // Raw HTML block auto-detection (<!DOCTYPE html ... </html> or <html> ... </html>)
+      const trimmedLine = line.trim();
+      const lowerLine = trimmedLine.toLowerCase();
+      if (lowerLine.startsWith('<!doctype html') || lowerLine === '<html>' || lowerLine.startsWith('<html ')) {
+        const htmlLines = [line];
+        i++;
+        while (i < lines.length) {
+          htmlLines.push(lines[i]);
+          if (lines[i].trim().toLowerCase() === '</html>' || lines[i].trim().toLowerCase().endsWith('</html>')) {
+            i++;
+            break;
+          }
+          i++;
+        }
+        page.appendChild(createCodeBlock('html', htmlLines.join('\n')));
+        continue;
+      }
+
+      // Raw HTML <table> ... </table> auto-detection
+      if (lowerLine === '<table>' || lowerLine.startsWith('<table ')) {
+        const tableHtmlLines = [line];
+        i++;
+        while (i < lines.length) {
+          tableHtmlLines.push(lines[i]);
+          if (lines[i].trim().toLowerCase() === '</table>' || lines[i].trim().toLowerCase().endsWith('</table>')) {
+            i++;
+            break;
+          }
+          i++;
+        }
+        page.appendChild(createCodeBlock('html', tableHtmlLines.join('\n')));
+        continue;
+      }
+
+      // Raw Multi-line JSON auto-detection
+      if (trimmedLine === '{' || (trimmedLine.startsWith('{') && /^\s*\{\s*"/.test(trimmedLine))) {
+        let depth = 0;
+        const jsonLines = [];
+        let validJson = false;
+        let j = i;
+        while (j < lines.length) {
+          const l = lines[j];
+          jsonLines.push(l);
+          for (let c of l) {
+            if (c === '{') depth++;
+            else if (c === '}') depth--;
+          }
+          if (depth === 0) {
+            validJson = true;
+            break;
+          }
+          j++;
+        }
+        if (validJson && jsonLines.length > 1) {
+          const jsonText = jsonLines.join('\n');
+          try {
+            JSON.parse(jsonText);
+            page.appendChild(createCodeBlock('json', jsonText));
+            i = j + 1;
+            continue;
+          } catch(e) {
+            // Not valid JSON, continue with normal parsing
+          }
+        }
       }
 
       // Headings 1-4
