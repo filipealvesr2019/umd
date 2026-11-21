@@ -7,7 +7,9 @@
 
 
 
+
 ### Heading 3
+
 
 
 
@@ -28,6 +30,7 @@ Item B | 2 | $200
 
 
 
+
 [CHART title="Training vs Validation Loss" type="line"]
 Point | Train ds | dsLoss | ds3
 epoca 1 | 0.85 | 0.92 | 0.36
@@ -39,10 +42,17 @@ Epoch 5 | 0.26 | 0.45 | 0.36
 
 
 
+[CHART title="Model Benchmark Comparison (MMLU %)" type="bar"]
+GPT-4o | 88.5
+Claude 3.5 Sonnet | 89.2
+Gemini 1.5 Pro | 86.4
+Our AI Model | 92.1
+[/CHART]
+
 
 [CHART title="Inference Latency by Context (ms)" type="column"]
 1k ctx | 18
-8k ctx | 24
+dsadsadsadsadsadsa | 24
 32k ctx | 35
 128k ctx | 48
 New Col | 40
