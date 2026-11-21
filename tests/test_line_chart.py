@@ -103,4 +103,21 @@ def test_direct_line_chart_no_table_and_interactions():
         new_point_count = page.locator('.chart-point').count()
         assert new_point_count > 8
         
+        # 9. Test clicking X-axis label to edit text
+        first_x_label = page.locator('.editable-x-label').first
+        assert first_x_label.count() == 1
+        first_x_label.click()
+        
+        inline_input = page.locator('.axis-x-inline-input')
+        assert inline_input.count() == 1
+        inline_input.fill("Epoch Alpha")
+        inline_input.press("Enter")
+        
+        # Verify text updated on SVG
+        assert page.locator('.editable-x-label').first.text_content() == "Epoch Alpha"
+        
+        # Verify serialization has new label
+        ser = page.evaluate("() => serializeDocument()")
+        assert "Epoch Alpha" in ser
+        
         browser.close()
