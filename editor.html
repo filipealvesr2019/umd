@@ -107,6 +107,8 @@
     margin: 20px 0;
     border-radius: 8px;
     transition: box-shadow 0.15s ease;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .isolated-element:hover {
@@ -250,6 +252,8 @@
     border-radius: 8px;
     padding: 16px 18px;
     margin: 16px 0;
+    width: 100%;
+    box-sizing: border-box;
   }
   .chart-header {
     display: flex;
@@ -413,18 +417,33 @@
     display: flex;
     align-items: flex-end;
     gap: 16px;
-    height: 170px;
+    height: 220px;
     padding: 16px 8px 6px;
     margin-top: 10px;
     border-bottom: 1px solid var(--border-subtle);
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .chart-columns-container::-webkit-scrollbar {
+    height: 6px;
+  }
+  .chart-columns-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
   }
   .column-bar-item {
-    flex: 1;
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+    flex: 0 0 48px;
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 100%;
     position: relative;
+    box-sizing: border-box;
   }
   .column-bar-item:hover .delete-col-btn {
     opacity: 1;
@@ -444,24 +463,30 @@
     color: var(--danger);
   }
   .column-val-input {
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--text-heading);
     margin-bottom: 6px;
     outline: none;
     cursor: text;
+    text-align: center;
+    width: 100%;
   }
   .column-track {
     flex: 1;
-    width: 28px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 5px 5px 0 0;
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    background: transparent;
+    border-radius: 6px 6px 0 0;
     display: flex;
     align-items: flex-end;
+    justify-content: center;
+    box-sizing: border-box;
   }
   .column-fill {
     width: 100%;
-    border-radius: 5px 5px 0 0;
+    border-radius: 6px 6px 0 0;
     transition: height 0.3s ease;
   }
   .column-lbl-input {
@@ -472,6 +497,36 @@
     cursor: text;
     white-space: nowrap;
     text-align: center;
+    width: 48px;
+    max-width: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    box-sizing: border-box;
+  }
+  .column-lbl-input:hover {
+    color: #ffffff;
+  }
+  .column-lbl-tooltip {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #18181b;
+    border: 1px solid #3f3f46;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    color: #f4f4f5;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 60;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  .column-bar-item:hover .column-lbl-tooltip {
+    opacity: 1;
   }
 
   /* Chart: Multi-Series Direct-Manipulation Line Chart */
@@ -2071,7 +2126,7 @@
 
     // 1. Remove all editor UI buttons, toolbars, actions, scrollbars
     clone.querySelectorAll(
-      '.element-toolbar, .delete-stage-btn, .delete-series-btn, .line-row-del-btn, .delete-bar-btn, .delete-col-btn, .code-copy-btn, .code-gutter, ' +
+      '.column-lbl-tooltip, .element-toolbar, .delete-stage-btn, .delete-series-btn, .line-row-del-btn, .delete-bar-btn, .delete-col-btn, .code-copy-btn, .code-gutter, ' +
       '.table-actions, .pipeline-actions, .chart-actions, .add-block-btn, ' +
       '.notion-drag-handle, .table-top-scroll, .format-bar, .umd-context-menu'
     ).forEach(el => el.remove());
@@ -4065,12 +4120,24 @@
         lbl.className = 'column-lbl-input';
         lbl.contentEditable = 'true';
         lbl.innerText = label;
-        lbl.addEventListener('input', scheduleSave);
+        lbl.title = label;
+
+        const tip = document.createElement('div');
+        tip.className = 'column-lbl-tooltip';
+        tip.innerText = label;
+
+        lbl.addEventListener('input', () => {
+          const txt = lbl.innerText.trim();
+          lbl.title = txt;
+          tip.innerText = txt;
+          scheduleSave();
+        });
 
         item.appendChild(del);
         item.appendChild(val);
         item.appendChild(track);
         item.appendChild(lbl);
+        item.appendChild(tip);
         colWrap.appendChild(item);
         recalculateColumns();
       }
