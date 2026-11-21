@@ -336,6 +336,46 @@ hr { border: 0; border-top: 1px solid var(--umd-border); margin: 2em 0; }
   margin-top: 6px;
 }
 
+/* ---------- comparison chart ---------- */
+.umd-comparison-legend {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.umd-comparison-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--umd-text);
+}
+.umd-comparison-legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.umd-comparison-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+.umd-comparison-bars-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  flex: 1;
+}
+.umd-comparison-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
 .umd-pipeline {
   margin: 1.4em 0;
   padding: 16px 20px;

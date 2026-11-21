@@ -121,3 +121,76 @@ def test_direct_line_chart_no_table_and_interactions():
         assert "Epoch Alpha" in ser
         
         browser.close()
+
+
+def test_curved_line_chart():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(f"file:///{str(EDITOR_HTML).replace('\\', '/')}")
+
+        curved_umd = """
+[CHART title="Curved Trajectory" type="curved"]
+Point | Series A | Series B
+Jan | 50 | 20
+Feb | 70 | 40
+Mar | 65 | 35
+[/CHART]
+"""
+        page.evaluate("(text) => renderDocument(text)", curved_umd)
+
+        # Verify curved path is rendered
+        curved_path = page.locator('path.chart-polyline')
+        assert curved_path.count() == 2
+
+        # Verify points count: 3 points * 2 series = 6
+        assert page.locator('.chart-point').count() == 6
+
+        # Verify hitarea exists for curve
+        assert page.locator('path.chart-line-hitarea').count() == 2
+
+        # Verify serialization
+        ser = page.evaluate("() => serializeDocument()")
+        assert 'type="curved"' in ser
+        assert "Jan | 50 | 20" in ser
+
+        browser.close()
+
+
+def test_comparison_column_chart():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(f"file:///{str(EDITOR_HTML).replace('\\', '/')}")
+
+        comp_umd = """
+[CHART title="European Population" type="comparison" series="2013, 2021"]
+Germany | 80.6 | 83.2
+Spain | 46.6 | 47.4
+[/CHART]
+"""
+        page.evaluate("(text) => renderDocument(text)", comp_umd)
+
+        # Verify comparison groups count
+        groups = page.locator('.comparison-group-item')
+        assert groups.count() == 2
+
+        # Verify comparison series legend
+        legends = page.locator('.comparison-legend-item')
+        assert legends.count() == 2
+
+        # Verify comparison bars count: 2 groups * 2 series = 4
+        assert page.locator('.comparison-bar-col').count() == 4
+
+        # Edit a value
+        first_val = page.locator('.comparison-val-input').first
+        first_val.fill("99.9")
+        first_val.dispatch_event('input')
+
+        # Verify serialization reflects update
+        ser = page.evaluate("() => serializeDocument()")
+        assert 'type="comparison"' in ser
+        assert 'series="2013, 2021"' in ser
+        assert "Germany | 99.9 | 83.2" in ser
+
+        browser.close()

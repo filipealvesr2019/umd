@@ -540,6 +540,174 @@
     opacity: 1;
   }
 
+  /* Chart: Comparison / Grouped Column */
+  .chart-comparison-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    height: 250px;
+    padding: 24px 16px 28px;
+    margin-top: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .chart-comparison-container::-webkit-scrollbar {
+    height: 6px;
+  }
+  .chart-comparison-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+  .comparison-legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+  .comparison-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text-heading);
+  }
+  .comparison-legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .comparison-legend-name {
+    outline: none;
+    cursor: text;
+  }
+  .delete-series-btn {
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color 0.15s ease;
+  }
+  .delete-series-btn:hover {
+    color: var(--danger);
+  }
+  .comparison-group-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  .comparison-group-item:hover .delete-group-btn {
+    opacity: 1;
+  }
+  .delete-group-btn {
+    opacity: 0;
+    position: absolute;
+    top: -14px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .delete-group-btn:hover {
+    color: var(--danger);
+  }
+  .comparison-bars-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    flex: 1;
+    position: relative;
+  }
+  .comparison-bar-col {
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    box-sizing: border-box;
+  }
+  .comparison-val-input {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-bottom: 4px;
+    outline: none;
+    cursor: text;
+    text-align: center;
+    width: 36px;
+    white-space: nowrap;
+    overflow: visible;
+    flex-shrink: 0;
+  }
+  .comparison-bar-fill {
+    width: 100%;
+    border-radius: 5px 5px 0 0;
+    transition: height 0.3s ease;
+    flex-shrink: 0;
+  }
+  .comparison-group-lbl {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    margin-bottom: 2px;
+    outline: none;
+    cursor: text;
+    white-space: nowrap;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    box-sizing: border-box;
+  }
+  .comparison-group-lbl:hover {
+    color: #ffffff;
+  }
+  .comparison-lbl-tooltip {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #18181b;
+    border: 1px solid #52525b;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #ffffff;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 100;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  }
+  .comparison-group-item:hover .comparison-lbl-tooltip {
+    opacity: 1;
+  }
+
   /* Chart: Multi-Series Direct-Manipulation Line Chart */
   .chart-line-container {
     display: flex;
@@ -1714,6 +1882,14 @@
     <span class="menu-shortcut"></span>
   </div>
 
+  <div class="menu-item" data-action="add-chart-curved">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c4-8 8-12 11-4s5 2 7-6"/></svg>
+    </span>
+    <span class="menu-title">Curved Line Chart</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
   <div class="menu-item" data-action="add-chart-bar">
     <span class="menu-icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -1727,6 +1903,14 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="4" height="11" rx="1"/><rect x="10" y="5" width="4" height="16" rx="1"/><rect x="17" y="2" width="4" height="19" rx="1"/></svg>
     </span>
     <span class="menu-title">Vertical Column Chart</span>
+    <span class="menu-shortcut"></span>
+  </div>
+
+  <div class="menu-item" data-action="add-chart-comparison">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="3" height="13" rx="1"/><rect x="6" y="5" width="3" height="16" rx="1"/><rect x="13" y="11" width="3" height="10" rx="1"/><rect x="17" y="3" width="3" height="18" rx="1"/></svg>
+    </span>
+    <span class="menu-title">Comparison Column Chart</span>
     <span class="menu-shortcut"></span>
   </div>
 
@@ -2137,7 +2321,7 @@
 
     // 1. Remove all editor UI buttons, toolbars, actions, scrollbars
     clone.querySelectorAll(
-      '.column-lbl-tooltip, .element-toolbar, .delete-stage-btn, .delete-series-btn, .line-row-del-btn, .delete-bar-btn, .delete-col-btn, .code-copy-btn, .code-gutter, ' +
+      '.comparison-lbl-tooltip, .delete-group-btn, .column-lbl-tooltip, .element-toolbar, .delete-stage-btn, .delete-series-btn, .line-row-del-btn, .delete-bar-btn, .delete-col-btn, .code-copy-btn, .code-gutter, ' +
       '.table-actions, .pipeline-actions, .chart-actions, .add-block-btn, ' +
       '.notion-drag-handle, .table-top-scroll, .format-bar, .umd-context-menu'
     ).forEach(el => el.remove());
@@ -2207,6 +2391,33 @@
           let trs = points.map(p => {
             let tds = '<td style="padding:6px 8px; color:#fff;">' + (p.label || '') + '</td>' +
               (p.values || []).map(val => '<td style="text-align:right; padding:6px 8px; color:#38bdf8; font-weight:bold;">' + val + '</td>').join('');
+            return '<tr style="border-bottom:1px solid #333;">' + tds + '</tr>';
+          }).join('');
+          wrap.innerHTML = '<div style="font-weight:bold; font-size:14px; margin-bottom:10px; color:#fff;">' + title + '</div><table style="width:100%; border-collapse:collapse; font-size:13px;"><thead><tr style="border-bottom:2px solid #555;">' + ths + '</tr></thead><tbody>' + trs + '</tbody></table>';
+          chartEl.replaceWith(wrap);
+        }
+        return;
+      }
+      if (cType === 'comparison' || chartEl.querySelector('.chart-comparison-container')) {
+        const title = chartEl.getAttribute('data-title') || chartEl.querySelector('.chart-title-input')?.innerText.trim() || 'Comparison Chart';
+        let seriesNames = [];
+        try {
+          seriesNames = JSON.parse(chartEl.getAttribute('data-comparison-series') || '[]');
+        } catch (e) {}
+        if (seriesNames.length === 0) {
+          seriesNames = Array.from(chartEl.querySelectorAll('.comparison-legend-name')).map(el => el.innerText.trim()).filter(Boolean);
+        }
+        const groupEls = Array.from(chartEl.querySelectorAll('.comparison-group-item'));
+        if (groupEls.length > 0) {
+          const wrap = document.createElement('div');
+          wrap.setAttribute('style', 'margin:16px 0; padding:14px; background:#1e1e1e; border:1px solid #333; border-radius:8px;');
+          let ths = '<th style="text-align:left; padding:6px 8px; color:#aaa;">Category</th>' +
+            seriesNames.map(s => '<th style="text-align:right; padding:6px 8px; color:#aaa;">' + s + '</th>').join('');
+          let trs = groupEls.map(g => {
+            const lbl = g.querySelector('.comparison-group-lbl')?.innerText.trim() || '';
+            const vals = Array.from(g.querySelectorAll('.comparison-val-input')).map(v => v.innerText.trim());
+            let tds = '<td style="padding:6px 8px; color:#fff;">' + lbl + '</td>' +
+              vals.map(val => '<td style="text-align:right; padding:6px 8px; color:#38bdf8; font-weight:bold;">' + val + '</td>').join('');
             return '<tr style="border-bottom:1px solid #333;">' + tds + '</tr>';
           }).join('');
           wrap.innerHTML = '<div style="font-weight:bold; font-size:14px; margin-bottom:10px; color:#fff;">' + title + '</div><table style="width:100%; border-collapse:collapse; font-size:13px;"><thead><tr style="border-bottom:2px solid #555;">' + ths + '</tr></thead><tbody>' + trs + '</tbody></table>';
@@ -2501,6 +2712,26 @@
         { label: 'Epoch 3', values: ['0.45', '0.58'] },
         { label: 'Epoch 4', values: ['0.34', '0.49'] },
         { label: 'Epoch 5', values: ['0.26', '0.45'] }
+      ]);
+    } else if (action === 'add-chart-curved') {
+      newElement = createLineChartElement('Metric Trajectory Trends', ['Series A', 'Series B', 'Series C'], [
+        { label: 'Jan 2020', values: ['74', '50', '-2'] },
+        { label: 'Mar 2020', values: ['60', '7', '-18'] },
+        { label: 'May 2020', values: ['68', '21', '-5'] },
+        { label: 'Jul 2020', values: ['54', '-8', '-16'] },
+        { label: 'Sep 2020', values: ['58', '14', '0'] },
+        { label: 'Nov 2020', values: ['56', '8', '-14'] },
+        { label: 'Dec 2020', values: ['80', '23', '-12'] }
+      ], true);
+    } else if (action === 'add-chart-comparison') {
+      newElement = createComparisonChartElement('Population of Selected European Countries in 2013 and 2021', ['2013', '2021'], [
+        { label: 'Germany', values: ['80.6', '83.2'] },
+        { label: 'Spain', values: ['46.6', '47.4'] },
+        { label: 'France', values: ['65.8', '67.7'] },
+        { label: 'Croatia', values: ['4.3', '4.0'] },
+        { label: 'Italy', values: ['60.2', '59.1'] },
+        { label: 'Poland', values: ['38.0', '37.7'] },
+        { label: 'Portugal', values: ['10.5', '10.3'] }
       ]);
     } else if (action === 'add-pipeline') {
       newElement = createPipelineElement('Inference Architecture Pipeline', [
@@ -3376,10 +3607,11 @@
     return wrapper;
   }
 
-  function createLineChartElement(title, seriesNames, dataPoints) {
+  function createLineChartElement(title, seriesNames, dataPoints, isCurved) {
+    isCurved = Boolean(isCurved);
     const wrapper = createIsolatedWrapper('chart');
-    wrapper.setAttribute('data-title', title || 'Line Chart');
-    wrapper.setAttribute('data-chart-type', 'line');
+    wrapper.setAttribute('data-title', title || (isCurved ? 'Curved Line Chart' : 'Line Chart'));
+    wrapper.setAttribute('data-chart-type', isCurved ? 'curved' : 'line');
 
     const chartBlock = document.createElement('div');
     chartBlock.className = 'notion-chart-block';
@@ -3389,7 +3621,7 @@
     const titleInput = document.createElement('div');
     titleInput.className = 'chart-title-input';
     titleInput.contentEditable = 'true';
-    titleInput.innerText = title || 'Line Chart';
+    titleInput.innerText = title || (isCurved ? 'Curved Line Chart' : 'Line Chart');
     titleInput.addEventListener('input', () => {
       wrapper.setAttribute('data-title', titleInput.innerText.trim());
       scheduleSave();
@@ -3397,13 +3629,13 @@
 
     const hint = document.createElement('span');
     hint.className = 'chart-help-hint';
-    hint.innerText = 'Click canvas: +Line • Click line: +Point • Click point: Edit/Delete';
+    hint.innerText = isCurved ? 'Click canvas: +Curve • Click curve: +Point • Click point: Edit/Delete' : 'Click canvas: +Line • Click line: +Point • Click point: Edit/Delete';
 
     header.appendChild(titleInput);
     header.appendChild(hint);
     chartBlock.appendChild(header);
 
-    const linePalette = ['#2dd4bf', '#f59e0b', '#38bdf8', '#ec4899', '#a855f7', '#10b981', '#eab308'];
+    const linePalette = isCurved ? ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#a855f7', '#ec4899', '#38bdf8'] : ['#2dd4bf', '#f59e0b', '#38bdf8', '#ec4899', '#a855f7', '#10b981', '#eab308'];
 
     let series = (seriesNames && seriesNames.length > 0) ? [...seriesNames] : ['Train Loss', 'Val Loss'];
     let points = (dataPoints && dataPoints.length > 0) ? JSON.parse(JSON.stringify(dataPoints)) : [
@@ -3508,8 +3740,8 @@
 
       const addLineBtn = document.createElement('button');
       addLineBtn.className = 'chart-btn';
-      addLineBtn.innerText = '+ Add Line';
-      addLineBtn.title = 'Add new line series';
+      addLineBtn.innerText = isCurved ? '+ Add Curve' : '+ Add Line';
+      addLineBtn.title = isCurved ? 'Add new curved series' : 'Add new line series';
       addLineBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         addNewLine();
@@ -3773,28 +4005,31 @@
         const color = linePalette[sIdx % linePalette.length];
         const polyCoords = [];
 
-        points.forEach((p, pIdx) => {
+        const pts = points.map((p, pIdx) => {
           const val = (p.values && p.values[sIdx] !== undefined) ? p.values[sIdx] : '0';
-          const cx = getX(pIdx);
-          const cy = getY(val);
-          polyCoords.push(cx.toFixed(1) + ',' + cy.toFixed(1));
+          return { x: getX(pIdx), y: getY(val) };
         });
 
-        const pointsStr = polyCoords.join(' ');
+        function getCurvedPathD(ptsList) {
+          if (ptsList.length === 0) return '';
+          if (ptsList.length === 1) return `M ${ptsList[0].x.toFixed(1)},${ptsList[0].y.toFixed(1)}`;
+          if (ptsList.length === 2) return `M ${ptsList[0].x.toFixed(1)},${ptsList[0].y.toFixed(1)} L ${ptsList[1].x.toFixed(1)},${ptsList[1].y.toFixed(1)}`;
+          let d = `M ${ptsList[0].x.toFixed(1)},${ptsList[0].y.toFixed(1)}`;
+          for (let i = 0; i < ptsList.length - 1; i++) {
+            const p0 = i > 0 ? ptsList[i - 1] : ptsList[i];
+            const p1 = ptsList[i];
+            const p2 = ptsList[i + 1];
+            const p3 = i < ptsList.length - 2 ? ptsList[i + 2] : p2;
+            const cp1x = p1.x + (p2.x - p0.x) / 6;
+            const cp1y = p1.y + (p2.y - p0.y) / 6;
+            const cp2x = p2.x - (p3.x - p1.x) / 6;
+            const cp2y = p2.y - (p3.y - p1.y) / 6;
+            d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+          }
+          return d;
+        }
 
-        // Visible Polyline
-        const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-        polyline.setAttribute('points', pointsStr);
-        polyline.setAttribute('class', 'chart-polyline');
-        polyline.setAttribute('stroke', color);
-        svg.appendChild(polyline);
-
-        // Invisible Wide Hitarea to click and add a point on this line
-        const hitarea = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-        hitarea.setAttribute('points', pointsStr);
-        hitarea.setAttribute('class', 'chart-line-hitarea');
-        hitarea.setAttribute('title', 'Click to add point here');
-        hitarea.addEventListener('click', (e) => {
+        const onLineHit = (e) => {
           e.stopPropagation();
           const wrapRect = svg.getBoundingClientRect();
           const clickSvgX = ((e.clientX - wrapRect.left) / wrapRect.width) * w;
@@ -3835,8 +4070,46 @@
             const newPtY = (getY(valStr) / h) * wrapR.height;
             showPointPopover(insertIdx, sIdx, newPtX, newPtY);
           }, 50);
-        });
-        svg.appendChild(hitarea);
+        };
+
+        if (isCurved) {
+          const pathD = getCurvedPathD(pts);
+
+          const curveEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          curveEl.setAttribute('d', pathD);
+          curveEl.setAttribute('class', 'chart-polyline');
+          curveEl.setAttribute('fill', 'none');
+          curveEl.setAttribute('stroke', color);
+          curveEl.setAttribute('stroke-width', '3');
+          curveEl.setAttribute('stroke-linecap', 'round');
+          curveEl.setAttribute('stroke-linejoin', 'round');
+          svg.appendChild(curveEl);
+
+          const hitarea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          hitarea.setAttribute('d', pathD);
+          hitarea.setAttribute('fill', 'none');
+          hitarea.setAttribute('stroke', 'transparent');
+          hitarea.setAttribute('stroke-width', '24');
+          hitarea.setAttribute('class', 'chart-line-hitarea');
+          hitarea.setAttribute('title', 'Click to add point here');
+          hitarea.addEventListener('click', onLineHit);
+          svg.appendChild(hitarea);
+        } else {
+          const pointsStr = pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+
+          const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+          polyline.setAttribute('points', pointsStr);
+          polyline.setAttribute('class', 'chart-polyline');
+          polyline.setAttribute('stroke', color);
+          svg.appendChild(polyline);
+
+          const hitarea = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+          hitarea.setAttribute('points', pointsStr);
+          hitarea.setAttribute('class', 'chart-line-hitarea');
+          hitarea.setAttribute('title', 'Click to add point here');
+          hitarea.addEventListener('click', onLineHit);
+          svg.appendChild(hitarea);
+        }
 
         // Point Circles
         points.forEach((p, pIdx) => {
@@ -3940,6 +4213,250 @@
       syncDataset();
       renderLegend();
       renderSvg();
+    }
+
+    renderAll();
+    return wrapper;
+  }
+
+  function createComparisonChartElement(title, seriesNames, groupsData) {
+    const wrapper = createIsolatedWrapper('chart');
+    wrapper.setAttribute('data-title', title || 'Comparison Chart');
+    wrapper.setAttribute('data-chart-type', 'comparison');
+
+    const chartBlock = document.createElement('div');
+    chartBlock.className = 'notion-chart-block';
+
+    const header = document.createElement('div');
+    header.className = 'chart-header';
+    const titleInput = document.createElement('div');
+    titleInput.className = 'chart-title-input';
+    titleInput.contentEditable = 'true';
+    titleInput.innerText = title || 'Population of Selected European Countries in 2013 and 2021';
+    titleInput.addEventListener('input', () => {
+      wrapper.setAttribute('data-title', titleInput.innerText.trim());
+      scheduleSave();
+    });
+
+    const hint = document.createElement('span');
+    hint.className = 'chart-help-hint';
+    hint.innerText = 'Click value/name to edit • Add comparison series to compare multiple metrics';
+
+    header.appendChild(titleInput);
+    header.appendChild(hint);
+    chartBlock.appendChild(header);
+
+    const compPalette = ['#f59e0b', '#10b981', '#38bdf8', '#ec4899', '#a855f7', '#ef4444', '#14b8a6', '#6366f1'];
+
+    let series = (seriesNames && seriesNames.length > 0) ? [...seriesNames] : ['2013', '2021'];
+    let groups = (groupsData && groupsData.length > 0) ? JSON.parse(JSON.stringify(groupsData)) : [
+      { label: 'Germany', values: ['80.6', '83.2'] },
+      { label: 'Spain', values: ['46.6', '47.4'] },
+      { label: 'France', values: ['65.8', '67.7'] },
+      { label: 'Croatia', values: ['4.3', '4.0'] },
+      { label: 'Italy', values: ['60.2', '59.1'] },
+      { label: 'Poland', values: ['38.0', '37.7'] },
+      { label: 'Portugal', values: ['10.5', '10.3'] }
+    ];
+
+    function syncDataset() {
+      wrapper.setAttribute('data-comparison-series', JSON.stringify(series));
+      wrapper.setAttribute('data-comparison-groups', JSON.stringify(groups));
+    }
+
+    const legend = document.createElement('div');
+    legend.className = 'comparison-legend';
+
+    const chartContainer = document.createElement('div');
+    chartContainer.className = 'chart-comparison-container';
+
+    const actions = document.createElement('div');
+    actions.className = 'chart-actions';
+
+    function recalculateComparisonHeights() {
+      let maxVal = 10.0;
+      groups.forEach(g => {
+        (g.values || []).forEach(v => {
+          const num = parseFloat(String(v).replace(/[^0-9.-]/g, '')) || 0;
+          if (num > maxVal) maxVal = num;
+        });
+      });
+
+      const groupEls = chartContainer.querySelectorAll('.comparison-group-item');
+      groupEls.forEach((gEl) => {
+        const valInputs = gEl.querySelectorAll('.comparison-val-input');
+        const fills = gEl.querySelectorAll('.comparison-bar-fill');
+        valInputs.forEach((vInp, sIdx) => {
+          const num = parseFloat(String(vInp.innerText).replace(/[^0-9.-]/g, '')) || 0;
+          const pct = Math.min(84, Math.max(0, (num / maxVal) * 84));
+          if (fills[sIdx]) fills[sIdx].style.height = pct + '%';
+        });
+      });
+    }
+
+    function renderLegend() {
+      legend.innerHTML = '';
+      series.forEach((sName, sIdx) => {
+        const color = compPalette[sIdx % compPalette.length];
+        const item = document.createElement('div');
+        item.className = 'comparison-legend-item';
+
+        const colorDot = document.createElement('span');
+        colorDot.className = 'comparison-legend-color';
+        colorDot.style.background = color;
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'comparison-legend-name';
+        nameSpan.contentEditable = 'true';
+        nameSpan.innerText = sName;
+        nameSpan.title = 'Click to rename comparison series';
+        nameSpan.addEventListener('input', () => {
+          series[sIdx] = nameSpan.innerText.trim();
+          syncDataset();
+          scheduleSave();
+        });
+
+        item.appendChild(colorDot);
+        item.appendChild(nameSpan);
+
+        if (series.length > 1) {
+          const delBtn = document.createElement('button');
+          delBtn.className = 'delete-series-btn';
+          delBtn.innerHTML = '&times;';
+          delBtn.title = 'Remove this comparison series';
+          delBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            series.splice(sIdx, 1);
+            groups.forEach(g => {
+              if (g.values) g.values.splice(sIdx, 1);
+            });
+            renderAll();
+            scheduleSave();
+          });
+          item.appendChild(delBtn);
+        }
+
+        legend.appendChild(item);
+      });
+
+      const addSeriesBtn = document.createElement('button');
+      addSeriesBtn.className = 'chart-btn';
+      addSeriesBtn.innerText = '+ Add Comparison Series';
+      addSeriesBtn.title = 'Add another series to compare across all groups';
+      addSeriesBtn.addEventListener('click', () => {
+        const newSeriesName = 'Series ' + (series.length + 1);
+        series.push(newSeriesName);
+        groups.forEach(g => {
+          if (!g.values) g.values = [];
+          g.values.push('50.0');
+        });
+        renderAll();
+        scheduleSave();
+      });
+      legend.appendChild(addSeriesBtn);
+    }
+
+    function renderGroups() {
+      chartContainer.innerHTML = '';
+      groups.forEach((g, gIdx) => {
+        const gItem = document.createElement('div');
+        gItem.className = 'comparison-group-item';
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'delete-group-btn';
+        delBtn.innerHTML = '&times;';
+        delBtn.title = 'Remove group';
+        delBtn.addEventListener('click', () => {
+          groups.splice(gIdx, 1);
+          renderAll();
+          scheduleSave();
+        });
+        gItem.appendChild(delBtn);
+
+        const barsRow = document.createElement('div');
+        barsRow.className = 'comparison-bars-row';
+
+        series.forEach((_, sIdx) => {
+          const val = (g.values && g.values[sIdx] !== undefined) ? g.values[sIdx] : '0';
+          const color = compPalette[sIdx % compPalette.length];
+
+          const col = document.createElement('div');
+          col.className = 'comparison-bar-col';
+
+          const valInp = document.createElement('div');
+          valInp.className = 'comparison-val-input';
+          valInp.contentEditable = 'true';
+          valInp.innerText = val;
+          valInp.addEventListener('input', () => {
+            if (!g.values) g.values = [];
+            g.values[sIdx] = valInp.innerText.trim();
+            recalculateComparisonHeights();
+            syncDataset();
+            scheduleSave();
+          });
+
+          const fill = document.createElement('div');
+          fill.className = 'comparison-bar-fill';
+          fill.style.background = color;
+
+          col.appendChild(valInp);
+          col.appendChild(fill);
+          barsRow.appendChild(col);
+        });
+        gItem.appendChild(barsRow);
+
+        const lbl = document.createElement('div');
+        lbl.className = 'comparison-group-lbl';
+        lbl.contentEditable = 'true';
+        lbl.innerText = g.label || ('Group ' + (gIdx + 1));
+        lbl.title = g.label || '';
+        const groupWidth = Math.max(48, series.length * 32 + (series.length - 1) * 5);
+        lbl.style.width = groupWidth + 'px';
+        lbl.style.maxWidth = Math.max(120, groupWidth) + 'px';
+
+        const tip = document.createElement('div');
+        tip.className = 'comparison-lbl-tooltip';
+        tip.innerText = g.label || '';
+
+        lbl.addEventListener('input', () => {
+          const txt = lbl.innerText.trim();
+          g.label = txt;
+          lbl.title = txt;
+          tip.innerText = txt;
+          syncDataset();
+          scheduleSave();
+        });
+
+        gItem.appendChild(lbl);
+        gItem.appendChild(tip);
+        chartContainer.appendChild(gItem);
+      });
+    }
+
+    const addGroupBtn = document.createElement('button');
+    addGroupBtn.className = 'chart-btn';
+    addGroupBtn.innerText = '+ Add Group';
+    addGroupBtn.addEventListener('click', () => {
+      const defVals = series.map(() => '40.0');
+      groups.push({
+        label: 'New Country',
+        values: defVals
+      });
+      renderAll();
+      scheduleSave();
+    });
+    actions.appendChild(addGroupBtn);
+
+    chartBlock.appendChild(legend);
+    chartBlock.appendChild(chartContainer);
+    chartBlock.appendChild(actions);
+    wrapper.appendChild(chartBlock);
+
+    function renderAll() {
+      syncDataset();
+      renderLegend();
+      renderGroups();
+      recalculateComparisonHeights();
     }
 
     renderAll();
@@ -4704,7 +5221,8 @@
           if (lines[i].trim()) chartLines.push(lines[i].trim());
           i++;
         }
-        if (cType === 'line') {
+        if (cType === 'line' || cType === 'curved' || cType === 'spline') {
+          const isCurved = (cType === 'curved' || cType === 'spline');
           let seriesNames = [];
           const dataPoints = [];
           if (chartLines.length > 0) {
@@ -4724,7 +5242,34 @@
               dataPoints.push({ label, values: vals });
             }
           }
-          page.appendChild(createLineChartElement(cTitle, seriesNames, dataPoints));
+          page.appendChild(createLineChartElement(cTitle, seriesNames, dataPoints, isCurved));
+          i++;
+          continue;
+        }
+        if (cType === 'comparison' || cType === 'grouped-column' || cType === 'grouped-bar') {
+          let seriesNames = [];
+          let seriesAttr = line.match(/series="([^"]+)"/);
+          if (seriesAttr) {
+            seriesNames = seriesAttr[1].split(',').map(s => s.trim());
+          }
+          const groupsData = [];
+          let startRow = 0;
+          if (seriesNames.length === 0 && chartLines.length > 0) {
+            const firstParts = chartLines[0].split('|').map(s => s.trim());
+            if (isNaN(parseFloat(firstParts[1] || ''))) {
+              seriesNames = firstParts.slice(1);
+              startRow = 1;
+            } else {
+              seriesNames = ['Series 1', 'Series 2'];
+            }
+          }
+          for (let r = startRow; r < chartLines.length; r++) {
+            const parts = chartLines[r].split('|').map(s => s.trim());
+            const label = parts[0];
+            const vals = parts.slice(1);
+            groupsData.push({ label, values: vals });
+          }
+          page.appendChild(createComparisonChartElement(cTitle, seriesNames, groupsData));
           i++;
           continue;
         }
@@ -4937,7 +5482,7 @@
         const title = block.getAttribute('data-title') || 'Benchmark Chart';
         const chartType = block.getAttribute('data-chart-type') || 'bar';
         lines.push('[CHART title="' + title + '" type="' + chartType + '"]');
-        if (chartType === 'line') {
+        if (chartType === 'line' || chartType === 'curved' || chartType === 'spline') {
           let seriesNames = [];
           let points = [];
           try {
@@ -4953,6 +5498,22 @@
           points.forEach(p => {
             const vals = (p.values || []).map(v => (v !== undefined && v !== null) ? String(v).trim() : '0');
             lines.push([p.label, ...vals].join(' | '));
+          });
+        } else if (chartType === 'comparison' || chartType === 'grouped-column') {
+          lines.pop();
+          let seriesNames = [];
+          try {
+            seriesNames = JSON.parse(block.getAttribute('data-comparison-series') || '[]');
+          } catch (e) {}
+          if (seriesNames.length === 0) {
+            seriesNames = Array.from(block.querySelectorAll('.comparison-legend-name')).map(el => el.innerText.trim()).filter(Boolean);
+          }
+          lines.push('[CHART title="' + title + '" type="comparison" series="' + seriesNames.join(', ') + '"]');
+          const groupEls = block.querySelectorAll('.comparison-group-item');
+          groupEls.forEach(gEl => {
+            const l = gEl.querySelector('.comparison-group-lbl')?.innerText.trim() || 'Group';
+            const vals = Array.from(gEl.querySelectorAll('.comparison-val-input')).map(vEl => vEl.innerText.trim() || '0');
+            lines.push([l, ...vals].join(' | '));
           });
         } else if (chartType === 'pie') {
           const rows = block.querySelectorAll('.pie-legend-row');

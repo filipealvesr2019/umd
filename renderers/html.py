@@ -366,6 +366,103 @@ def _chart(node: Node, document: Document) -> str:
             f'</div>'
         )
 
+    # CURVED / SPLINE LINE CHART
+    if chart_type in ("curved", "spline"):
+        points = []
+        width = 460
+        height = 140
+        padding = 24
+        eff_w = width - (padding * 2)
+        eff_h = height - (padding * 2)
+        n = len(parsed)
+        coords = []
+        for idx, (_, val) in enumerate(parsed):
+            x = padding + (idx * (eff_w / max(1, n - 1)))
+            y = height - padding - ((val / max_val) * eff_h)
+            coords.append((x, y))
+            points.append(f"{x:.1f},{y:.1f}")
+
+        if len(coords) <= 1:
+            d = f"M {coords[0][0]:.1f},{coords[0][1]:.1f}" if coords else ""
+        elif len(coords) == 2:
+            d = f"M {coords[0][0]:.1f},{coords[0][1]:.1f} L {coords[1][0]:.1f},{coords[1][1]:.1f}"
+        else:
+            d = f"M {coords[0][0]:.1f},{coords[0][1]:.1f}"
+            for i in range(len(coords) - 1):
+                p0 = coords[i - 1] if i > 0 else coords[i]
+                p1 = coords[i]
+                p2 = coords[i + 1]
+                p3 = coords[i + 2] if i < len(coords) - 2 else p2
+                cp1x = p1[0] + (p2[0] - p0[0]) / 6.0
+                cp1y = p1[1] + (p2[1] - p0[1]) / 6.0
+                cp2x = p2[0] - (p3[0] - p1[0]) / 6.0
+                cp2y = p2[1] - (p3[1] - p1[1]) / 6.0
+                d += f" C {cp1x:.1f},{cp1y:.1f} {cp2x:.1f},{cp2y:.1f} {p2[0]:.1f},{p2[1]:.1f}"
+
+        x_labels = "".join(f'<span class="umd-line-lbl">{escape(lbl)}</span>' for lbl, _ in parsed)
+        return (
+            f'<div class="umd-chart umd-line-chart umd-curved-chart">'
+            f'<div class="umd-chart-title">{title}</div>'
+            f'<svg viewBox="0 0 {width} {height}" class="umd-line-svg">'
+            f'<path fill="none" stroke="#ef4444" stroke-width="2.5" d="{d}"/>'
+            + "".join(f'<circle cx="{p.split(",")[0]}" cy="{p.split(",")[1]}" r="4" fill="#ef4444"/>' for p in points) +
+            f'</svg>'
+            f'<div class="umd-line-x-labels">{x_labels}</div>'
+            f'</div>'
+        )
+
+    # COMPARISON / GROUPED COLUMN CHART
+    if chart_type in ("comparison", "grouped-column", "grouped-bar"):
+        series_attr = attrs.get("series", "")
+        series_names = [s.strip() for s in str(series_attr).split(",") if s.strip()] if series_attr else []
+        rows = []
+        start_idx = 0
+        if not series_names and lines:
+            first_parts = [p.strip() for p in lines[0].split("|")]
+            try:
+                float(first_parts[1].replace("%", ""))
+            except (IndexError, ValueError):
+                series_names = first_parts[1:]
+                start_idx = 1
+        
+        max_comp_val = 10.0
+        for l in lines[start_idx:]:
+            parts = [p.strip() for p in l.split("|")]
+            lbl = parts[0]
+            vals = []
+            for v_str in parts[1:]:
+                try:
+                    v = float(v_str.replace("%", ""))
+                except ValueError:
+                    v = 0.0
+                vals.append(v)
+                if v > max_comp_val:
+                    max_comp_val = v
+            rows.append((lbl, vals))
+
+        legend_html = '<div class="umd-comparison-legend">' + "".join(
+            f'<div class="umd-comparison-legend-item"><span class="umd-comparison-legend-color" style="background:{colors[s_idx % len(colors)]}"></span><span>{escape(s_name)}</span></div>'
+            for s_idx, s_name in enumerate(series_names)
+        ) + '</div>' if series_names else ''
+
+        groups_html = []
+        for lbl, vals in rows:
+            bars_html = "".join(
+                f'<div class="umd-comparison-bar-col"><span class="umd-column-val">{v:g}</span><div class="umd-column-track"><div class="umd-column-fill" style="height:{min(100.0, max(0.0, (v / max_comp_val) * 100.0)):.1f}%; background:{colors[s_idx % len(colors)]}"></div></div></div>'
+                for s_idx, v in enumerate(vals)
+            )
+            groups_html.append(
+                f'<div class="umd-comparison-group"><div class="umd-comparison-bars-row">{bars_html}</div><span class="umd-column-lbl">{escape(lbl)}</span></div>'
+            )
+
+        return (
+            f'<div class="umd-chart umd-comparison-chart">'
+            f'<div class="umd-chart-title">{title}</div>'
+            f'{legend_html}'
+            f'<div class="umd-columns-flow">{"".join(groups_html)}</div>'
+            f'</div>'
+        )
+
     # DEFAULT: HORIZONTAL BAR CHART
     items_html = []
     for idx, (lbl, val) in enumerate(parsed):

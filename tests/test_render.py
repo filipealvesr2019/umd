@@ -125,6 +125,29 @@ Prompt -> Tokenizer -> Transformer -> Output
         self.assertIn('class="umd-progress-card"', html)
         self.assertIn("95%", html)
 
+    def test_curved_and_comparison_charts(self):
+        doc = """
+[CHART title="Loss Curve" type="curved"]
+Epoch 1 | 0.85
+Epoch 2 | 0.45
+Epoch 3 | 0.20
+[/CHART]
+
+[CHART title="European Population" type="comparison" series="2013, 2021"]
+Germany | 80.6 | 83.2
+Spain | 46.6 | 47.4
+[/CHART]
+"""
+        html = render_document(doc)
+        self.assertIn('umd-curved-chart', html)
+        self.assertIn('Loss Curve', html)
+        self.assertIn('path fill="none"', html)
+        self.assertIn('umd-comparison-chart', html)
+        self.assertIn('European Population', html)
+        self.assertIn('Germany', html)
+        self.assertIn('80.6', html)
+        self.assertIn('83.2', html)
+
 
 if __name__ == "__main__":
     unittest.main()
