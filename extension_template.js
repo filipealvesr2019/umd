@@ -18,7 +18,6 @@ function activate(context) {
 class UmdEditorProvider {
     constructor(context) {
         this.context = context;
-        this.htmlTemplate = fs.readFileSync(path.join(__dirname, 'editor.html'), 'utf8');
     }
 
     async resolveCustomTextEditor(document, webviewPanel, token) {
@@ -26,8 +25,14 @@ class UmdEditorProvider {
             enableScripts: true,
         };
 
-        const initialContent = Buffer.from(document.getText(), 'utf8').toString('base64');
-        webviewPanel.webview.html = this.htmlTemplate.replace('__INITIAL_CONTENT_BASE64__', initialContent);
+        const htmlPath = path.join(__dirname, 'editor.html');
+        const getHtml = () => {
+            const template = fs.readFileSync(htmlPath, 'utf8');
+            const initialContent = Buffer.from(document.getText(), 'utf8').toString('base64');
+            return template.replace('__INITIAL_CONTENT_BASE64__', initialContent);
+        };
+
+        webviewPanel.webview.html = getHtml();
 
         let isInternalEdit = false;
         let lastAppliedText = document.getText();
@@ -52,8 +57,18 @@ class UmdEditorProvider {
             }
         });
 
+        let watcher = null;
+        try {
+            watcher = fs.watch(htmlPath, () => {
+                try {
+                    webviewPanel.webview.html = getHtml();
+                } catch (err) {}
+            });
+        } catch (err) {}
+
         webviewPanel.onDidDispose(() => {
             changeDocSubscription.dispose();
+            if (watcher) watcher.close();
         });
 
         webviewPanel.webview.onDidReceiveMessage(e => {

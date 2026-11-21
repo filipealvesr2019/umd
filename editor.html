@@ -610,7 +610,7 @@
   }
 
   .notion-code-block {
-    background: #1e1e1e;
+    background: #181818;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
     margin: 14px 0;
@@ -619,15 +619,15 @@
     line-height: 1.6;
     color: #d4d4d4;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   }
 
   .notion-code-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 14px;
-    background: rgba(255, 255, 255, 0.04);
+    padding: 7px 14px;
+    background: #212121;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     font-size: 11px;
     font-weight: 600;
@@ -636,55 +636,88 @@
   }
 
   .code-lang-badge {
-    color: #9cdcfe;
+    color: #79c0ff;
     text-transform: uppercase;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 11px;
     letter-spacing: 0.8px;
+    font-weight: 700;
   }
 
   .code-copy-btn {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 4px;
-    color: #ccc;
+    color: #e0e0e0;
     font-size: 11px;
-    padding: 3px 8px;
+    padding: 3px 9px;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .code-copy-btn:hover {
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.18);
     color: #fff;
   }
 
+  .code-body-wrapper {
+    display: flex;
+    position: relative;
+    overflow-x: auto;
+    background: #181818;
+  }
+
+  .code-gutter {
+    flex-shrink: 0;
+    padding: 12px 10px 12px 14px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    color: #6e7681;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: right;
+    user-select: none;
+    -webkit-user-select: none;
+    background: rgba(0, 0, 0, 0.22);
+    min-width: 38px;
+  }
+
+  .code-gutter-line {
+    height: 1.6em;
+  }
+
   .notion-code-content {
+    flex: 1;
     padding: 12px 16px;
     overflow-x: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
+    white-space: pre;
+    word-break: normal;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #e6edf3;
     outline: none;
     tab-size: 2;
   }
 
-  /* Syntax Highlighting Tokens (VS Code Dark+ Palette) */
-  .syn-key { color: #9cdcfe; font-weight: 500; }        /* JSON / Object keys (Light Blue) */
-  .syn-string { color: #ce9178; }                       /* Strings (Orange-Brown) */
-  .syn-number { color: #b5cea8; }                       /* Numbers (Light Green) */
-  .syn-boolean { color: #569cd6; font-weight: 500; }    /* Booleans (Blue) */
-  .syn-null { color: #569cd6; font-style: italic; }     /* null / None (Blue Italic) */
-  .syn-punct { color: #d4d4d4; opacity: 0.85; }         /* Delimiters { } [ ] : , */
-  .syn-tag { color: #569cd6; font-weight: 600; }        /* HTML/XML tags <div> (Blue) */
-  .syn-tag-bracket { color: #808080; }                  /* < > </ /> (Grey) */
-  .syn-attr { color: #9cdcfe; }                         /* HTML attributes (Light Blue) */
-  .syn-keyword { color: #c586c0; font-weight: 500; }    /* def, import, const, function (Purple) */
-  .syn-builtin { color: #4ec9b0; }                      /* print, console, Array (Teal) */
-  .syn-comment { color: #6a9955; font-style: italic; }  /* Comments #, //, <!-- (Green) */
-  .syn-operator { color: #d4d4d4; }                     /* =, +, -, *, / */
+  /* Syntax Highlighting Tokens (Vibrant Dark Palette) */
+  .syn-key { color: #79c0ff; font-weight: 600; }        /* JSON / Object keys (Light Blue/Cyan) */
+  .syn-string { color: #a5d6ff; }                       /* Strings (Sky Blue / Orange) */
+  .syn-number { color: #79c0ff; }                       /* Numbers / Units (Cyan) */
+  .syn-boolean { color: #ff7b72; font-weight: 600; }    /* Booleans (Vibrant Red/Coral) */
+  .syn-null { color: #ff7b72; font-style: italic; }     /* null / None (Coral Italic) */
+  .syn-punct { color: #c9d1d9; opacity: 0.9; }          /* Delimiters { } [ ] : , */
+  .syn-tag { color: #7ee787; font-weight: 600; }        /* HTML/XML tags <div>, <header> (Vibrant Green) */
+  .syn-tag-bracket { color: #8b949e; }                  /* < > </ /> (Muted Grey) */
+  .syn-attr { color: #79c0ff; }                         /* HTML attributes (Light Blue) */
+  .syn-keyword { color: #ff7b72; font-weight: 600; }    /* def, import, export, const, return (Coral / Magenta) */
+  .syn-property { color: #ffa657; font-weight: 500; }   /* CSS properties margin:, width: */
+  .syn-builtin { color: #ffa657; }                      /* print, styled, Array (Warm Yellow/Orange) */
+  .syn-comment { color: #8b949e; font-style: italic; }  /* Comments #, //, <!-- (Muted Grey) */
+  .syn-operator { color: #ff7b72; }                     /* =, +, -, *, /, => */
 
   /* Bullet List */
   ul.notion-bullet-list {
@@ -2219,6 +2252,25 @@
 
   const PY_KEYWORDS = new Set(['def', 'class', 'import', 'from', 'return', 'if', 'elif', 'else', 'for', 'while', 'try', 'except', 'finally', 'with', 'as', 'in', 'is', 'not', 'and', 'or', 'lambda', 'yield', 'raise', 'pass', 'break', 'continue', 'async', 'await', 'self']);
   const JS_KEYWORDS = new Set(['const', 'let', 'var', 'function', 'return', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'default', 'try', 'catch', 'finally', 'throw', 'class', 'extends', 'new', 'this', 'super', 'import', 'export', 'from', 'as', 'async', 'await', 'typeof', 'instanceof', 'void', 'delete']);
+  const CSS_PROPERTIES = new Set([
+    'margin', 'margin-top', 'margin-bottom', 'margin-left', 'margin-right',
+    'padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+    'width', 'height', 'max-width', 'max-height', 'min-width', 'min-height',
+    'transform', 'transform-origin', 'transition', 'animation',
+    'float', 'clear', 'display', 'position', 'top', 'bottom', 'left', 'right',
+    'content', 'background', 'background-color', 'color', 'border', 'border-radius',
+    'overflow', 'overflow-x', 'overflow-y', 'z-index', 'opacity', 'cursor',
+    'font-size', 'font-weight', 'font-family', 'line-height', 'text-align'
+  ]);
+
+  function updateCodeGutter(gutterEl, text) {
+    const lineCount = (text || '').split('\n').length || 1;
+    let html = '';
+    for (let i = 1; i <= lineCount; i++) {
+      html += '<div class="code-gutter-line">' + i + '</div>';
+    }
+    gutterEl.innerHTML = html;
+  }
 
   function highlightGeneralCode(code, lang) {
     const isPy = (lang === 'python' || lang === 'py');
@@ -2230,9 +2282,9 @@
       let codePart = commentIdx !== -1 ? line.substring(0, commentIdx) : line;
       let commentPart = commentIdx !== -1 ? line.substring(commentIdx) : '';
 
-      const tokenRegex = /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(\b(?:True|False|None|true|false|null|undefined)\b)|(\b\d+(?:\.\d+)?\b)|(\b[a-zA-Z_]\w*\b)/g;
+      const tokenRegex = /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(\b(?:True|False|None|true|false|null|undefined)\b)|(\b\d+(?:\.\d+)?(?:px|em|rem|%|deg|s|ms|fr)?\b)|(\b[a-zA-Z_][\w\-]*\b)(\s*:)?|(=>|===|==|!==|!=|<=|>=|\$\{)/g;
 
-      let highlighted = codePart.replace(tokenRegex, function(match, strVal, boolVal, numVal, identVal) {
+      let highlighted = codePart.replace(tokenRegex, function(match, strVal, boolVal, numVal, identVal, isColon, opVal) {
         if (strVal) {
           return '<span class="syn-string">' + escapeHtmlForCode(strVal) + '</span>';
         }
@@ -2243,9 +2295,21 @@
           return '<span class="syn-number">' + numVal + '</span>';
         }
         if (identVal) {
-          if (kwSet.has(identVal)) {
-            return '<span class="syn-keyword">' + escapeHtmlForCode(identVal) + '</span>';
+          if (isColon && CSS_PROPERTIES.has(identVal.toLowerCase())) {
+            return '<span class="syn-property">' + escapeHtmlForCode(identVal) + '</span><span class="syn-punct">:</span>';
           }
+          if (kwSet.has(identVal)) {
+            return '<span class="syn-keyword">' + escapeHtmlForCode(identVal) + '</span>' + (isColon ? '<span class="syn-punct">:</span>' : '');
+          }
+          if (identVal === 'styled' || identVal === 'console' || identVal === 'print') {
+            return '<span class="syn-builtin">' + escapeHtmlForCode(identVal) + '</span>' + (isColon ? '<span class="syn-punct">:</span>' : '');
+          }
+          if (isColon) {
+            return '<span class="syn-key">' + escapeHtmlForCode(identVal) + '</span><span class="syn-punct">:</span>';
+          }
+        }
+        if (opVal) {
+          return '<span class="syn-operator">' + escapeHtmlForCode(opVal) + '</span>';
         }
         return escapeHtmlForCode(match);
       });
@@ -2308,22 +2372,39 @@
     header.appendChild(copyBtn);
     block.appendChild(header);
 
+    const bodyWrapper = document.createElement('div');
+    bodyWrapper.className = 'code-body-wrapper';
+
+    const gutter = document.createElement('div');
+    gutter.className = 'code-gutter';
+    gutter.setAttribute('aria-hidden', 'true');
+
     const codeEl = document.createElement('div');
     codeEl.className = 'notion-code-content';
     codeEl.contentEditable = 'true';
     codeEl.spellcheck = false;
-    codeEl.innerHTML = highlightSyntax(code || '', detectedLang);
 
-    codeEl.addEventListener('input', scheduleSave);
+    const initialText = code || '';
+    codeEl.innerHTML = highlightSyntax(initialText, detectedLang);
+    updateCodeGutter(gutter, codeEl.innerText);
+
+    codeEl.addEventListener('input', () => {
+      updateCodeGutter(gutter, codeEl.innerText);
+      scheduleSave();
+    });
+
     codeEl.addEventListener('blur', () => {
       const rawText = codeEl.innerText;
       const reDetected = detectCodeLanguage(rawText, wrap.getAttribute('data-lang'));
       wrap.setAttribute('data-lang', reDetected);
       langBadge.innerText = reDetected.toUpperCase();
       codeEl.innerHTML = highlightSyntax(rawText, reDetected);
+      updateCodeGutter(gutter, rawText);
     });
 
-    block.appendChild(codeEl);
+    bodyWrapper.appendChild(gutter);
+    bodyWrapper.appendChild(codeEl);
+    block.appendChild(bodyWrapper);
     wrap.appendChild(block);
     return wrap;
   }
