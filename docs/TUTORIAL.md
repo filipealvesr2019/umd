@@ -17,7 +17,7 @@ Welcome to the **UI-Markdown (`.umd`) Visual Editor** tutorial. This guide walks
    - [Horizontal Bar Chart](#45-horizontal-bar-chart)
    - [Pie / Donut Chart](#46-pie--donut-chart)
 5. [Layout, Cards, Pipelines & Callouts](#5-layout-cards-pipelines--callouts)
-6. [Tables & Checklists](#6-tables--checklists)
+6. [Tables, Checklists, Toggles & Code Blocks](#6-tables-checklists-toggles--code-blocks)
 7. [Clipboard & Clean Export](#7-clipboard--clean-export)
 8. [Keyboard Shortcuts](#8-keyboard-shortcuts)
 
@@ -68,15 +68,17 @@ Highlight **any text inside any element** — including paragraphs, headings, ta
 **Right-click anywhere** on the document canvas to open the Component Context Menu. Components are inserted right after the block you clicked:
 
 - **Clipboard & Formatting**: Copy, Select All, Bold, Italic, Underline, Strikethrough, Inline Code.
-- **Text Blocks**: Heading 1–3, Paragraph, Bullet List, Numbered List, Checklist, Quote, Code Block, Divider.
+- **Text & Headings**: Paragraph, Heading 1, Heading 2, Heading 3, Heading 4.
+- **Lists & Collapsibles**: Bullet List, Numbered List, Checklist (To-Do), Toggle List (Collapsible).
+- **Rich Blocks**: Code Block, Table, Callout Box, Metric Cards Grid (Columns), Blockquote, Horizontal Divider.
 - **Data Charts**:
-  - `Comparison Column Chart`
-  - `Curved Line Chart`
   - `Line Chart`
-  - `Vertical Column Chart`
+  - `Curved Line Chart`
   - `Horizontal Bar Chart`
+  - `Vertical Column Chart`
+  - `Comparison Column Chart`
   - `Pie / Donut Chart`
-- **Visual Blocks**: `Metric Cards Grid`, `Pipeline Architecture`, `Progress Bar`, `Callout Box`, `Table`.
+- **Workflow & Progress**: `Pipeline Architecture`, `Progress Bar`.
 
 To remove any component block, hover over it and click the **`× Delete`** button in its top-right corner.
 
@@ -139,15 +141,24 @@ Great for proportions, budgets, and dataset mixtures.
 
 ---
 
-## 6. Tables & Checklists
+## 6. Tables, Checklists, Toggles & Code Blocks
 
 ### Tables
-- Click any header or cell to type and format text.
-- Select a table to reveal row/column controls to **add rows**, **add columns**, or **remove** them.
+- Click any header or cell to type and apply inline formatting (font, size, letter spacing, color, bold, italic).
+- Click inside a table to reveal row/column controls to **add rows**, **add columns**, or **delete** them.
 
-### Checklists
+### Checklists (To-Do Lists)
 - Click checkboxes directly to toggle tasks between completed (`[x]`) and pending (`[ ]`).
 - Press **`Enter`** at the end of a checklist item to automatically create the next checkbox item.
+
+### Toggle Lists (Collapsible Sections)
+- Insert a **Toggle List** from the right-click menu to create an expandable/collapsible section.
+- Click the arrow (`▶` / `▼`) to expand or collapse hidden content; click the summary title or inner body to edit text inline.
+
+### Code Blocks, Blockquotes & Dividers
+- **Code Block**: Right-click → `Code Block` to insert a monospace code block. Edit code directly inside the block.
+- **Blockquote**: Right-click → `Quote` for highlighted callout quotes.
+- **Horizontal Divider**: Right-click → `Divider` to visually separate document sections.
 
 ---
 

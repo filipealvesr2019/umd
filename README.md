@@ -8,8 +8,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-75%20passed-brightgreen.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20external-purple.svg)]()
+[![Tutorial](https://img.shields.io/badge/docs-Editor%20Tutorial-blue.svg)](docs/TUTORIAL.md)
 
 *Combine fluid Markdown writing with interactive UI blocks, live editable data charts, rich typography controls, and architecture pipelines — stored cleanly in a single `.umd` file with zero companion files.*
+
+[Overview](#-overview) • [Key Features](#-key-features) • **[📖 Editor Tutorials](#-visual-editor-tutorials-all-features)** • [Quick Start](#-quick-start) • [Syntax Reference](#-syntax--component-reference) • [Python API](#-python-api) • [License](#-license)
 
 <br/>
 
@@ -111,6 +114,31 @@ umd install
 ```
 
 > **Tip:** Reload your IDE (`Ctrl+Shift+P` → `Developer: Reload Window`). Click any `.umd` file to open it directly in the visual editor!
+
+---
+
+## 📖 Visual Editor Tutorials (All Features)
+
+Everything in UI-Markdown can be created and edited visually right on the canvas. Explore the quick tutorials below or open the **[Complete Step-by-Step User Guide (`docs/TUTORIAL.md`)](docs/TUTORIAL.md)** for full details.
+
+| Tutorial Topic | What You Will Learn | Direct Link |
+| :--- | :--- | :--- |
+| **1. Getting Started & Layout** | Installing the IDE extension, opening `.umd` files, and toggling **Full Width** mode | [Read Guide →](docs/TUTORIAL.md#1-getting-started) |
+| **2. Typography & Text Styling** | Changing **Font Family**, **Font Size**, **Letter Spacing**, **Text Color** (palette + custom picker), **Bold / Italic / Underline / Strike / Code** on any element | [Read Guide →](docs/TUTORIAL.md#2-working-with-text--typography) |
+| **3. Right-Click Component Menu** | Inserting headings (H1–H4), lists, toggles, tables, charts, pipelines, and deleting blocks | [Read Guide →](docs/TUTORIAL.md#3-inserting-components-context-menu) |
+| **4. Interactive Data Charts** | Editing Comparison Columns, Curved Spline Lines, Multi-Series Lines, Vertical Columns, Horizontal Bars, and Pie/Donut charts directly on canvas | [Read Guide →](docs/TUTORIAL.md#4-interactive-data-charts) |
+| **5. Cards, Pipelines & Callouts** | Building Metric Card grids, AI architecture pipelines, progress meters, and styled callouts | [Read Guide →](docs/TUTORIAL.md#5-layout-cards-pipelines--callouts) |
+| **6. Tables, Checklists & Toggles** | Dynamic table rows/columns, interactive to-do checkboxes, collapsible toggle lists, quotes, code blocks, and dividers | [Read Guide →](docs/TUTORIAL.md#6-tables-checklists-toggles--code-blocks) |
+| **7. Clean Clipboard Export** | Copying tables, charts, and styled text cleanly into Google Docs, Word, Sheets, or chat apps | [Read Guide →](docs/TUTORIAL.md#7-clipboard--clean-export) |
+| **8. Keyboard Shortcuts** | Essential shortcuts for fast visual editing | [Read Guide →](docs/TUTORIAL.md#8-keyboard-shortcuts) |
+
+### Quick How-To Highlights
+
+- **Format Any Text Anywhere:** Select any text (in paragraphs, headings, tables, cards, callouts, or chart labels) to open the floating toolbar. Combine **Font**, **Size**, **Spacing** (`letter-spacing`), **Color** (10 swatches + custom color picker), and **B / I / U / S / `<>`** — the toolbar stays open while you apply multiple styles.
+- **Insert Any Block:** **Right-click** anywhere on the canvas to insert headings, lists, checklists, toggle lists, tables, callouts, metric cards, pipelines, progress bars, or any of the 6 interactive chart types.
+- **Edit Curved & Line Charts Visually:** Click empty canvas space to add a new curve/line, click directly on any curve to insert a point, click any point to edit/delete its value, drag points vertically, or click X-axis labels to rename them inline.
+- **Edit Comparison & Column Charts:** Click **`+ Add Comparison Series`** or **`+ Add Group`** / **`+ Add Column`**, click numbers above bars to edit values in real time, and hover over truncated long labels to view the full name.
+- **Copy Cleanly:** Press `Ctrl + C` (or right-click → **Copy**) to copy clean HTML + plain text without editor buttons or UI chrome.
 
 ---
 
