@@ -4,9 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ui-markdown"
-version = "0.0.3"
+version = "0.0.4"
 description = "UI-Markdown — Interactive visual documents in pure plain text"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.9"
 authors = [
     { name = "Filipe Alves" }
@@ -19,6 +20,12 @@ classifiers = [
     "Topic :: Text Processing :: Markup",
     "Topic :: Text Editors :: Integrated Development Environments (IDE)",
 ]
+
+[project.urls]
+Homepage = "https://github.com/filipealvesr2019/umd"
+Repository = "https://github.com/filipealvesr2019/umd"
+Documentation = "https://github.com/filipealvesr2019/umd/blob/main/docs/TUTORIAL.md"
+Issues = "https://github.com/filipealvesr2019/umd/issues"
 
 [project.scripts]
 umd = "umd.cli:main"
