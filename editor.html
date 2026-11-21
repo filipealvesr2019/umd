@@ -1779,9 +1779,174 @@
     }
   });
 
+  function exportCleanClipboard(root) {
+    const clone = root.cloneNode(true);
+
+    // 1. Remove all editor UI buttons, toolbars, actions, scrollbars
+    clone.querySelectorAll(
+      '.element-toolbar, .delete-stage-btn, .code-copy-btn, .code-gutter, ' +
+      '.table-actions, .pipeline-actions, .chart-actions, .add-block-btn, ' +
+      '.notion-drag-handle, .table-top-scroll, .format-bar, .umd-context-menu'
+    ).forEach(el => el.remove());
+
+    // 2. Transform columns/cards into clean HTML tables
+    const colContainers = Array.from(clone.querySelectorAll('.notion-columns, .isolated-element[data-block-type="columns"]'));
+    colContainers.forEach(colEl => {
+      const cards = Array.from(colEl.querySelectorAll('.notion-card'));
+      if (cards.length > 0) {
+        const table = document.createElement('table');
+        table.setAttribute('style', 'width:100%; border-collapse:separate; border-spacing:12px; margin:16px 0;');
+        const headerTr = document.createElement('tr');
+        const valTr = document.createElement('tr');
+        cards.forEach(card => {
+          const lbl = card.querySelector('.card-label')?.innerText.trim() || '';
+          const val = card.querySelector('.card-value')?.innerText.trim() || '';
+
+          const th = document.createElement('th');
+          th.setAttribute('style', 'background:#262626; border:1px solid #404040; border-radius:6px 6px 0 0; padding:10px 14px; text-align:left; font-size:11px; font-weight:bold; color:#a3a3a3; text-transform:uppercase;');
+          th.innerText = lbl;
+          headerTr.appendChild(th);
+
+          const td = document.createElement('td');
+          td.setAttribute('style', 'background:#202020; border:1px solid #404040; border-top:none; border-radius:0 0 6px 6px; padding:14px; vertical-align:top; font-size:15px; font-weight:600; color:#ffffff;');
+          td.innerHTML = val;
+          valTr.appendChild(td);
+        });
+        table.appendChild(headerTr);
+        table.appendChild(valTr);
+        colEl.replaceWith(table);
+      }
+    });
+
+    // 3. Transform pipeline
+    const pipeContainers = Array.from(clone.querySelectorAll('.pipeline-flow-container, .isolated-element[data-block-type="pipeline"]'));
+    pipeContainers.forEach(pipeEl => {
+      const title = pipeEl.querySelector('.pipeline-title-input')?.innerText.trim() || pipeEl.getAttribute('data-title') || 'Pipeline';
+      const stages = Array.from(pipeEl.querySelectorAll('.pipeline-stage-text')).map(s => s.innerText.trim()).filter(Boolean);
+      if (stages.length > 0) {
+        const wrap = document.createElement('div');
+        wrap.setAttribute('style', 'margin:16px 0; padding:14px; background:#1e1e1e; border:1px solid #333; border-radius:8px;');
+        wrap.innerHTML = '<div style="font-weight:bold; font-size:14px; margin-bottom:10px; color:#fff;">' + title + '</div><div style="font-size:13px; color:#e0e0e0; line-height:1.8;">' + stages.join(' ➔ ') + '</div>';
+        pipeEl.replaceWith(wrap);
+      }
+    });
+
+    // 4. Transform charts
+    const chartContainers = Array.from(clone.querySelectorAll('.chart-wrapper, .isolated-element[data-block-type="chart"]'));
+    chartContainers.forEach(chartEl => {
+      const title = chartEl.getAttribute('data-title') || chartEl.querySelector('.chart-title-input')?.innerText.trim() || 'Benchmark Chart';
+      const items = [];
+      chartEl.querySelectorAll('.chart-bar-row, .column-bar-item, .pie-legend-row').forEach(row => {
+        const l = row.querySelector('.chart-label-input, .column-lbl-input, .pie-lbl-input')?.innerText.trim();
+        const v = row.querySelector('.chart-value-input, .column-val-input, .pie-val-input')?.innerText.trim();
+        if (l && v) items.push({ l, v });
+      });
+      if (items.length > 0) {
+        const wrap = document.createElement('div');
+        wrap.setAttribute('style', 'margin:16px 0; padding:14px; background:#1e1e1e; border:1px solid #333; border-radius:8px;');
+        let rowsHtml = items.map(it => '<tr style="border-bottom:1px solid #333;"><td style="padding:6px 8px; color:#fff;">' + it.l + '</td><td style="text-align:right; padding:6px 8px; color:#38bdf8; font-weight:bold;">' + it.v + (it.v.includes('%') ? '' : '%') + '</td></tr>').join('');
+        wrap.innerHTML = '<div style="font-weight:bold; font-size:14px; margin-bottom:10px; color:#fff;">' + title + '</div><table style="width:100%; border-collapse:collapse; font-size:13px;"><thead><tr style="border-bottom:2px solid #555;"><th style="text-align:left; padding:6px 8px; color:#aaa;">Item</th><th style="text-align:right; padding:6px 8px; color:#aaa;">Score</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>';
+        chartEl.replaceWith(wrap);
+      }
+    });
+
+    // 5. Transform code blocks
+    const codeContainers = Array.from(clone.querySelectorAll('.notion-code-block, .isolated-element[data-block-type="code-block"]'));
+    codeContainers.forEach(codeEl => {
+      const content = codeEl.querySelector('.notion-code-content');
+      const pre = document.createElement('pre');
+      pre.setAttribute('style', 'background:#181818; padding:14px 16px; border-radius:8px; font-family:monospace; font-size:13px; line-height:1.6; color:#e6edf3; overflow-x:auto;');
+      pre.innerHTML = content ? content.innerHTML : '';
+      codeEl.replaceWith(pre);
+    });
+
+    // 6. Transform callouts
+    const calloutContainers = Array.from(clone.querySelectorAll('.notion-callout, .isolated-element[data-block-type="callout"]'));
+    calloutContainers.forEach(cEl => {
+      const header = cEl.querySelector('.callout-header');
+      const title = header ? header.innerText.replace('●', '').trim() : '';
+      const body = cEl.querySelector('.callout-text')?.innerHTML.trim() || '';
+      const bq = document.createElement('blockquote');
+      bq.setAttribute('style', 'border-left:4px solid #10b981; background:rgba(16,185,129,0.1); padding:12px 16px; margin:14px 0; border-radius:0 8px 8px 0;');
+      bq.innerHTML = '<strong style="color:#10b981; display:block; margin-bottom:4px;">' + title + '</strong><div style="color:#e0e0e0;">' + body + '</div>';
+      cEl.replaceWith(bq);
+    });
+
+    // 7. Transform progress
+    const progContainers = Array.from(clone.querySelectorAll('.notion-progress-block, .isolated-element[data-block-type="progress"]'));
+    progContainers.forEach(pEl => {
+      const label = pEl.getAttribute('data-label') || pEl.querySelector('.progress-label-input')?.innerText.trim() || 'Progress';
+      const val = pEl.getAttribute('data-value') || '0';
+      const wrap = document.createElement('div');
+      wrap.setAttribute('style', 'margin:14px 0; padding:12px 16px; background:#1e1e1e; border:1px solid #333; border-radius:8px;');
+      wrap.innerHTML = '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><strong style="color:#fff;">' + label + '</strong><span style="color:#38bdf8; font-weight:bold;">' + val + '%</span></div>';
+      pEl.replaceWith(wrap);
+    });
+
+    // 8. Transform tables
+    const tableContainers = Array.from(clone.querySelectorAll('.table-block-wrapper, .isolated-element[data-block-type="table"]'));
+    tableContainers.forEach(tEl => {
+      const table = tEl.querySelector('table');
+      if (table) {
+        table.setAttribute('style', 'width:100%; border-collapse:collapse; margin:16px 0; font-size:14px;');
+        table.querySelectorAll('th').forEach(th => th.setAttribute('style', 'border:1px solid #444; padding:8px 12px; background:#262626; text-align:left; color:#ccc;'));
+        table.querySelectorAll('td').forEach(td => td.setAttribute('style', 'border:1px solid #333; padding:8px 12px; color:#fff;'));
+        tEl.replaceWith(table);
+      }
+    });
+
+    // Extract clean markdown text
+    function getCleanMarkdownText(node) {
+      const lines = [];
+      const children = Array.from(node.children);
+      if (children.length === 0) {
+        return node.innerText ? node.innerText.trim() : '';
+      }
+      children.forEach(child => {
+        const tag = child.tagName ? child.tagName.toLowerCase() : '';
+        if (tag === 'h1') lines.push('# ' + child.innerText.trim() + '\n');
+        else if (tag === 'h2') lines.push('## ' + child.innerText.trim() + '\n');
+        else if (tag === 'h3') lines.push('### ' + child.innerText.trim() + '\n');
+        else if (tag === 'h4') lines.push('#### ' + child.innerText.trim() + '\n');
+        else if (tag === 'p') {
+          const t = child.innerText.trim();
+          if (t) lines.push(t + '\n');
+        } else if (tag === 'table') {
+          const ths = Array.from(child.querySelectorAll('th')).map(th => th.innerText.trim());
+          const trs = Array.from(child.querySelectorAll('tbody tr, tr')).filter(tr => tr.querySelectorAll('td').length > 0);
+          if (ths.length > 0) {
+            lines.push('| ' + ths.join(' | ') + ' |');
+            lines.push('| ' + ths.map(() => '---').join(' | ') + ' |');
+          }
+          trs.forEach(tr => {
+            const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim().replace(/\n+/g, ' '));
+            if (tds.length > 0) {
+              lines.push('| ' + tds.join(' | ') + ' |');
+            }
+          });
+          lines.push('');
+        } else if (tag === 'blockquote') {
+          const text = child.innerText.trim().split('\n').map(l => '> ' + l).join('\n');
+          lines.push(text + '\n');
+        } else if (tag === 'pre') {
+          lines.push('```\n' + child.innerText + '\n```\n');
+        } else {
+          const t = child.innerText ? child.innerText.trim() : '';
+          if (t) lines.push(t + '\n');
+        }
+      });
+      return lines.join('\n').trim();
+    }
+
+    return {
+      html: clone.innerHTML,
+      text: getCleanMarkdownText(clone)
+    };
+  }
+
   // COPY EVENT:
-  // - When Ctrl+A / entire page is selected: copy clean complete UMD text and HTML!
-  // - When a part/piece of text is selected: let native copy handle it cleanly!
+  // - Cleanly formats ALL visual elements (cards/columns into tables, pipeline into flows, charts into tables)
+  // - Completely strips '✕ Delete' and other UI buttons for both Ctrl+A and partial mouse selection!
   document.addEventListener('copy', (ev) => {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
@@ -1797,28 +1962,19 @@
       range.endContainer === page && range.endOffset >= page.childNodes.length
     ) || (selStr.length > 50 && pageStr.length > 50 && selStr === pageStr);
 
+    let cleanResult;
     if (isSelectAllActive || isExactPage) {
-      if (ev.clipboardData) {
-        const fullMarkdown = serializeDocument();
-        if (fullMarkdown) {
-          ev.clipboardData.setData('text/plain', fullMarkdown);
-          try {
-            ev.clipboardData.setData('text/html', page.innerHTML);
-          } catch (e) {}
-          ev.preventDefault();
-        }
-      }
-      return;
+      cleanResult = exportCleanClipboard(page);
+    } else {
+      const container = document.createElement('div');
+      container.appendChild(range.cloneContents());
+      cleanResult = exportCleanClipboard(container);
     }
 
-    // Partial selection: explicitly copy the selected text and HTML fragment!
-    const selectedText = sel.toString();
-    if (selectedText && ev.clipboardData) {
-      ev.clipboardData.setData('text/plain', selectedText);
+    if (ev.clipboardData && cleanResult) {
+      ev.clipboardData.setData('text/plain', cleanResult.text);
       try {
-        const container = document.createElement('div');
-        container.appendChild(range.cloneContents());
-        ev.clipboardData.setData('text/html', container.innerHTML);
+        ev.clipboardData.setData('text/html', cleanResult.html);
       } catch (e) {}
       ev.preventDefault();
     }
