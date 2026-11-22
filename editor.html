@@ -6010,6 +6010,7 @@
     const img = document.createElement('img');
     img.className = 'notion-image-el';
     img.alt = alt || '';
+    img.referrerPolicy = 'no-referrer';
     if (width) {
       const wStr = /^\d+$/.test(String(width).trim()) ? (String(width).trim() + 'px') : String(width).trim();
       img.style.width = wStr;
@@ -6017,10 +6018,40 @@
 
     const fallback = document.createElement('div');
     fallback.className = 'notion-image-fallback';
+    let remoteFallbackAttemptedFor = '';
+
+    function showImageFallback(curSrc) {
+      img.style.display = 'none';
+      fallback.style.display = 'block';
+      fallback.style.cursor = 'pointer';
+      const isWeb = /^https?:\/\//i.test(curSrc || '');
+      fallback.textContent = isWeb
+        ? 'Could not load URL: ' + curSrc + ' — paste a direct image URL ("Copy image address") or click to Open Image.'
+        : 'Could not load image: ' + (curSrc || '(empty)') + ' — click to Open Image.';
+    }
+
+    function requestResolveImage(srcToResolve, onDone) {
+      const reqId = 'img-res-' + (++imageRequestSeq);
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        pendingImageCallbacks.delete(reqId);
+        onDone(null);
+      }, 6000);
+      pendingImageCallbacks.set(reqId, (data) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        onDone(data && data.webviewSrc ? data.webviewSrc : null);
+      });
+      vscode.postMessage({ type: 'resolve-image', requestId: reqId, src: srcToResolve });
+    }
 
     function applySrc(newSrc, overrideDisplayUrl) {
       const clean = (newSrc || '').trim();
       wrapper.setAttribute('data-src', clean);
+      remoteFallbackAttemptedFor = '';
       if (!clean) {
         img.style.display = 'none';
         fallback.style.display = 'block';
@@ -6036,25 +6067,42 @@
       }
       const isRemoteOrData = /^(https?:|data:|blob:|vscode-webview-resource:)/i.test(clean);
       if (!isRemoteOrData && typeof acquireVsCodeApi === 'function') {
-        const reqId = 'img-res-' + (++imageRequestSeq);
-        pendingImageCallbacks.set(reqId, (data) => {
-          if (data && data.webviewSrc) {
+        img.style.display = 'none';
+        fallback.style.display = 'block';
+        fallback.textContent = 'Loading image...';
+        requestResolveImage(clean, (webviewSrc) => {
+          if (webviewSrc) {
             img.style.display = 'block';
             fallback.style.display = 'none';
-            img.src = data.webviewSrc;
+            img.src = webviewSrc;
+          } else {
+            showImageFallback(clean);
           }
         });
-        vscode.postMessage({ type: 'resolve-image', requestId: reqId, src: clean });
       } else {
         img.src = resolveImageSrc(clean);
       }
     }
 
     img.addEventListener('error', () => {
-      img.style.display = 'none';
-      fallback.style.display = 'block';
-      fallback.style.cursor = 'pointer';
-      fallback.textContent = 'Could not load image: ' + (wrapper.getAttribute('data-src') || '(empty)') + ' — click to Open Image.';
+      const curSrc = (wrapper.getAttribute('data-src') || '').trim();
+      if (/^https?:\/\//i.test(curSrc) && remoteFallbackAttemptedFor !== curSrc && typeof acquireVsCodeApi === 'function') {
+        remoteFallbackAttemptedFor = curSrc;
+        img.style.display = 'none';
+        fallback.style.display = 'block';
+        fallback.textContent = 'Loading image...';
+        requestResolveImage(curSrc, (webviewSrc) => {
+          if (webviewSrc) {
+            img.style.display = 'block';
+            fallback.style.display = 'none';
+            img.src = webviewSrc;
+          } else {
+            showImageFallback(curSrc);
+          }
+        });
+        return;
+      }
+      showImageFallback(curSrc);
     });
 
     const fileInput = document.createElement('input');

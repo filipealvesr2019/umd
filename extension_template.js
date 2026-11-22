@@ -110,6 +110,56 @@ class UmdEditorProvider {
             return `data:${mime};base64,${b64}`;
         };
 
+        const fetchUrlBuffer = (urlStr, redirectsLeft = 5) => new Promise((resolve, reject) => {
+            const httpMod = urlStr.startsWith('https:') ? require('https') : require('http');
+            const req = httpMod.get(urlStr, {
+                headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+            }, (res) => {
+                if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location && redirectsLeft > 0) {
+                    const nextUrl = new URL(res.headers.location, urlStr).toString();
+                    res.resume();
+                    return fetchUrlBuffer(nextUrl, redirectsLeft - 1).then(resolve, reject);
+                }
+                if (res.statusCode < 200 || res.statusCode >= 300) {
+                    res.resume();
+                    return reject(new Error('HTTP ' + res.statusCode));
+                }
+                const chunks = [];
+                res.on('data', c => chunks.push(c));
+                res.on('end', () => resolve({
+                    contentType: (res.headers['content-type'] || '').split(';')[0].trim().toLowerCase(),
+                    buffer: Buffer.concat(chunks),
+                    finalUrl: urlStr,
+                }));
+            });
+            req.on('error', reject);
+            req.setTimeout(10000, () => { req.destroy(new Error('timeout')); });
+        });
+
+        const resolveRemoteImage = async (rawUrl) => {
+            const first = await fetchUrlBuffer(rawUrl);
+            if (first.contentType.startsWith('image/')) {
+                return `data:${first.contentType};base64,${first.buffer.toString('base64')}`;
+            }
+            if (first.contentType.includes('html')) {
+                const html = first.buffer.toString('utf8');
+                const ogMatch =
+                    html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
+                    html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i) ||
+                    html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i) ||
+                    html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i);
+                if (ogMatch && ogMatch[1]) {
+                    const imgUrl = new URL(ogMatch[1].replace(/&amp;/g, '&'), first.finalUrl).toString();
+                    const imgRes = await fetchUrlBuffer(imgUrl);
+                    if (imgRes.contentType.startsWith('image/')) {
+                        return `data:${imgRes.contentType};base64,${imgRes.buffer.toString('base64')}`;
+                    }
+                    return imgUrl;
+                }
+            }
+            return null;
+        };
+
         webviewPanel.webview.onDidReceiveMessage(async e => {
             switch (e.type) {
                 case 'ready':
@@ -153,17 +203,34 @@ class UmdEditorProvider {
                 }
                 case 'resolve-image': {
                     const rawSrc = (e.src || '').trim();
-                    if (!rawSrc) return;
+                    if (!rawSrc) {
+                        webviewPanel.webview.postMessage({ type: 'image-resolved', requestId: e.requestId, webviewSrc: null });
+                        return;
+                    }
+                    if (/^https?:\/\//i.test(rawSrc)) {
+                        let resolved = null;
+                        try {
+                            resolved = await resolveRemoteImage(rawSrc);
+                        } catch (err) {}
+                        webviewPanel.webview.postMessage({
+                            type: 'image-resolved',
+                            requestId: e.requestId,
+                            webviewSrc: resolved,
+                        });
+                        return;
+                    }
                     const absPath = path.isAbsolute(rawSrc) ? rawSrc : path.resolve(docDir, rawSrc);
+                    let localResolved = null;
                     if (fs.existsSync(absPath)) {
                         try {
-                            webviewPanel.webview.postMessage({
-                                type: 'image-resolved',
-                                requestId: e.requestId,
-                                webviewSrc: fileToDataUri(absPath),
-                            });
+                            localResolved = fileToDataUri(absPath);
                         } catch (err) {}
                     }
+                    webviewPanel.webview.postMessage({
+                        type: 'image-resolved',
+                        requestId: e.requestId,
+                        webviewSrc: localResolved,
+                    });
                     return;
                 }
                 case 'edit':
