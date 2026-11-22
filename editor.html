@@ -271,17 +271,18 @@
   .chart-rows-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
+    padding: 6px 0;
   }
   .chart-bar-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     position: relative;
   }
   .chart-label-input {
-    width: 140px;
-    font-size: 13px;
+    width: 160px;
+    font-size: 13.5px;
     color: var(--text-body);
     outline: none;
     cursor: text;
@@ -291,7 +292,7 @@
   }
   .chart-track {
     flex: 1;
-    height: 10px;
+    height: 16px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 999px;
     overflow: hidden;
@@ -303,9 +304,9 @@
     transition: width 0.3s ease;
   }
   .chart-value-input {
-    width: 55px;
+    width: 60px;
     text-align: right;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
     color: var(--text-heading);
     outline: none;
@@ -360,43 +361,44 @@
   .chart-pie-container {
     display: flex;
     align-items: center;
-    gap: 32px;
-    margin-top: 10px;
+    gap: 40px;
+    margin-top: 14px;
+    padding: 8px 4px;
   }
   .chart-pie-visual-wrap {
     flex-shrink: 0;
   }
   .chart-pie-visual {
-    width: 140px;
-    height: 140px;
+    width: 220px;
+    height: 220px;
     border-radius: 50%;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
   }
   .chart-pie-hole {
-    width: 70px;
-    height: 70px;
+    width: 108px;
+    height: 108px;
     border-radius: 50%;
     background: var(--bg-page);
   }
   .chart-pie-legend-wrap {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     flex: 1;
   }
   .pie-legend-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 13px;
+    gap: 12px;
+    font-size: 14px;
   }
   .pie-color-dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     flex-shrink: 0;
   }
@@ -425,10 +427,10 @@
   .chart-columns-container {
     display: flex;
     align-items: flex-end;
-    gap: 16px;
-    height: 240px;
-    padding: 24px 12px 26px;
-    margin-top: 10px;
+    gap: 24px;
+    height: 320px;
+    padding: 28px 16px 28px;
+    margin-top: 12px;
     border-bottom: 1px solid var(--border-subtle);
     width: 100%;
     box-sizing: border-box;
@@ -468,10 +470,10 @@
     background: rgba(255, 255, 255, 0.4);
   }
   .column-bar-item {
-    width: 48px;
-    min-width: 48px;
-    max-width: 48px;
-    flex: 0 0 48px;
+    width: 76px;
+    min-width: 76px;
+    max-width: 76px;
+    flex: 0 0 76px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -499,9 +501,9 @@
   }
   .column-track {
     flex: 1;
-    width: 32px;
-    min-width: 32px;
-    max-width: 32px;
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
     background: transparent;
     display: flex;
     flex-direction: column;
@@ -512,37 +514,37 @@
     overflow: visible;
   }
   .column-val-input {
-    font-size: 11.5px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text-heading);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     outline: none;
     cursor: text;
     text-align: center;
-    width: 48px;
+    width: 76px;
     white-space: nowrap;
     overflow: visible;
     flex-shrink: 0;
   }
   .column-fill {
-    width: 32px;
-    min-width: 32px;
-    max-width: 32px;
-    border-radius: 6px 6px 0 0;
+    width: 52px;
+    min-width: 52px;
+    max-width: 52px;
+    border-radius: 7px 7px 0 0;
     transition: height 0.3s ease;
     flex-shrink: 0;
   }
   .column-lbl-input {
-    font-size: 11.5px;
+    font-size: 12.5px;
     color: var(--text-muted);
-    margin-top: 8px;
+    margin-top: 10px;
     margin-bottom: 2px;
     outline: none;
     cursor: text;
     white-space: nowrap;
     text-align: center;
-    width: 48px;
-    max-width: 48px;
+    width: 76px;
+    max-width: 76px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
@@ -578,10 +580,10 @@
   .chart-comparison-container {
     display: flex;
     align-items: flex-end;
-    gap: 20px;
-    height: 250px;
-    padding: 24px 16px 28px;
-    margin-top: 10px;
+    gap: 28px;
+    height: 320px;
+    padding: 28px 16px 28px;
+    margin-top: 12px;
     border-bottom: 1px solid var(--border-subtle);
     width: 100%;
     box-sizing: border-box;
@@ -697,9 +699,9 @@
     position: relative;
   }
   .comparison-bar-col {
-    width: 32px;
-    min-width: 32px;
-    max-width: 32px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -709,28 +711,28 @@
     box-sizing: border-box;
   }
   .comparison-val-input {
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--text-heading);
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     outline: none;
     cursor: text;
     text-align: center;
-    width: 36px;
+    width: 44px;
     white-space: nowrap;
     overflow: visible;
     flex-shrink: 0;
   }
   .comparison-bar-fill {
     width: 100%;
-    border-radius: 5px 5px 0 0;
+    border-radius: 6px 6px 0 0;
     transition: height 0.3s ease;
     flex-shrink: 0;
   }
   .comparison-group-lbl {
-    font-size: 11.5px;
+    font-size: 12.5px;
     color: var(--text-muted);
-    margin-top: 8px;
+    margin-top: 10px;
     margin-bottom: 2px;
     outline: none;
     cursor: text;
