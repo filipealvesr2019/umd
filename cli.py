@@ -17,6 +17,15 @@ import sys
 import tempfile
 from pathlib import Path
 
+from .agent_kit import (
+    UMD_SPEC,
+    add_table_row,
+    append_chart_row,
+    build_outline,
+    diagnostic_hint,
+    install_skill,
+    set_metric,
+)
 from .document.model import Document
 from .document.persistence import open_document
 from .installer import install_extension, uninstall_extension
@@ -36,6 +45,23 @@ def _print_diagnostics(document: Document) -> int:
 
 def cmd_check(args) -> int:
     document = open_document(args.file)
+    if getattr(args, "json", False):
+        payload = {
+            "file": str(document.path),
+            "valid": document.valid,
+            "error_count": len(document.errors()),
+            "warning_count": len(document.warnings()),
+            "diagnostics": [
+                {
+                    **d.to_dict(),
+                    "hint": diagnostic_hint(d.code),
+                }
+                for d in document.diagnostics
+            ],
+        }
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+        return 1 if document.errors() else 0
+
     status = _print_diagnostics(document)
     print(
         f"{len(document.nodes())} nós, {len(document.tables())} tabela(s), "
@@ -45,18 +71,85 @@ def cmd_check(args) -> int:
 
 
 def cmd_outline(args) -> int:
-    document = open_document(args.file)
+    if getattr(args, "json", False):
+        payload = build_outline(args.file)
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+        return 0 if payload["valid"] else 1
 
-    def walk(node, depth=0):
-        pad = "  " * depth
-        label = f"[{node.name}]" if node.is_component else node.type
-        preview = node.text.replace("\n", " ⏎ ")[:60]
-        print(f"{pad}{node.id:<14} {label:<12} L{node.line:<4} {preview}")
-        for child in node.children:
-            walk(child, depth + 1)
+    payload = build_outline(args.file)
+    for item in payload["items"]:
+        kind = item["kind"].upper()
+        line = f"L{item['line']}"
+        idx = f"#{item['index']}" if "index" in item else ""
+        label = item.get("title") or item.get("label") or item.get("lang") or ""
+        extra = ""
+        if item["kind"] == "table" and "headers" in item:
+            extra = f" ({item.get('rows', 0)} linhas: {', '.join(item['headers'])})"
+        elif item["kind"] == "chart":
+            extra = f" [type={item.get('chart_type', 'bar')}]"
+        elif item["kind"] == "card" and "value" in item:
+            extra = f" = {item['value']}"
+        elif item["kind"] == "progress":
+            extra = f" = {item.get('value')}/{item.get('max')}"
+        print(f"{line:<6} {kind + idx:<12} {label}{extra}")
+    return 0 if payload["valid"] else 1
 
-    walk(document.root)
-    return _print_diagnostics(document)
+
+def cmd_spec(args) -> int:
+    print(UMD_SPEC.strip())
+    return 0
+
+
+def cmd_install_skill(args) -> int:
+    paths = install_skill(getattr(args, "dir", None))
+    print("UMD Agent Skill instalada com sucesso:")
+    for p in paths:
+        print(f"  -> {p}")
+    return 0
+
+
+def cmd_add_row(args) -> int:
+    raw_vals = args.value or ([args.values] if args.values else [])
+    ok, msg, _ = add_table_row(args.file, args.table, raw_vals, write=args.write)
+    print(msg)
+    if not ok:
+        return 2
+    if args.write:
+        print(f"gravado: {args.file}")
+    else:
+        print("(dry-run; use --write para gravar)")
+    return 0
+
+
+def cmd_set_metric(args) -> int:
+    ok, msg, _ = set_metric(
+        args.file,
+        args.label,
+        args.value,
+        subtitle=args.subtitle,
+        write=args.write,
+    )
+    print(msg)
+    if not ok:
+        return 2
+    if args.write:
+        print(f"gravado: {args.file}")
+    else:
+        print("(dry-run; use --write para gravar)")
+    return 0
+
+
+def cmd_append_chart(args) -> int:
+    raw_vals = args.value or ([args.values] if args.values else [])
+    ok, msg, _ = append_chart_row(args.file, args.chart, raw_vals, write=args.write)
+    print(msg)
+    if not ok:
+        return 2
+    if args.write:
+        print(f"gravado: {args.file}")
+    else:
+        print("(dry-run; use --write para gravar)")
+    return 0
 
 
 def cmd_ast(args) -> int:
@@ -231,13 +324,46 @@ def build_parser() -> argparse.ArgumentParser:
     uninstall = sub.add_parser("uninstall", help="desinstala o editor visual do UMD")
     uninstall.set_defaults(func=cmd_uninstall)
 
+    spec_cmd = sub.add_parser("spec", help="imprime referência compacta da sintaxe UMD para agentes de IA")
+    spec_cmd.set_defaults(func=cmd_spec)
+
+    install_skill_cmd = sub.add_parser("install-skill", help="instala a skill global do UMD para Antigravity, Claude e Cursor")
+    install_skill_cmd.add_argument("--dir", help="pasta customizada onde gravar SKILL.md")
+    install_skill_cmd.set_defaults(func=cmd_install_skill)
+
     check = sub.add_parser("check", help="valida um arquivo .umd")
     check.add_argument("file")
+    check.add_argument("--json", action="store_true", help="saída estruturada em JSON com dicas de correção")
     check.set_defaults(func=cmd_check)
 
-    outline = sub.add_parser("outline", help="mostra a árvore de nós com ids e linhas")
+    outline = sub.add_parser("outline", help="lista títulos, tabelas, gráficos e métricas com linhas")
     outline.add_argument("file")
+    outline.add_argument("--json", action="store_true", help="saída estruturada em JSON")
     outline.set_defaults(func=cmd_outline)
+
+    add_row = sub.add_parser("add-row", help="adiciona uma linha em uma tabela ([TABLE] ou Markdown)")
+    add_row.add_argument("file")
+    add_row.add_argument("--table", default="1", help="índice 1-based ou id da tabela (padrão: 1)")
+    add_row.add_argument("--values", help="valores separados por '|' (ex: 'Seed 133|HELD|88.0%%')")
+    add_row.add_argument("--value", action="append", help="valor individual (pode repetir)")
+    add_row.add_argument("--write", action="store_true", help="salva a alteração no arquivo")
+    add_row.set_defaults(func=cmd_add_row)
+
+    set_metric_cmd = sub.add_parser("set-metric", help="atualiza um [CARD title=...] ou [PROGRESS label=...]")
+    set_metric_cmd.add_argument("file")
+    set_metric_cmd.add_argument("--label", required=True, help="título do CARD ou label do PROGRESS")
+    set_metric_cmd.add_argument("--value", required=True, help="novo valor")
+    set_metric_cmd.add_argument("--subtitle", help="segunda linha opcional para [CARD]")
+    set_metric_cmd.add_argument("--write", action="store_true", help="salva a alteração no arquivo")
+    set_metric_cmd.set_defaults(func=cmd_set_metric)
+
+    append_chart = sub.add_parser("append-chart", help="adiciona uma linha de dados em um [CHART]")
+    append_chart.add_argument("file")
+    append_chart.add_argument("--chart", default="1", help="índice 1-based, chart#N ou trecho do título")
+    append_chart.add_argument("--values", help="valores separados por '|' (ex: 'Exp 133|91.5')")
+    append_chart.add_argument("--value", action="append", help="valor individual (pode repetir)")
+    append_chart.add_argument("--write", action="store_true", help="salva a alteração no arquivo")
+    append_chart.set_defaults(func=cmd_append_chart)
 
     ast = sub.add_parser("ast", help="exporta a AST em JSON")
     ast.add_argument("file")

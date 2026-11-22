@@ -15,6 +15,7 @@ Uso rápido::
 """
 from __future__ import annotations
 
+from .builder import Report, bold, inline_code, italic, strike, styled, underline
 from .core.parser import ParseResult, parse as parse_umd
 from .core.validator import validate
 from .document.model import Document
@@ -44,12 +45,19 @@ __version__ = "0.0.6"
 __all__ = [
     "Document",
     "ParseResult",
+    "Report",
+    "bold",
+    "inline_code",
+    "italic",
     "open",
     "open_document",
     "parse",
     "parse_umd",
     "render_document",
     "save_document",
+    "strike",
+    "styled",
+    "underline",
     "validate",
     "view",
     "__version__",
