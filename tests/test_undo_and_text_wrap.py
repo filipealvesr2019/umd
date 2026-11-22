@@ -133,3 +133,52 @@ def test_light_and_dark_theme_palettes():
         assert light_vars["codeBg"] == "rgb(248, 250, 252)"
 
         browser.close()
+
+
+def test_ctrl_f_find_and_highlight():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": 900, "height": 700})
+        page.goto(f"file:///{str(EDITOR_HTML).replace(chr(92), '/')}")
+
+        sample = (
+            "# Relatorio HELD\n\n"
+            "Avaliacao de HELD01 no experimento.\n\n"
+            "```text\n[ESPERADO]\nResultado HELD com alta precisao.\n```\n"
+        )
+        page.evaluate("(text) => renderDocument(text)", sample)
+
+        # Open find bar via Ctrl+F
+        page.keyboard.press("Control+f")
+        find_input = page.locator("#umd-find-input")
+        assert find_input.is_visible()
+
+        # Type query and verify 3 matches + CSS highlights registered
+        find_input.fill("held")
+        assert page.locator("#umd-find-count").inner_text().strip() == "1 / 3"
+
+        hl_info = page.evaluate("""() => ({
+            hasMatch: CSS.highlights.has('umd-find-match'),
+            hasActive: CSS.highlights.has('umd-find-active'),
+            matchSize: CSS.highlights.get('umd-find-match')?.size || 0,
+            activeSize: CSS.highlights.get('umd-find-active')?.size || 0,
+        })""")
+        assert hl_info["hasMatch"] and hl_info["hasActive"]
+        assert hl_info["matchSize"] == 2
+        assert hl_info["activeSize"] == 1
+
+        # Navigate next with Enter
+        page.keyboard.press("Enter")
+        assert page.locator("#umd-find-count").inner_text().strip() == "2 / 3"
+
+        # Navigate previous with Shift+Enter
+        page.keyboard.press("Shift+Enter")
+        assert page.locator("#umd-find-count").inner_text().strip() == "1 / 3"
+
+        # Escape closes bar and clears highlights without mutating .umd serialization
+        page.keyboard.press("Escape")
+        assert not find_input.is_visible()
+        assert page.evaluate("() => !CSS.highlights.has('umd-find-match') && !CSS.highlights.has('umd-find-active')")
+        assert "<mark" not in page.evaluate("() => serializeDocument()")
+
+        browser.close()
