@@ -1988,7 +1988,13 @@
     padding: 6px 10px;
     border-radius: 5px;
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
     transition: background 0.1s ease;
+  }
+
+  .menu-item > * {
+    pointer-events: none;
   }
 
   .menu-item:hover {
@@ -3648,14 +3654,22 @@
     }
   });
 
-  // Context Menu Actions
+  // Context Menu Actions (trigger immediately on left mousedown so icon/text clicks never miss)
   contextMenu.querySelectorAll('.menu-item').forEach(item => {
+    let handledOnMouseDown = false;
     item.addEventListener('mousedown', (ev) => {
-      // Prevent blur and loss of selection before click executes
+      if (ev.button !== 0) return;
       ev.preventDefault();
+      ev.stopPropagation();
+      handledOnMouseDown = true;
+      const action = item.getAttribute('data-action');
+      insertFromMenu(action);
+      hideContextMenu();
+      setTimeout(() => { handledOnMouseDown = false; }, 0);
     });
     item.addEventListener('click', (ev) => {
       ev.stopPropagation();
+      if (handledOnMouseDown) return;
       const action = item.getAttribute('data-action');
       insertFromMenu(action);
       hideContextMenu();
