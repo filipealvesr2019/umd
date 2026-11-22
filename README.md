@@ -6,7 +6,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-75%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-83%20passed-brightgreen.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20external-purple.svg)]()
 [![Tutorial](https://img.shields.io/badge/docs-Editor%20Tutorial-blue.svg)](docs/TUTORIAL.md)
 
@@ -47,8 +47,16 @@ Traditional documentation tools often force you to choose between:
 
 ## ✨ Key Features
 
-- **📄 Zero Companion Files**: Everything — styled text, metrics, charts, pipelines, callouts, checklists, and tables — lives inside one plain `.umd` text file.
-- **🎨 Interactive Visual Editor**: Seamless WYSIWYG editor built for **Antigravity IDE** and **VS Code**, featuring full keyboard navigation, right-click component insertion menus, and real-time live sync.
+- **📄 Zero Companion Files**: Everything — styled text, metrics, charts, pipelines, callouts, checklists, images, and tables — lives cleanly in one plain `.umd` text file.
+- **🎨 Interactive Visual Editor**: Seamless WYSIWYG editor built for **Antigravity IDE** and **VS Code**, featuring instant right-click component insertion, full document **Undo/Redo** (`Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z`), **hover-only scrollbars & action buttons** for a distraction-free canvas, and real-time live sync.
+- **🌗 Automatic Dark & Light Themes**: Automatically adapts to VS Code / Antigravity `vscode-dark` and `vscode-light` themes (as well as OS `prefers-color-scheme`) with dedicated palettes for code syntax highlighting, charts, tables, floating toolbars, and menus.
+- **🖼️ Native Image Blocks (`[IMAGE]` & `![alt](src)`)**: Open local images from anywhere on your PC (**Open Image**), embed direct image URLs, edit captions inline, and resize with hover presets (`S / M / L / Full`) — storing only clean plain-text paths in `.umd` (zero Base64 bloat).
+- **📝 Smart Code & Auto-Wrapping Plain-Text Blocks**: Syntax-highlighted code blocks (`python`, `json`, `html`, `js`, `sql`, `bash`) plus automatic word-wrapping in `text` blocks so long transcripts and outputs never require horizontal scrolling.
+- **🤖 Built for AI Agents & Automated Reports**:
+  - **`umd spec` & `umd install-skill`**: One-command compact syntax reference and global `SKILL.md` installer for **Antigravity**, **Claude Code**, and **Cursor**.
+  - **`umd check --json` & `umd outline --json`**: Machine-readable validation with fix hints and fast structural outlines for navigating large reports without blowing up context windows.
+  - **Surgical CLI Edits**: Update tables (`umd add-row`), metrics/progress (`umd set-metric`), or charts (`umd append-chart`) in place without rewriting the whole file.
+  - **Python `Report` Builder (`from umd.builder import Report`)**: Zero-dependency fluent Python API covering every editor element and inline text style for automated ML/benchmark experiment reports.
 - **✍️ Universal Rich Typography Toolbar**: Select any text in any element (paragraphs, headings, tables, cards, callouts, or chart labels) to customize:
   - **Font Family** (`Sans`, `Serif`, `Mono`, `Casual`, `Display`)
   - **Font Size** (`11px` to `36px`)
@@ -147,22 +155,34 @@ Everything in UI-Markdown can be created and edited visually right on the canvas
 
 ---
 
-## 💻 CLI Commands
+## 💻 CLI Commands & AI-Agent Toolkit
 
-The `umd` CLI provides high-performance document tools:
+The `umd` CLI provides fast validation, inspection, and surgical editing designed for both humans and AI agents:
 
 ```bash
+# Install or update the VS Code / Antigravity visual editor extension
+umd install
+
+# Install the global AI-agent Skill (Antigravity, Claude Code, Cursor)
+umd install-skill
+
+# Print the compact UMD syntax reference for AI agents
+umd spec
+
+# Validate syntax, structure, and chart data (human or JSON with fix hints)
+umd check document.umd
+umd check document.umd --json
+
+# Inspect headings, tables, charts, cards, and line numbers without reading the full file
+umd outline document.umd --json
+
+# Surgical in-place edits (dry-run by default; pass --write to save)
+umd add-row report.umd --table 1 --values "Seed 133|HELD|88.0%" --write
+umd set-metric report.umd --label "HELD" --value "7/8" --subtitle "87.5%" --write
+umd append-chart report.umd --chart 1 --values "Exp 133|91.5" --write
+
 # Render a .umd document to standalone HTML
 umd render document.umd -o document.html
-
-# Validate syntax and check for structural errors
-umd check document.umd
-
-# Open the visual editor server
-umd edit document.umd
-
-# Re-install or update the IDE extension
-umd install
 ```
 
 ---
@@ -250,7 +270,7 @@ Code, Math & Multi-Step Reasoning
 [/COLUMNS]
 ```
 
-### 6. Reactive Progress, Callouts & Inline Styling
+### 6. Reactive Progress, Callouts, Images & Inline Styling
 ```markdown
 [PROGRESS label="Stage 2 Reinforcement Learning (RLVR)" value="94" max="100" /]
 
@@ -258,48 +278,56 @@ Code, Math & Multi-Step Reasoning
 All unit benchmarks, safety filters, and latency boundaries passed.
 [/CALLOUT]
 
+[IMAGE src="./plots/attention_heatmap.png" alt="Attention Heatmap" caption="Layer 4 Attention Map" width="640" /]
+
 Highlighted text with <span style="color: #ef4444; font-size: 22px; letter-spacing: 2px;">custom typography</span> persists losslessly.
 ```
 
 ---
 
-## 🐍 Python API
+## 🐍 Python API & Report Builder
 
-Integrate UMD programmatically into your scripts, CI/CD pipelines, or agent workflows:
+Generate complete `.umd` reports directly from your Python / ML experiment scripts with zero syntax errors using `umd.builder.Report`, or parse/render documents programmatically:
 
 ```python
-from umd import parse, render_document, Document
+from umd import Report, styled, inline_code, parse, render_document, Document
 
-# 1. Parse UMD text into an AST
-doc_text = """
-# Model Evaluation
-[PROGRESS label="Fine-Tuning" value=95 max=100 /]
-"""
-result = parse(doc_text)
-print(f"Parsed {len(result.root.children)} root nodes.")
+# 1. Build a complete visual report programmatically (all editor blocks & text styles)
+report = (
+    Report("Experiment 132 — Evaluation", "Automated benchmark summary")
+    .p(f"Status: {styled('PASS', color='#10b981', bold=True)} on {inline_code('HELD01')}")
+    .cards([
+        ("TRAIN Exact", "18/20", "90.0%"),
+        ("HELD Exact", "6/8", "75.0%"),
+    ])
+    .comparison_chart(
+        "Accuracy by Regime (%)",
+        [("TRAIN", [82.0, 90.0]), ("HELD", [62.5, 75.0])],
+        series=["Exp 131", "Exp 132"],
+    )
+    .table(["Seed", "Regime", "Score"], [["130", "HELD01", "84.6%"]])
+    .image("./plots/confusion_matrix.png", caption="Confusion Matrix", width=640)
+    .callout("Zero syntax errors guaranteed.", tone="success", title="Verified")
+)
+report.save("report_132.umd")
 
-# 2. Render to self-contained HTML
-html_output = render_document(doc_text, standalone=True)
-with open("evaluation.html", "w", encoding="utf-8") as f:
-    f.write(html_output)
-
-# 3. Document Object Model editing
-doc = Document.from_text(doc_text)
-doc.append_paragraph("Evaluation completed successfully.")
-print(doc.to_text())
+# 2. Parse, validate & render to standalone HTML
+doc = Document(report.render())
+assert doc.valid
+html_output = render_document(doc)
 ```
 
 ---
 
 ## 🧪 Testing & Verification
 
-UMD includes a comprehensive test suite covering parser grammar, AST validation, roundtrip persistence, security escaping, Playwright visual editor interactions, and rendering:
+UMD includes a comprehensive test suite covering parser grammar, AST validation, AI-agent CLI & builder tools, roundtrip persistence, security escaping, Playwright visual editor interactions (undo/redo, text wrapping, image blocks, dark/light themes, interactive charts), and rendering:
 
 ```bash
 pytest tests/
 ```
 
-**Status:** 75 passed (100% pass rate across editing, interactive charts, typography formatting, parsing, rendering, roundtrip, and security modules).
+**Status:** 83 passed (100% pass rate across editing, undo/redo, interactive charts, images, dark/light themes, AI-agent kit, typography formatting, parsing, rendering, roundtrip, and security modules).
 
 ---
 
