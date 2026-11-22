@@ -42,6 +42,7 @@ class UmdEditorProvider {
             if (currentText === lastAppliedText) {
                 return;
             }
+            lastAppliedText = currentText;
             webviewPanel.webview.postMessage({
                 type: 'update',
                 text: currentText,
