@@ -331,6 +331,15 @@
     margin-top: 10px;
     display: flex;
     gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+  .isolated-element:hover .chart-actions,
+  .notion-chart-block:hover .chart-actions,
+  .notion-chart-block:focus-within .chart-actions {
+    opacity: 1;
+    pointer-events: auto;
   }
   .chart-btn {
     background: transparent;
@@ -425,13 +434,38 @@
     box-sizing: border-box;
     overflow-x: auto;
     overflow-y: hidden;
+    scrollbar-width: none;
+  }
+  .isolated-element:hover .chart-columns-container,
+  .notion-chart-block:hover .chart-columns-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   }
   .chart-columns-container::-webkit-scrollbar {
+    display: none;
+    height: 0;
+  }
+  .isolated-element:hover .chart-columns-container::-webkit-scrollbar,
+  .notion-chart-block:hover .chart-columns-container::-webkit-scrollbar {
+    display: block;
     height: 6px;
   }
+  .chart-columns-container::-webkit-scrollbar-button {
+    display: none;
+  }
+  .chart-columns-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
   .chart-columns-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: transparent;
     border-radius: 3px;
+  }
+  .isolated-element:hover .chart-columns-container::-webkit-scrollbar-thumb,
+  .notion-chart-block:hover .chart-columns-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+  }
+  .chart-columns-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
   }
   .column-bar-item {
     width: 48px;
@@ -553,13 +587,38 @@
     box-sizing: border-box;
     overflow-x: auto;
     overflow-y: hidden;
+    scrollbar-width: none;
+  }
+  .isolated-element:hover .chart-comparison-container,
+  .notion-chart-block:hover .chart-comparison-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   }
   .chart-comparison-container::-webkit-scrollbar {
+    display: none;
+    height: 0;
+  }
+  .isolated-element:hover .chart-comparison-container::-webkit-scrollbar,
+  .notion-chart-block:hover .chart-comparison-container::-webkit-scrollbar {
+    display: block;
     height: 6px;
   }
+  .chart-comparison-container::-webkit-scrollbar-button {
+    display: none;
+  }
+  .chart-comparison-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
   .chart-comparison-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: transparent;
     border-radius: 3px;
+  }
+  .isolated-element:hover .chart-comparison-container::-webkit-scrollbar-thumb,
+  .notion-chart-block:hover .chart-comparison-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+  }
+  .chart-comparison-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
   }
   .comparison-legend {
     display: flex;
@@ -1037,6 +1096,15 @@
     margin-top: 10px;
     display: flex;
     gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+  .isolated-element:hover .pipeline-actions,
+  .notion-pipeline-block:hover .pipeline-actions,
+  .notion-pipeline-block:focus-within .pipeline-actions {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   /* AI / Data Graphics: Training Progress Card */
@@ -1152,7 +1220,16 @@
     font-size: 11px;
     padding: 3px 9px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+
+  .isolated-element:hover .code-copy-btn,
+  .notion-code-block:hover .code-copy-btn,
+  .notion-code-block:focus-within .code-copy-btn {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .code-copy-btn:hover {
@@ -1198,6 +1275,61 @@
     color: #e6edf3;
     outline: none;
     tab-size: 2;
+  }
+
+  .code-body-wrapper,
+  .notion-code-content {
+    scrollbar-width: none;
+  }
+
+  .isolated-element:hover .code-body-wrapper,
+  .isolated-element:hover .notion-code-content,
+  .notion-code-block:hover .code-body-wrapper,
+  .notion-code-block:hover .notion-code-content {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  }
+
+  .code-body-wrapper::-webkit-scrollbar,
+  .notion-code-content::-webkit-scrollbar {
+    display: none;
+    height: 0;
+  }
+
+  .isolated-element:hover .code-body-wrapper::-webkit-scrollbar,
+  .isolated-element:hover .notion-code-content::-webkit-scrollbar,
+  .notion-code-block:hover .code-body-wrapper::-webkit-scrollbar,
+  .notion-code-block:hover .notion-code-content::-webkit-scrollbar {
+    display: block;
+    height: 6px;
+  }
+
+  .code-body-wrapper::-webkit-scrollbar-button,
+  .notion-code-content::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  .code-body-wrapper::-webkit-scrollbar-track,
+  .notion-code-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .code-body-wrapper::-webkit-scrollbar-thumb,
+  .notion-code-content::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+  }
+
+  .isolated-element:hover .code-body-wrapper::-webkit-scrollbar-thumb,
+  .isolated-element:hover .notion-code-content::-webkit-scrollbar-thumb,
+  .notion-code-block:hover .code-body-wrapper::-webkit-scrollbar-thumb,
+  .notion-code-block:hover .notion-code-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .code-body-wrapper::-webkit-scrollbar-thumb:hover,
+  .notion-code-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.42);
   }
 
   .notion-code-block.is-text-wrap .code-body-wrapper {
@@ -1361,7 +1493,7 @@
     position: relative;
   }
 
-  /* Barra de rolagem no topo da tabela */
+  /* Barra de rolagem no topo da tabela (visível apenas no hover) */
   .table-top-scroll {
     width: 100%;
     overflow-x: auto;
@@ -1369,11 +1501,37 @@
     height: 10px;
     margin-bottom: 6px;
     display: none;
+    opacity: 0;
+    pointer-events: none;
+    scrollbar-width: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .isolated-element:hover .table-top-scroll,
+  .table-block-wrapper:hover .table-top-scroll {
+    opacity: 1;
+    pointer-events: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   }
 
   .table-top-scroll::-webkit-scrollbar,
   .table-scroll-body::-webkit-scrollbar {
+    display: none;
+    height: 0;
+  }
+
+  .isolated-element:hover .table-top-scroll::-webkit-scrollbar,
+  .isolated-element:hover .table-scroll-body::-webkit-scrollbar,
+  .table-block-wrapper:hover .table-top-scroll::-webkit-scrollbar,
+  .table-block-wrapper:hover .table-scroll-body::-webkit-scrollbar {
+    display: block;
     height: 8px;
+  }
+
+  .table-top-scroll::-webkit-scrollbar-button,
+  .table-scroll-body::-webkit-scrollbar-button {
+    display: none;
   }
 
   .table-top-scroll::-webkit-scrollbar-track,
@@ -1402,6 +1560,15 @@
     width: 100%;
     overflow-x: auto;
     border-radius: 4px;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+  }
+
+  .isolated-element:hover .table-scroll-body,
+  .table-block-wrapper:hover .table-scroll-body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+    padding-bottom: 0;
   }
 
   table.notion-table {
@@ -1452,6 +1619,8 @@
     transition: opacity 0.15s ease;
   }
 
+  .isolated-element:hover .table-actions,
+  .table-block-wrapper:hover .table-actions,
   .table-block-wrapper:focus-within .table-actions,
   .table-block-wrapper.is-selected .table-actions {
     opacity: 1;
