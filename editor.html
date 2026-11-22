@@ -1109,6 +1109,88 @@
     pointer-events: auto;
   }
 
+  /* Image Block */
+  .notion-image-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 14px;
+    margin: 14px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .notion-image-frame {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .notion-image-el {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    display: block;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  }
+  .notion-image-fallback {
+    display: none;
+    width: 100%;
+    padding: 20px 14px;
+    border: 1px dashed var(--border-subtle);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    text-align: center;
+  }
+  .notion-image-caption {
+    width: 100%;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    outline: none;
+    min-height: 18px;
+  }
+  .notion-image-caption:empty::before {
+    content: 'Add a caption...';
+    opacity: 0.45;
+  }
+  .image-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    width: 100%;
+  }
+  .isolated-element:hover .image-controls,
+  .notion-image-block:hover .image-controls,
+  .notion-image-block:focus-within .image-controls {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .image-src-input {
+    display: none;
+    flex: 1;
+    min-width: 220px;
+    max-width: 480px;
+    background: var(--bg-page);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 4px 8px;
+    outline: none;
+  }
+  .image-src-input:focus {
+    border-color: var(--accent);
+  }
+
   /* AI / Data Graphics: Training Progress Card */
   .notion-progress-block {
     background: var(--card-bg);
@@ -1956,6 +2038,281 @@
     background: var(--border-subtle);
     margin: 4px 6px;
   }
+
+  /* =========================================================================
+     LIGHT THEME PALETTE (VS Code Light / High-Contrast Light / Standalone)
+     Dark theme defaults above remain 100% untouched.
+     ========================================================================= */
+  body.vscode-light,
+  body.vscode-high-contrast-light,
+  body.umd-theme-light {
+    --bg-page: var(--vscode-editor-background, #ffffff);
+    --bg-main: var(--vscode-editor-background, #f8fafc);
+    --text-primary: #1f2937;
+    --text-heading: #0f172a;
+    --text-body: #334155;
+    --text-muted: #64748b;
+    --border-subtle: rgba(15, 23, 42, 0.11);
+    --border-hover: rgba(15, 23, 42, 0.24);
+    --accent: #0284c7;
+    --accent-light: rgba(2, 132, 199, 0.12);
+    --hover-bg: rgba(15, 23, 42, 0.045);
+    --card-bg: #f8fafc;
+    --menu-bg: #ffffff;
+    --menu-border: #cbd5e1;
+    --menu-hover: #2563eb;
+    --danger: #dc2626;
+  }
+
+  body.vscode-light ::selection,
+  body.vscode-high-contrast-light ::selection,
+  body.umd-theme-light ::selection {
+    background: rgba(2, 132, 199, 0.22);
+    color: #0f172a;
+  }
+
+  body.vscode-light .top-nav-bar,
+  body.vscode-high-contrast-light .top-nav-bar,
+  body.umd-theme-light .top-nav-bar {
+    background: var(--bg-main);
+    border-bottom-color: var(--border-subtle);
+  }
+
+  body.vscode-light .nav-action-btn:hover,
+  body.vscode-high-contrast-light .nav-action-btn:hover,
+  body.umd-theme-light .nav-action-btn:hover {
+    background: rgba(15, 23, 42, 0.06);
+    border-color: rgba(15, 23, 42, 0.25);
+  }
+
+  body.vscode-light .nav-action-btn.active,
+  body.vscode-high-contrast-light .nav-action-btn.active,
+  body.umd-theme-light .nav-action-btn.active {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: #2563eb;
+    color: #1d4ed8;
+  }
+
+  /* Inline code & Code/Text blocks in Light Theme */
+  body.vscode-light .inline-code,
+  body.vscode-high-contrast-light .inline-code,
+  body.umd-theme-light .inline-code {
+    background: rgba(15, 23, 42, 0.07);
+    color: #be123c;
+  }
+
+  body.vscode-light .notion-code-block,
+  body.vscode-high-contrast-light .notion-code-block,
+  body.umd-theme-light .notion-code-block {
+    background: #f8fafc;
+    border-color: rgba(15, 23, 42, 0.12);
+    color: #1e293b;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  }
+
+  body.vscode-light .notion-code-header,
+  body.vscode-high-contrast-light .notion-code-header,
+  body.umd-theme-light .notion-code-header {
+    background: #f1f5f9;
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+  }
+
+  body.vscode-light .code-lang-badge,
+  body.vscode-high-contrast-light .code-lang-badge,
+  body.umd-theme-light .code-lang-badge {
+    color: #0369a1;
+  }
+
+  body.vscode-light .code-copy-btn,
+  body.vscode-high-contrast-light .code-copy-btn,
+  body.umd-theme-light .code-copy-btn {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.15);
+    color: #334155;
+  }
+
+  body.vscode-light .code-copy-btn:hover,
+  body.vscode-high-contrast-light .code-copy-btn:hover,
+  body.umd-theme-light .code-copy-btn:hover {
+    background: rgba(15, 23, 42, 0.11);
+    color: #0f172a;
+  }
+
+  body.vscode-light .code-body-wrapper,
+  body.vscode-high-contrast-light .code-body-wrapper,
+  body.umd-theme-light .code-body-wrapper {
+    background: #f8fafc;
+  }
+
+  body.vscode-light .code-gutter,
+  body.vscode-high-contrast-light .code-gutter,
+  body.umd-theme-light .code-gutter {
+    background: #f1f5f9;
+    border-right-color: rgba(15, 23, 42, 0.08);
+    color: #94a3b8;
+  }
+
+  body.vscode-light .notion-code-content,
+  body.vscode-high-contrast-light .notion-code-content,
+  body.umd-theme-light .notion-code-content {
+    color: #1e293b;
+  }
+
+  /* Syntax highlighting tokens in Light Theme */
+  body.vscode-light .syn-key,
+  body.vscode-high-contrast-light .syn-key,
+  body.umd-theme-light .syn-key { color: #0550ae; }
+  body.vscode-light .syn-string,
+  body.vscode-high-contrast-light .syn-string,
+  body.umd-theme-light .syn-string { color: #0a3069; }
+  body.vscode-light .syn-number,
+  body.vscode-high-contrast-light .syn-number,
+  body.umd-theme-light .syn-number { color: #0550ae; }
+  body.vscode-light .syn-boolean,
+  body.vscode-high-contrast-light .syn-boolean,
+  body.umd-theme-light .syn-boolean,
+  body.vscode-light .syn-null,
+  body.vscode-high-contrast-light .syn-null,
+  body.umd-theme-light .syn-null { color: #cf222e; }
+  body.vscode-light .syn-punct,
+  body.vscode-high-contrast-light .syn-punct,
+  body.umd-theme-light .syn-punct { color: #475569; }
+  body.vscode-light .syn-tag,
+  body.vscode-high-contrast-light .syn-tag,
+  body.umd-theme-light .syn-tag { color: #116329; }
+  body.vscode-light .syn-tag-bracket,
+  body.vscode-high-contrast-light .syn-tag-bracket,
+  body.umd-theme-light .syn-tag-bracket { color: #64748b; }
+  body.vscode-light .syn-attr,
+  body.vscode-high-contrast-light .syn-attr,
+  body.umd-theme-light .syn-attr { color: #0550ae; }
+  body.vscode-light .syn-keyword,
+  body.vscode-high-contrast-light .syn-keyword,
+  body.umd-theme-light .syn-keyword { color: #cf222e; }
+  body.vscode-light .syn-property,
+  body.vscode-high-contrast-light .syn-property,
+  body.umd-theme-light .syn-property { color: #953800; }
+  body.vscode-light .syn-builtin,
+  body.vscode-high-contrast-light .syn-builtin,
+  body.umd-theme-light .syn-builtin { color: #8250df; }
+  body.vscode-light .syn-comment,
+  body.vscode-high-contrast-light .syn-comment,
+  body.umd-theme-light .syn-comment { color: #6e7781; }
+  body.vscode-light .syn-operator,
+  body.vscode-high-contrast-light .syn-operator,
+  body.umd-theme-light .syn-operator { color: #cf222e; }
+
+  /* Charts, Progress, Pipelines, Tooltips & Popovers in Light Theme */
+  body.vscode-light .chart-track,
+  body.vscode-high-contrast-light .chart-track,
+  body.umd-theme-light .chart-track,
+  body.vscode-light .progress-track,
+  body.vscode-high-contrast-light .progress-track,
+  body.umd-theme-light .progress-track {
+    background: rgba(15, 23, 42, 0.08);
+  }
+
+  body.vscode-light .comparison-legend-item,
+  body.vscode-high-contrast-light .comparison-legend-item,
+  body.umd-theme-light .comparison-legend-item {
+    background: rgba(15, 23, 42, 0.04);
+  }
+
+  body.vscode-light .column-lbl-input:hover,
+  body.vscode-high-contrast-light .column-lbl-input:hover,
+  body.umd-theme-light .column-lbl-input:hover,
+  body.vscode-light .comparison-group-lbl:hover,
+  body.vscode-high-contrast-light .comparison-group-lbl:hover,
+  body.umd-theme-light .comparison-group-lbl:hover {
+    color: #0f172a;
+  }
+
+  body.vscode-light .column-lbl-tooltip,
+  body.vscode-high-contrast-light .column-lbl-tooltip,
+  body.umd-theme-light .column-lbl-tooltip,
+  body.vscode-light .comparison-lbl-tooltip,
+  body.vscode-high-contrast-light .comparison-lbl-tooltip,
+  body.umd-theme-light .comparison-lbl-tooltip,
+  body.vscode-light .chart-point-popover,
+  body.vscode-high-contrast-light .chart-point-popover,
+  body.umd-theme-light .chart-point-popover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+  }
+
+  body.vscode-light .line-chart-svg text,
+  body.vscode-high-contrast-light .line-chart-svg text,
+  body.umd-theme-light .line-chart-svg text {
+    fill: #475569;
+  }
+
+  body.vscode-light .line-chart-svg line,
+  body.vscode-high-contrast-light .line-chart-svg line,
+  body.umd-theme-light .line-chart-svg line {
+    stroke: rgba(15, 23, 42, 0.12);
+  }
+
+  /* Floating format bar, selects & context menu in Light Theme */
+  body.vscode-light .notion-format-bar,
+  body.vscode-high-contrast-light .notion-format-bar,
+  body.umd-theme-light .notion-format-bar,
+  body.vscode-light .format-color-menu,
+  body.vscode-high-contrast-light .format-color-menu,
+  body.umd-theme-light .format-color-menu,
+  body.vscode-light .umd-context-menu,
+  body.vscode-high-contrast-light .umd-context-menu,
+  body.umd-theme-light .umd-context-menu {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+  }
+
+  body.vscode-light .format-select,
+  body.vscode-high-contrast-light .format-select,
+  body.umd-theme-light .format-select {
+    background: #f8fafc;
+    color: #1e293b;
+    border-color: #cbd5e1;
+  }
+
+  body.vscode-light .format-select option,
+  body.vscode-high-contrast-light .format-select option,
+  body.umd-theme-light .format-select option {
+    background: #ffffff;
+    color: #1e293b;
+  }
+
+  body.vscode-light .menu-item:hover,
+  body.vscode-high-contrast-light .menu-item:hover,
+  body.umd-theme-light .menu-item:hover {
+    color: #ffffff;
+  }
+
+  /* Hover scrollbars in Light Theme */
+  body.vscode-light .isolated-element:hover .table-top-scroll,
+  body.vscode-light .table-block-wrapper:hover .table-top-scroll,
+  body.vscode-light .isolated-element:hover .table-scroll-body,
+  body.vscode-light .table-block-wrapper:hover .table-scroll-body,
+  body.vscode-light .isolated-element:hover .chart-columns-container,
+  body.vscode-light .isolated-element:hover .chart-comparison-container,
+  body.vscode-light .isolated-element:hover .code-body-wrapper,
+  body.vscode-light .isolated-element:hover .notion-code-content,
+  body.vscode-high-contrast-light .isolated-element:hover .table-scroll-body,
+  body.umd-theme-light .isolated-element:hover .table-scroll-body {
+    scrollbar-color: rgba(15, 23, 42, 0.28) transparent;
+  }
+
+  body.vscode-light .table-top-scroll::-webkit-scrollbar-thumb,
+  body.vscode-light .table-scroll-body::-webkit-scrollbar-thumb,
+  body.vscode-light .chart-columns-container::-webkit-scrollbar-thumb,
+  body.vscode-light .chart-comparison-container::-webkit-scrollbar-thumb,
+  body.vscode-light .code-body-wrapper::-webkit-scrollbar-thumb,
+  body.vscode-light .notion-code-content::-webkit-scrollbar-thumb,
+  body.umd-theme-light .table-scroll-body::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.24);
+  }
 </style>
 </head>
 <body>
@@ -2202,6 +2559,14 @@
     <span class="menu-shortcut">```</span>
   </div>
 
+  <div class="menu-item" data-action="add-image">
+    <span class="menu-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </span>
+    <span class="menu-title">Image</span>
+    <span class="menu-shortcut">[IMAGE]</span>
+  </div>
+
   <div class="menu-item" data-action="add-table">
     <span class="menu-icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
@@ -2329,6 +2694,45 @@
   const page = document.getElementById('editor-page');
   const contextMenu = document.getElementById('context-menu');
   const formatBar = document.getElementById('format-bar');
+  const DOC_BASE_URI_RAW = "__DOC_BASE_URI__";
+  const DOC_BASE_URI = DOC_BASE_URI_RAW.startsWith("__DOC_BASE_") ? "" : DOC_BASE_URI_RAW;
+  const pendingImageCallbacks = new Map();
+  let imageRequestSeq = 0;
+
+  // Automatic Light/Dark theme sync (VS Code injects body.vscode-light / body.vscode-dark;
+  // outside VS Code, follow OS prefers-color-scheme).
+  (function initThemeDetection() {
+    function syncStandaloneTheme() {
+      const cls = document.body.classList;
+      if (cls.contains('vscode-dark') || cls.contains('vscode-light') || cls.contains('vscode-high-contrast') || cls.contains('vscode-high-contrast-light')) {
+        cls.remove('umd-theme-light');
+        return;
+      }
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        cls.add('umd-theme-light');
+      } else {
+        cls.remove('umd-theme-light');
+      }
+    }
+    syncStandaloneTheme();
+    if (window.matchMedia) {
+      const mq = window.matchMedia('(prefers-color-scheme: light)');
+      if (mq.addEventListener) mq.addEventListener('change', syncStandaloneTheme);
+    }
+  })();
+
+  function resolveImageSrc(src) {
+    const clean = (src || '').trim();
+    if (!clean) return '';
+    if (/^(https?:|data:|blob:|vscode-webview-resource:|file:)/i.test(clean)) {
+      return clean;
+    }
+    if (DOC_BASE_URI) {
+      const normalized = clean.replace(/\\/g, '/').replace(/^\.\//, '');
+      return DOC_BASE_URI.replace(/\/$/, '') + '/' + normalized;
+    }
+    return clean;
+  }
   let saveTimer = null;
   let isRendering = false;
   let lastSerializedText = '';
@@ -2402,7 +2806,16 @@
   }
 
   window.addEventListener('message', event => {
-    if (event.data && event.data.type === 'update') {
+    if (!event.data) return;
+    if (event.data.type === 'image-picked' || event.data.type === 'image-resolved') {
+      const cb = pendingImageCallbacks.get(event.data.requestId);
+      if (cb) {
+        pendingImageCallbacks.delete(event.data.requestId);
+        cb(event.data);
+      }
+      return;
+    }
+    if (event.data.type === 'update') {
       const incoming = (event.data.text || '').replace(/\r\n/g, '\n').trim();
       const current = lastSerializedText.replace(/\r\n/g, '\n').trim();
       if (incoming && incoming === current) {
@@ -2986,7 +3399,7 @@
     // 1. Remove all editor UI buttons, toolbars, actions, scrollbars
     clone.querySelectorAll(
       '.comparison-lbl-tooltip, .delete-group-btn, .column-lbl-tooltip, .element-toolbar, .delete-stage-btn, .delete-series-btn, .line-row-del-btn, .delete-bar-btn, .delete-col-btn, .code-copy-btn, .code-gutter, ' +
-      '.table-actions, .pipeline-actions, .chart-actions, .add-block-btn, ' +
+      '.table-actions, .pipeline-actions, .chart-actions, .image-controls, .add-block-btn, ' +
       '.notion-drag-handle, .table-top-scroll, .format-bar, .umd-context-menu'
     ).forEach(el => el.remove());
 
@@ -3332,6 +3745,8 @@
       newElement = createHeadingBlock(4, 'Heading 4');
     } else if (action === 'add-code') {
       newElement = createCodeBlock('python', '# Write code here');
+    } else if (action === 'add-image') {
+      newElement = createImageElement('', 'Image', '', '');
     } else if (action === 'add-table') {
       newElement = createTableElement('Data Table', ['Item', 'Qty', 'Price'], [
         ['Item A', '1', '$100'],
@@ -5580,6 +5995,202 @@
     return wrapper;
   }
 
+  function createImageElement(src, alt, caption, width) {
+    const wrapper = createIsolatedWrapper('image');
+    wrapper.setAttribute('data-src', src || '');
+    wrapper.setAttribute('data-alt', alt || '');
+    wrapper.setAttribute('data-width', width ? String(width) : '');
+
+    const card = document.createElement('div');
+    card.className = 'notion-image-block';
+
+    const frame = document.createElement('div');
+    frame.className = 'notion-image-frame';
+
+    const img = document.createElement('img');
+    img.className = 'notion-image-el';
+    img.alt = alt || '';
+    if (width) {
+      const wStr = /^\d+$/.test(String(width).trim()) ? (String(width).trim() + 'px') : String(width).trim();
+      img.style.width = wStr;
+    }
+
+    const fallback = document.createElement('div');
+    fallback.className = 'notion-image-fallback';
+
+    function applySrc(newSrc, overrideDisplayUrl) {
+      const clean = (newSrc || '').trim();
+      wrapper.setAttribute('data-src', clean);
+      if (!clean) {
+        img.style.display = 'none';
+        fallback.style.display = 'block';
+        fallback.style.cursor = 'pointer';
+        fallback.textContent = 'Click here or "Open Image" to choose an image from your PC, or use "Edit path" for a URL.';
+        return;
+      }
+      img.style.display = 'block';
+      fallback.style.display = 'none';
+      if (overrideDisplayUrl) {
+        img.src = overrideDisplayUrl;
+        return;
+      }
+      const isRemoteOrData = /^(https?:|data:|blob:|vscode-webview-resource:)/i.test(clean);
+      if (!isRemoteOrData && typeof acquireVsCodeApi === 'function') {
+        const reqId = 'img-res-' + (++imageRequestSeq);
+        pendingImageCallbacks.set(reqId, (data) => {
+          if (data && data.webviewSrc) {
+            img.style.display = 'block';
+            fallback.style.display = 'none';
+            img.src = data.webviewSrc;
+          }
+        });
+        vscode.postMessage({ type: 'resolve-image', requestId: reqId, src: clean });
+      } else {
+        img.src = resolveImageSrc(clean);
+      }
+    }
+
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      fallback.style.display = 'block';
+      fallback.style.cursor = 'pointer';
+      fallback.textContent = 'Could not load image: ' + (wrapper.getAttribute('data-src') || '(empty)') + ' — click to Open Image.';
+    });
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      const objUrl = URL.createObjectURL(file);
+      const cleanName = file.name || 'image';
+      if (!wrapper.getAttribute('data-alt')) {
+        wrapper.setAttribute('data-alt', cleanName);
+        img.alt = cleanName;
+      }
+      srcInput.value = cleanName;
+      applySrc(cleanName, objUrl);
+      scheduleSave();
+    });
+
+    function triggerOpenImage() {
+      if (typeof acquireVsCodeApi === 'function') {
+        const reqId = 'img-pick-' + (++imageRequestSeq);
+        pendingImageCallbacks.set(reqId, (data) => {
+          if (!data || !data.src) return;
+          if (data.alt && !wrapper.getAttribute('data-alt')) {
+            wrapper.setAttribute('data-alt', data.alt);
+            img.alt = data.alt;
+          }
+          srcInput.value = data.src;
+          srcInput.style.display = 'none';
+          applySrc(data.src, data.webviewSrc);
+          scheduleSave();
+        });
+        vscode.postMessage({ type: 'pick-image', requestId: reqId });
+      } else {
+        fileInput.click();
+      }
+    }
+
+    fallback.addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerOpenImage();
+    });
+
+    frame.appendChild(img);
+    frame.appendChild(fallback);
+    card.appendChild(frame);
+
+    const captionEl = document.createElement('div');
+    captionEl.className = 'notion-image-caption';
+    captionEl.contentEditable = 'true';
+    captionEl.innerHTML = caption ? markdownInlineToHtml(caption) : '';
+    captionEl.addEventListener('input', scheduleSave);
+    card.appendChild(captionEl);
+
+    const controls = document.createElement('div');
+    controls.className = 'image-controls';
+
+    const openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'chart-btn';
+    openBtn.textContent = 'Open Image';
+    openBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerOpenImage();
+    });
+    controls.appendChild(openBtn);
+    controls.appendChild(fileInput);
+
+    [
+      { label: 'S', val: '400' },
+      { label: 'M', val: '640' },
+      { label: 'L', val: '820' },
+      { label: 'Full', val: '' }
+    ].forEach(preset => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chart-btn';
+      btn.textContent = preset.label;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        wrapper.setAttribute('data-width', preset.val);
+        img.style.width = preset.val ? (preset.val + 'px') : '';
+        scheduleSave();
+      });
+      controls.appendChild(btn);
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'chart-btn';
+    editBtn.textContent = 'Edit path';
+
+    const srcInput = document.createElement('input');
+    srcInput.type = 'text';
+    srcInput.className = 'image-src-input';
+    srcInput.placeholder = './plot.png or https://...';
+    srcInput.value = src || '';
+    if (!src) {
+      srcInput.style.display = 'inline-block';
+    }
+
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const visible = srcInput.style.display !== 'none';
+      srcInput.style.display = visible ? 'none' : 'inline-block';
+      if (!visible) {
+        srcInput.value = wrapper.getAttribute('data-src') || '';
+        srcInput.focus();
+        srcInput.select();
+      }
+    });
+
+    srcInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applySrc(srcInput.value);
+        srcInput.style.display = 'none';
+        scheduleSave();
+      }
+    });
+    srcInput.addEventListener('blur', () => {
+      applySrc(srcInput.value);
+      scheduleSave();
+    });
+
+    controls.appendChild(editBtn);
+    controls.appendChild(srcInput);
+    card.appendChild(controls);
+
+    applySrc(src);
+    wrapper.appendChild(card);
+    return wrapper;
+  }
+
   // DOCUMENT PARSING & RENDERING
   function renderDocument(text) {
     if (typeof text !== 'string') text = '';
@@ -5984,6 +6595,30 @@
         continue;
       }
 
+      // Image: [IMAGE src="..." alt="..." caption="..." width="..." /]
+      if (/^\[IMAGE\b/i.test(line.trim())) {
+        let srcMatch = line.match(/src="([^"]*)"/i);
+        let altMatch = line.match(/alt="([^"]*)"/i);
+        let capMatch = line.match(/caption="([^"]*)"/i);
+        let wMatch = line.match(/width="?([0-9]+)"?/i);
+        page.appendChild(createImageElement(
+          srcMatch ? srcMatch[1] : '',
+          altMatch ? altMatch[1] : '',
+          capMatch ? capMatch[1] : '',
+          wMatch ? wMatch[1] : ''
+        ));
+        i++;
+        continue;
+      }
+
+      // Standard Markdown Image: ![alt](src)
+      let mdImgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (mdImgMatch) {
+        page.appendChild(createImageElement(mdImgMatch[2].trim(), mdImgMatch[1].trim(), '', ''));
+        i++;
+        continue;
+      }
+
       // Plain text line or blank line
       if (line.trim().length > 0) {
         page.appendChild(createParagraphBlock(line));
@@ -6234,6 +6869,18 @@
         const val = block.getAttribute('data-value') || '0';
         const mx = block.getAttribute('data-max') || '100';
         lines.push('[PROGRESS label="' + label + '" value="' + val + '" max="' + mx + '" /]');
+        lines.push('');
+      } else if (type === 'image') {
+        const src = (block.getAttribute('data-src') || '').replace(/"/g, "'");
+        const alt = (block.getAttribute('data-alt') || '').replace(/"/g, "'");
+        const width = (block.getAttribute('data-width') || '').trim();
+        const capEl = block.querySelector('.notion-image-caption');
+        const caption = capEl ? htmlToMarkdownInline(capEl).trim().replace(/"/g, "'") : '';
+        let attrs = 'src="' + src + '"';
+        if (alt) attrs += ' alt="' + alt + '"';
+        if (caption) attrs += ' caption="' + caption + '"';
+        if (width) attrs += ' width="' + width + '"';
+        lines.push('[IMAGE ' + attrs + ' /]');
         lines.push('');
       }
     });

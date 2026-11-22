@@ -73,3 +73,63 @@ def test_plain_text_block_wraps_without_horizontal_scroll():
         assert metrics[1]["whiteSpace"] == "pre"
 
         browser.close()
+
+
+def test_image_block_render_resize_and_roundtrip():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": 900, "height": 700})
+        page.goto(f"file:///{str(EDITOR_HTML).replace(chr(92), '/')}")
+
+        sample = (
+            '[IMAGE src="assets/screenshot_01_editor_overview.png" '
+            'alt="Overview" caption="Figura 1" width="640" /]\n\n'
+            '![Plot](./plot.png)\n'
+        )
+        page.evaluate("(text) => renderDocument(text)", sample)
+
+        assert page.locator('.notion-image-block').count() == 2
+        assert page.locator('.notion-image-caption').first.inner_text().strip() == "Figura 1"
+
+        # Hover first image and click width preset 'L' (820px)
+        first_img_wrap = page.locator('.isolated-element[data-block-type="image"]').first
+        first_img_wrap.hover()
+        first_img_wrap.get_by_role("button", name="L", exact=True).click()
+
+        serialized = page.evaluate("() => serializeDocument()")
+        assert 'src="assets/screenshot_01_editor_overview.png"' in serialized
+        assert 'caption="Figura 1"' in serialized
+        assert 'width="820"' in serialized
+        assert 'src="./plot.png"' in serialized
+
+        browser.close()
+
+
+def test_light_and_dark_theme_palettes():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": 900, "height": 700})
+        page.goto(f"file:///{str(EDITOR_HTML).replace(chr(92), '/')}")
+        page.evaluate("(text) => renderDocument(text)", "# Title\n\n```python\nx = 1\n```\n")
+
+        # Force dark mode (default VS Code dark)
+        page.evaluate("() => { document.body.className = 'vscode-dark'; }")
+        dark_vars = page.evaluate("""() => {
+            const cs = getComputedStyle(document.body);
+            const code = getComputedStyle(document.querySelector('.notion-code-block'));
+            return { text: cs.getPropertyValue('--text-primary').trim(), codeBg: code.backgroundColor };
+        }""")
+        assert dark_vars["text"] == "#bec4cc"
+        assert dark_vars["codeBg"] == "rgb(24, 24, 24)"
+
+        # Switch to VS Code light theme
+        page.evaluate("() => { document.body.className = 'vscode-light'; }")
+        light_vars = page.evaluate("""() => {
+            const cs = getComputedStyle(document.body);
+            const code = getComputedStyle(document.querySelector('.notion-code-block'));
+            return { text: cs.getPropertyValue('--text-primary').trim(), codeBg: code.backgroundColor };
+        }""")
+        assert light_vars["text"] == "#1f2937"
+        assert light_vars["codeBg"] == "rgb(248, 250, 252)"
+
+        browser.close()
