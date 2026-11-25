@@ -1,0 +1,30 @@
+{
+  "100": {
+    "lines": 816,
+    "chars": 10994,
+    "parse_ms_best": 36.77,
+    "parse_ms_avg": 52.03,
+    "render_ms": 63.0
+  },
+  "500": {
+    "lines": 4076,
+    "chars": 55766,
+    "parse_ms_best": 112.24,
+    "parse_ms_avg": 125.96,
+    "render_ms": 143.26
+  },
+  "1000": {
+    "lines": 8151,
+    "chars": 111731,
+    "parse_ms_best": 213.39,
+    "parse_ms_avg": 260.62,
+    "render_ms": 258.18
+  },
+  "2000": {
+    "lines": 16301,
+    "chars": 225661,
+    "parse_ms_best": 376.35,
+    "parse_ms_avg": 457.13,
+    "render_ms": 428.07
+  }
+}

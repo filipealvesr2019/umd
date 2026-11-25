@@ -1,0 +1,43 @@
+name: Mutation Testing
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1" # Mondays, 03:00 UTC
+
+jobs:
+  mutmut:
+    name: mutmut (core)
+    runs-on: ubuntu-latest
+    # mutmut does not support native Windows; it runs on Linux here.
+    continue-on-error: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package and mutation dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,mutants]"
+
+      - name: Run mutation testing
+        run: mutmut run
+
+      - name: Show surviving mutants
+        run: mutmut results
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: |
+            mutants/
+            .mutmut-cache
+          if-no-files-found: ignore

@@ -1,7 +1,7 @@
 # Roadmap de Qualidade (QA) — UI-Markdown
 
 ## Estado atual
-- 84 testes passando (parser, renderização, roundtrip, segurança, edição, charts, CLI/agent kit).
+- 100 testes passando (parser, renderização, roundtrip, segurança, edição, charts, CLI/agent kit).
 - Cobertura 75,94% (branch, medido com `pytest --cov`), acima do mínimo de 75%.
 - README em inglês + README.pt-BR.md (português do Brasil, arquivo separado).
 - Workflow de publicação no PyPI existente.
@@ -15,8 +15,8 @@
 - [x] 2. Lint/format (ruff) + pre-commit
 - [x] 3. Cobertura publicada (Codecov) + badge
 - [x] 4. Documentação em inglês + pt-BR separada
-- [ ] 5. Testes E2E do editor visual (Playwright)  ← FALTA
-- [ ] 6. Performance, fuzzing e mutation testing  ← FALTA
+- [x] 5. Testes E2E do editor visual (Playwright)
+- [x] 6. Performance, fuzzing e mutation testing (mutmut configurado; execução no CI Linux)
 
 ## Objetivo
 Tornar o projeto um portfólio forte para vaga de QA no Brasil, com automação, métricas visíveis e documentação em pt-BR, sem alterar o código que funciona.
@@ -136,8 +136,12 @@ Teste de validação:
 
 ## 5. Testes E2E do editor visual (Playwright)
 
-Status: NÃO INICIADO (FALTA)
-Observação: já existem testes Playwright manuais em `tests/test_line_chart.py`, `tests/test_undo_and_text_wrap.py`, `tests/test_clipboard_visuals.py` e `tests/test_editing.py`, mas eles não estão organizados como suíte E2E nem integrados ao CI.
+Status: CONCLUÍDO
+Arquivos: `tests/e2e/conftest.py`, `tests/e2e/test_editor_e2e.py`, `.github/workflows/e2e.yml`.
+Cobertura da suíte (7 testes): roundtrip render/serialize, inserção de bloco (add-h2), edição de parágrafo + undo/redo, tema claro, gráfico, tabela e imagem sem Base64.
+Resultado local: 7 passed.
+Observação técnica: a fixture do navegador tem escopo de módulo e é encerrada antes dos outros testes. Com fixture de sessão, os testes síncronos do Playwright falhavam com "Sync API inside the asyncio loop" por causa da ordem de coleta (`e2e` roda primeiro).
+Pendência: o workflow `E2E` só roda após push (instala Chromium no Ubuntu).
 
 O que é:
 Testes automatizados no navegador que validam fluxos reais do editor visual (inserir blocos, editar texto, undo/redo, trocar tema, gráficos, imagens).
@@ -162,8 +166,13 @@ Teste de validação:
 
 ## 6. Performance, fuzzing e mutation testing (avançado/opcional)
 
-Status: NÃO INICIADO (FALTA)
-Observação: nenhuma dependência instalada (`hypothesis`, `pytest-benchmark`, `mutmut`) e nenhum baseline de performance definido.
+Status: CONCLUÍDO (com uma limitação de ambiente)
+Arquivos: `tests/test_fuzz.py`, `tests/test_performance.py`, `benchmarks/bench_parse.py`, `benchmarks/baseline.json`, `.github/workflows/mutation.yml`, `[tool.mutmut]` no `pyproject.toml`.
+Fuzzing (Hypothesis, 6 testes): parse/validate/render/Document nunca lançam exceção com texto arbitrário; texto-fonte preservado; contagem de parágrafos estável.
+Performance (3 testes + baseline): 816 linhas → 36,77 ms; 4.076 → 112,24 ms; 8.151 → 213,39 ms; 16.301 → 376,35 ms (melhor de 3 rodadas, Windows/Python 3.14). Guardas com limites generosos (1 s / 5 s / razão < 60x).
+Mutation testing: configurado para `core/` e `document/` com runner pytest.
+LIMITAÇÃO: mutmut não roda em Windows nativo (exige WSL). Não foi possível executar localmente; o workflow `Mutation Testing` roda no Ubuntu (manual + semanal). Próximo passo: disparar o workflow ou usar WSL para obter o score real.
+Alternativa sem WSL: rodar no GitHub Actions → aba Actions → "Mutation Testing" → Run workflow.
 
 O que é:
 Medir performance do parser, testar entradas malformadas/aleatórias (fuzzing) e avaliar se os testes detectam mudanças no código (mutation testing).
@@ -198,26 +207,27 @@ Teste de validação:
 4. Confirmar que os badges de CI e cobertura renderizam nos READMEs.
 5. Rodar `pre-commit install` localmente.
 
-### B. Testes E2E do editor (item 5)
-1. Criar `tests/e2e/` (ex.: `test_editor_e2e.py`) reaproveitando os helpers Playwright já existentes.
-2. Cobrir: abrir `editor.html`, inserir bloco, editar texto, undo/redo, tema claro/escuro, gráfico e imagem.
-3. Adicionar `playwright` em `[project.optional-dependencies] dev`.
-4. No CI, instalar navegador: `playwright install --with-deps chromium` e rodar `pytest tests/e2e/`.
-5. Validar com `pytest tests/e2e/` local e no CI.
+### B. Testes E2E do editor (item 5) — feito
+1. [x] `tests/e2e/` criado com `conftest.py` (fixture de módulo) e `test_editor_e2e.py`.
+2. [x] Fluxos cobertos: render/serialize, inserção de bloco, edição, undo/redo, tema claro, gráfico, tabela e imagem.
+3. [x] `playwright` no extra `e2e` do `pyproject.toml` (e já instalado localmente).
+4. [x] Workflow `.github/workflows/e2e.yml` instala Chromium e roda `pytest tests/e2e -v`.
+5. [x] Validado localmente: 7 passed. Falta apenas rodar no CI após o push.
 
-### C. Performance, fuzzing e mutation testing (item 6)
-1. Criar `benchmarks/` com documento grande e medir tempo de parse (baseline documentado).
-2. Adicionar `hypothesis` e testes de parser com entradas malformadas.
-3. Adicionar `mutmut` e rodar `mutmut run` para medir qualidade dos testes.
-4. Registrar resultados no `docs/TEST_STRATEGY.md` e na versão pt-BR.
+### C. Performance, fuzzing e mutation testing (item 6) — feito (com limitação)
+1. [x] `benchmarks/bench_parse.py` com 4 tamanhos e `benchmarks/baseline.json` gravado.
+2. [x] `tests/test_fuzz.py` com Hypothesis (6 testes, 60 exemplos cada).
+3. [ ] `mutmut` configurado e workflow criado, mas NÃO executado localmente: não roda em Windows nativo. Rodar via WSL ou acionar o workflow no GitHub.
+4. [x] Resultados registrados em `docs/TEST_STRATEGY.md` e `docs/TEST_STRATEGY.pt-BR.md`.
 
 ## Ordem sugerida de execução
 1. Push + conferir CI (A) — valida os itens 1 e 2.
 2. Codecov (A.3) — conclui o item 3.
-3. Testes E2E (B) — QA de interface.
-4. Performance/fuzzing/mutation (C) — diferenciação avançada.
+3. Acionar o workflow `Mutation Testing` no GitHub (ou usar WSL) — única pendência do item 6.
 
 ## Validação geral
-Após cada item: rodar `pytest tests/` e confirmar 84+ testes passando (ou mais, se novos testes forem adicionados).
-Comando de cobertura: `pytest --cov --cov-report=term-missing` (mínimo exigido: 75%).
+Após cada item: rodar `pytest tests/` e confirmar 100 testes passando (ou mais, se novos testes forem adicionados).
+Comando de cobertura: `pytest --cov --cov-report=term-missing` (mínimo exigido: 75%; atual 76,07%).
 Lint: `ruff check .` deve retornar "All checks passed!".
+E2E: `pytest tests/e2e -v` (7 testes; requer `playwright install chromium`).
+Performance: `python benchmarks/bench_parse.py` (baseline em `benchmarks/baseline.json`).

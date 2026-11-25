@@ -1,78 +1,194 @@
 [build-system]
+
 requires = ["setuptools>=61.0"]
+
 build-backend = "setuptools.build_meta"
 
+
+
 [project]
+
 name = "ui-markdown"
+
 version = "0.0.9"
+
 description = "UI-Markdown — Interactive visual documents in pure plain text"
+
 readme = "README.md"
+
 license = { file = "LICENSE" }
+
 requires-python = ">=3.9"
+
 authors = [
+
     { name = "Filipe Alves" }
+
 ]
+
 keywords = ["markdown", "ui", "documents", "interactive", "editor", "charts"]
+
 classifiers = [
+
     "Development Status :: 3 - Alpha",
+
     "Programming Language :: Python :: 3",
+
     "License :: OSI Approved :: MIT License",
+
     "Topic :: Text Processing :: Markup",
+
     "Topic :: Text Editors :: Integrated Development Environments (IDE)",
+
 ]
+
+
 
 [project.optional-dependencies]
+
 dev = [
+
   "pytest>=7.0",
+
   "pytest-cov>=4.0",
+
   "ruff>=0.6",
+
+  "hypothesis>=6.0",
+
 ]
+
+e2e = [
+
+  "playwright>=1.40",
+
+]
+
+fuzz = [
+
+  "hypothesis>=6.0",
+
+]
+
+mutants = [
+
+  "mutmut>=3.0",
+
+]
+
+
 
 [tool.ruff]
+
 line-length = 100
+
 target-version = "py39"
+
 extend-exclude = ["tests/test_line_chart.py"]
 
+
+
 [tool.ruff.lint]
+
 select = ["E9", "F63", "F7", "F82"]
 
+
+
 [tool.pytest.ini_options]
+
 minversion = "7.0"
+
 addopts = "-ra -q"
+
 testpaths = ["tests"]
 
-[tool.coverage.run]
-source = ["umd", "core", "components", "document", "markdown", "renderers"]
-branch = true
-omit = ["*/tests/*", "*/__pycache__/*"]
+markers = [
 
-[tool.coverage.report]
-show_missing = true
-skip_covered = false
-fail_under = 75
+  "e2e: browser end-to-end tests for the visual editor",
 
-[project.urls]
-Homepage = "https://github.com/filipealvesr2019/umd"
-Repository = "https://github.com/filipealvesr2019/umd"
-Documentation = "https://github.com/filipealvesr2019/umd/blob/main/docs/TUTORIAL.md"
-Issues = "https://github.com/filipealvesr2019/umd/issues"
+  "fuzz: property-based tests",
 
-[project.scripts]
-umd = "umd.cli:main"
-uimd = "umd.cli:main"
-
-[tool.setuptools]
-packages = [
-    "umd",
-    "umd.components",
-    "umd.core",
-    "umd.document",
-    "umd.markdown",
-    "umd.renderers",
 ]
 
+
+
+[tool.coverage.run]
+
+source = ["umd", "core", "components", "document", "markdown", "renderers"]
+
+branch = true
+
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+
+
+[tool.coverage.report]
+
+show_missing = true
+
+skip_covered = false
+
+fail_under = 75
+
+
+
+[tool.mutmut]
+
+paths_to_mutate = ["core/", "document/"]
+
+tests_dir = ["tests/"]
+
+runner = "python -m pytest -x -q"
+
+
+
+[project.urls]
+
+Homepage = "https://github.com/filipealvesr2019/umd"
+
+Repository = "https://github.com/filipealvesr2019/umd"
+
+Documentation = "https://github.com/filipealvesr2019/umd/blob/main/docs/TUTORIAL.md"
+
+Issues = "https://github.com/filipealvesr2019/umd/issues"
+
+
+
+[project.scripts]
+
+umd = "umd.cli:main"
+
+uimd = "umd.cli:main"
+
+
+
+[tool.setuptools]
+
+packages = [
+
+    "umd",
+
+    "umd.components",
+
+    "umd.core",
+
+    "umd.document",
+
+    "umd.markdown",
+
+    "umd.renderers",
+
+]
+
+
+
 [tool.setuptools.package-dir]
+
 umd = "."
 
+
+
 [tool.setuptools.package-data]
+
 umd = ["editor.html", "extension_template.js"]
+

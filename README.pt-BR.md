@@ -6,7 +6,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![Licença: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Testes](https://img.shields.io/badge/tests-84%20passed-brightgreen.svg)]()
+[![Testes](https://img.shields.io/badge/tests-100%20passed-brightgreen.svg)]()
 [![CI](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml/badge.svg)](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml)
 [![Cobertura](https://codecov.io/gh/filipealvesr2019/umd/branch/main/graph/badge.svg)](https://codecov.io/gh/filipealvesr2019/umd)
 [![Zero Dependências](https://img.shields.io/badge/dependencies-0%20external-purple.svg)]()
@@ -147,7 +147,7 @@ html_output = render_document(doc)
 pytest tests/
 ```
 
-**Status:** 84 testes passando (100% de taxa de sucesso).
+**Status:** 100 testes passando (unitários, roundtrip, segurança, edição, gráficos, CLI, end-to-end com Playwright, fuzzing com Hypothesis e guardas de performance). Cobertura: 76% (branch). Veja [docs/TEST_STRATEGY.pt-BR.md](docs/TEST_STRATEGY.pt-BR.md).
 
 ---
 

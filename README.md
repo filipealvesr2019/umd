@@ -6,7 +6,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-84%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-100%20passed-brightgreen.svg)]()
 [![CI](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml/badge.svg)](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/filipealvesr2019/umd/branch/main/graph/badge.svg)](https://codecov.io/gh/filipealvesr2019/umd)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20external-purple.svg)]()
@@ -331,7 +331,7 @@ UMD includes a comprehensive test suite covering parser grammar, AST validation,
 pytest tests/
 ```
 
-**Status:** 83 passed (100% pass rate across editing, undo/redo, interactive charts, images, dark/light themes, AI-agent kit, typography formatting, parsing, rendering, roundtrip, and security modules).
+**Status:** 100 tests passing (unit, roundtrip, security, editing, charts, CLI, Playwright end-to-end, Hypothesis fuzzing and performance guards). Coverage: 76% (branch). See [docs/TEST_STRATEGY.md](docs/TEST_STRATEGY.md).
 
 ---
 
