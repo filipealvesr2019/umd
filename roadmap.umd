@@ -1,0 +1,45 @@
+# Roadmap de Qualidade (QA) — UI-Markdown
+
+## Estado atual
+- 84 testes passando (parser, renderização, roundtrip, segurança, edição, charts, CLI/agent kit).
+- Cobertura aproximada: 76% (branch) / 86% (statement).
+- README em inglês + README.pt-BR.md (português do Brasil, arquivo separado).
+- Workflow de publicação no PyPI existente.
+
+## Objetivo
+Tornar o projeto um portfólio forte para vaga de QA no Brasil, com automação, métricas visíveis e documentação em pt-BR, sem alterar o código que funciona.
+
+## Itens do roadmap
+
+### 1. CI de testes
+- Status: pendente
+- Ação: criar `.github/workflows/ci.yml` com matriz Python 3.9/3.11/3.13, rodando `pytest` em push/PR na `main`.
+- Teste: workflow executa e passa.
+
+### 2. Lint/format (ruff) + pre-commit
+- Status: pendente
+- Ação: configurar `ruff` no `pyproject.toml`, adicionar `.pre-commit-config.yaml`, incluir lint no CI.
+- Teste: `ruff check .` passa.
+
+### 3. Cobertura publicada (Codecov) + badge
+- Status: pendente
+- Ação: enviar `coverage.xml` ao Codecov no CI e adicionar badge no README/README.pt-BR.md.
+- Teste: badge reflete cobertura real.
+
+### 4. Documentação em pt-BR
+- Status: em andamento
+- Ação: manter README.pt-BR.md atualizado; criar docs de estratégia de testes, contribuição, segurança e changelog em pt-BR.
+- Teste: arquivos existem e são coerentes com o projeto.
+
+### 5. Testes E2E do editor (Playwright)
+- Status: pendente
+- Ação: criar suíte Playwright para `editor.html` (undo/redo, temas, charts, imagens) e integrar ao CI.
+- Teste: `pytest tests/` (incluindo E2E) passa.
+
+### 6. Performance, fuzzing e mutation testing
+- Status: pendente (opcional/avançado)
+- Ação: benchmarks de parse, fuzzing do parser, mutation testing.
+- Teste: relatórios gerados e baseline definido.
+
+## Regra de ouro
+Não mexer em código que funciona. Toda mudança deve ser validada por `pytest tests/` antes de ser considerada concluída.
