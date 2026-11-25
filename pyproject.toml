@@ -21,6 +21,36 @@ classifiers = [
     "Topic :: Text Editors :: Integrated Development Environments (IDE)",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "pytest-cov>=4.0",
+  "ruff>=0.6",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = ["tests/test_line_chart.py"]
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["umd", "core", "components", "document", "markdown", "renderers"]
+branch = true
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 75
+
 [project.urls]
 Homepage = "https://github.com/filipealvesr2019/umd"
 Repository = "https://github.com/filipealvesr2019/umd"

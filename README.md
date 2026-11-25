@@ -6,11 +6,15 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-83%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-84%20passed-brightgreen.svg)]()
+[![CI](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml/badge.svg)](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/filipealvesr2019/umd/branch/main/graph/badge.svg)](https://codecov.io/gh/filipealvesr2019/umd)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20external-purple.svg)]()
 [![Tutorial](https://img.shields.io/badge/docs-Editor%20Tutorial-blue.svg)](docs/TUTORIAL.md)
 
 *Combine fluid Markdown writing with interactive UI blocks, live editable data charts, rich typography controls, and architecture pipelines — stored cleanly in a single `.umd` file with zero companion files.*
+
+**Português (BR): [README.pt-BR.md](README.pt-BR.md)**
 
 [Live Demo](#-live-demo) • [Overview](#-overview) • [Key Features](#-key-features) • **[📖 Editor Tutorials](#-visual-editor-tutorials-all-features)** • [Quick Start](#-quick-start) • [Syntax Reference](#-syntax--component-reference) • [Python API](#-python-api) • [License](#-license)
 
