@@ -9,37 +9,157 @@
 ## Objetivo
 Tornar o projeto um portfólio forte para vaga de QA no Brasil, com automação, métricas visíveis e documentação em pt-BR, sem alterar o código que funciona.
 
-## Itens do roadmap
-
-### 1. CI de testes
-- Status: pendente
-- Ação: criar `.github/workflows/ci.yml` com matriz Python 3.9/3.11/3.13, rodando `pytest` em push/PR na `main`.
-- Teste: workflow executa e passa.
-
-### 2. Lint/format (ruff) + pre-commit
-- Status: pendente
-- Ação: configurar `ruff` no `pyproject.toml`, adicionar `.pre-commit-config.yaml`, incluir lint no CI.
-- Teste: `ruff check .` passa.
-
-### 3. Cobertura publicada (Codecov) + badge
-- Status: pendente
-- Ação: enviar `coverage.xml` ao Codecov no CI e adicionar badge no README/README.pt-BR.md.
-- Teste: badge reflete cobertura real.
-
-### 4. Documentação em pt-BR
-- Status: em andamento
-- Ação: manter README.pt-BR.md atualizado; criar docs de estratégia de testes, contribuição, segurança e changelog em pt-BR.
-- Teste: arquivos existem e são coerentes com o projeto.
-
-### 5. Testes E2E do editor (Playwright)
-- Status: pendente
-- Ação: criar suíte Playwright para `editor.html` (undo/redo, temas, charts, imagens) e integrar ao CI.
-- Teste: `pytest tests/` (incluindo E2E) passa.
-
-### 6. Performance, fuzzing e mutation testing
-- Status: pendente (opcional/avançado)
-- Ação: benchmarks de parse, fuzzing do parser, mutation testing.
-- Teste: relatórios gerados e baseline definido.
-
 ## Regra de ouro
 Não mexer em código que funciona. Toda mudança deve ser validada por `pytest tests/` antes de ser considerada concluída.
+
+---
+
+## 1. CI de testes (rodar pytest em matriz Python no push/PR)
+
+O que é:
+Automatizar a execução dos testes a cada push/PR na `main`, em várias versões de Python, para garantir que nada quebrou.
+
+Como fazer:
+1. Criar o arquivo `.github/workflows/ci.yml`.
+2. Configurar gatilhos `on: push` e `on: pull_request` para a branch `main`.
+3. Criar job `test` com matriz `python-version: ["3.9", "3.11", "3.13"]`.
+4. Passos do job:
+   - `actions/checkout@v4`
+   - `actions/setup-python@v4` com a versão da matriz
+   - `pip install -e ".[dev]"` (ou `pip install pytest pytest-cov`)
+   - `pytest --cov --cov-report=xml --cov-report=term-missing`
+   - (opcional) upload de cobertura com `codecov/codecov-action@v4`
+5. Commit e push; verificar na aba Actions do GitHub se o workflow passa.
+
+Teste de validação:
+- Abrir um PR de teste e confirmar que o CI roda e fica verde.
+- Quebrar um teste de propósito e confirmar que o CI falha.
+
+---
+
+## 2. Lint/format padronizado (ruff) + pre-commit
+
+O que é:
+Verificação automática de estilo e erros estáticos (imports desordenados, variáveis não usadas, sintaxe incompatível com versões antigas) antes do commit e no CI.
+
+Como fazer:
+1. Adicionar dependência dev no `pyproject.toml`:
+   `[project.optional-dependencies] dev = ["pytest", "pytest-cov", "ruff"]`
+2. Configurar ruff no `pyproject.toml`:
+   ```
+   [tool.ruff]
+   line-length = 100
+   target-version = "py39"
+   [tool.ruff.lint]
+   select = ["E", "F", "I"]
+   ignore = ["E501"]
+   ```
+3. Criar `.pre-commit-config.yaml` com hooks `ruff` e `ruff-format`.
+4. Rodar `pre-commit install` para ativar os hooks locais.
+5. Adicionar etapa `ruff check .` no workflow de CI.
+
+Teste de validação:
+- `ruff check .` deve passar.
+- `ruff format --check .` deve passar.
+- Tentar commitar código fora do padrão e confirmar que o hook bloqueia.
+
+---
+
+## 3. Cobertura publicada (Codecov) + badge no README
+
+O que é:
+Publicar a cobertura de testes em um serviço (Codecov) e exibir um badge no README, atualizado automaticamente.
+
+Como fazer:
+1. Criar conta no Codecov e vincular o repositório.
+2. No CI, gerar `coverage.xml` (já feito com `--cov-report=xml`).
+3. Adicionar passo `codecov/codecov-action@v4` no workflow, apontando para `coverage.xml`.
+4. Adicionar badge no `README.md` e `README.pt-BR.md`:
+   `![Coverage](https://codecov.io/gh/OWNER/REPO/branch/main/graph/badge.svg)`
+5. (Opcional) Definir `fail_under` no `pyproject.toml` para falhar se a cobertura cair abaixo do limite.
+
+Teste de validação:
+- Após um run do CI, o badge no README deve mostrar a cobertura real.
+- Reduzir cobertura propositalmente e confirmar que o CI falha (se `fail_under` configurado).
+
+---
+
+## 4. Documentação em pt-BR
+
+O que é:
+Manter documentação técnica em português do Brasil para facilitar avaliação por recrutadores e times brasileiros, sem traduzir o README original.
+
+Como fazer:
+1. Manter `README.pt-BR.md` atualizado (já criado) como versão pt-BR separada.
+2. Criar `docs/ESTRATEGIA_TESTES.md` (ou `docs/TEST_STRATEGY.md` pt-BR) descrevendo:
+   - Escopo, camadas de teste, cobertura, gaps planejados.
+3. Criar `CONTRIBUTING.md` em pt-BR com setup, comandos de teste/lint e padrão de commits.
+4. Criar `SECURITY.md` em pt-BR com política de reporte de vulnerabilidades.
+5. Criar `CHANGELOG.md` em pt-BR com histórico de versões.
+6. (Opcional) Adicionar seção "Documentação em português" no README apontando para esses arquivos.
+
+Teste de validação:
+- Arquivos existem e estão coerentes com o projeto.
+- Links entre documentos funcionam.
+
+---
+
+## 5. Testes E2E do editor visual (Playwright)
+
+O que é:
+Testes automatizados no navegador que validam fluxos reais do editor visual (inserir blocos, editar texto, undo/redo, trocar tema, gráficos, imagens).
+
+Como fazer:
+1. Instalar Playwright: `pip install playwright` e `playwright install chromium`.
+2. Criar pasta `tests/e2e/` com testes usando `playwright.sync_api`.
+3. Exemplo de teste:
+   - Abrir `editor.html` via `file:///...`
+   - Inserir um bloco (ex.: heading) e verificar no DOM.
+   - Editar texto e verificar persistência.
+   - Testar undo/redo (`Ctrl+Z` / `Ctrl+Y`).
+   - Trocar tema (dark/light) e verificar classes/estilos.
+4. Adicionar dependência `playwright` em `[project.optional-dependencies] dev`.
+5. Integrar ao CI: instalar navegadores (`playwright install --with-deps chromium`) e rodar `pytest tests/e2e/`.
+
+Teste de validação:
+- `pytest tests/e2e/` passa localmente.
+- CI executa os testes E2E com sucesso.
+
+---
+
+## 6. Performance, fuzzing e mutation testing (avançado/opcional)
+
+O que é:
+Medir performance do parser, testar entradas malformadas/aleatórias (fuzzing) e avaliar se os testes detectam mudanças no código (mutation testing).
+
+Como fazer (performance):
+1. Criar script em `tests/benchmarks/` ou `benchmarks/` que gere documentos grandes e meça tempo de parse.
+2. Usar `time` ou `pytest-benchmark` para coletar métricas.
+3. Definir baseline (ex.: parse de 10k linhas em < X ms).
+
+Como fazer (fuzzing):
+1. Usar `hypothesis` ou gerar strings aleatórias/malformadas.
+2. Alimentar o parser e verificar que não quebra (sem exceção não tratada).
+3. Salvar casos que falharem como testes de regressão.
+
+Como fazer (mutation testing):
+1. Instalar `mutmut`.
+2. Rodar `mutmut run` e analisar score.
+3. Adicionar testes para matar mutantes sobreviventes.
+
+Teste de validação:
+- Relatórios de benchmark/fuzz/mutation gerados.
+- Baseline de performance documentado.
+
+---
+
+## Ordem sugerida de execução
+1. CI de testes (item 1) — base para tudo.
+2. Lint/pre-commit (item 2) — qualidade de código.
+3. Cobertura/Codecov (item 3) — métricas visíveis.
+4. Documentação pt-BR (item 4) — comunicação.
+5. Testes E2E (item 5) — QA de interface.
+6. Performance/fuzzing/mutation (item 6) — diferenciação avançada.
+
+## Validação geral
+Após cada item: rodar `pytest tests/` e confirmar 84+ testes passando (ou mais, se novos testes forem adicionados).
