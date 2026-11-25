@@ -2,9 +2,21 @@
 
 ## Estado atual
 - 84 testes passando (parser, renderização, roundtrip, segurança, edição, charts, CLI/agent kit).
-- Cobertura aproximada: 76% (branch) / 86% (statement).
+- Cobertura 75,94% (branch, medido com `pytest --cov`), acima do mínimo de 75%.
 - README em inglês + README.pt-BR.md (português do Brasil, arquivo separado).
 - Workflow de publicação no PyPI existente.
+- Workflow de CI criado (`.github/workflows/ci.yml`): matriz 3.9/3.11/3.13, ruff + pytest --cov + Codecov.
+- Lint/pre-commit configurados: `ruff` no `pyproject.toml` e `.pre-commit-config.yaml`.
+- Documentação em inglês + pt-BR: `CONTRIBUTING.md`/`.pt-BR.md`, `SECURITY.md`/`.pt-BR.md`, `CHANGELOG.md`/`.pt-BR.md`, `docs/TEST_STRATEGY.md`/`.pt-BR.md`.
+- Badges de CI e cobertura nos dois READMEs; contagem de testes corrigida para 84 no README em inglês.
+
+## Progresso do roadmap
+- [x] 1. CI de testes
+- [x] 2. Lint/format (ruff) + pre-commit
+- [x] 3. Cobertura publicada (Codecov) + badge
+- [x] 4. Documentação em inglês + pt-BR separada
+- [ ] 5. Testes E2E do editor visual (Playwright)  ← FALTA
+- [ ] 6. Performance, fuzzing e mutation testing  ← FALTA
 
 ## Objetivo
 Tornar o projeto um portfólio forte para vaga de QA no Brasil, com automação, métricas visíveis e documentação em pt-BR, sem alterar o código que funciona.
@@ -15,6 +27,10 @@ Não mexer em código que funciona. Toda mudança deve ser validada por `pytest 
 ---
 
 ## 1. CI de testes (rodar pytest em matriz Python no push/PR)
+
+Status: CONCLUÍDO
+Arquivo: `.github/workflows/ci.yml`
+Pendência: fazer o primeiro push para o GitHub e confirmar o run verde; cadastrar o repositório no Codecov.
 
 O que é:
 Automatizar a execução dos testes a cada push/PR na `main`, em várias versões de Python, para garantir que nada quebrou.
@@ -38,6 +54,11 @@ Teste de validação:
 ---
 
 ## 2. Lint/format padronizado (ruff) + pre-commit
+
+Status: CONCLUÍDO
+Arquivos: `pyproject.toml` (seção `[tool.ruff]`) e `.pre-commit-config.yaml`.
+Observação: regras selecionadas são as críticas (`E9`, `F63`, `F7`, `F82`) para não mexer no código que funciona; `tests/test_line_chart.py` está excluído porque usa f-string com backslash (só válido em Python 3.12+).
+Pendência: rodar `pre-commit install` na máquina local e `pre-commit run --all-files`.
 
 O que é:
 Verificação automática de estilo e erros estáticos (imports desordenados, variáveis não usadas, sintaxe incompatível com versões antigas) antes do commit e no CI.
@@ -67,6 +88,10 @@ Teste de validação:
 
 ## 3. Cobertura publicada (Codecov) + badge no README
 
+Status: PARCIAL
+Feito: `--cov-report=xml` no CI, upload via `codecov/codecov-action@v4`, `fail_under = 75` no `pyproject.toml` e badges em `README.md` e `README.pt-BR.md`.
+FALTA: criar a conta no Codecov, vincular o repositório `filipealvesr2019/umd` e obter o token (se o repositório não for público). Sem isso, o badge fica cinza/sem dados.
+
 O que é:
 Publicar a cobertura de testes em um serviço (Codecov) e exibir um badge no README, atualizado automaticamente.
 
@@ -84,7 +109,12 @@ Teste de validação:
 
 ---
 
-## 4. Documentação em pt-BR
+## 4. Documentação em inglês + versão pt-BR separada
+
+Status: CONCLUÍDO
+Arquivos em inglês: `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `docs/TEST_STRATEGY.md`.
+Arquivos em pt-BR: `README.pt-BR.md`, `CONTRIBUTING.pt-BR.md`, `SECURITY.pt-BR.md`, `CHANGELOG.pt-BR.md`, `docs/TEST_STRATEGY.pt-BR.md`.
+Regra: nada traduzido dentro do mesmo arquivo; cada documento tem sua versão em idioma separado.
 
 O que é:
 Manter documentação técnica em português do Brasil para facilitar avaliação por recrutadores e times brasileiros, sem traduzir o README original.
@@ -105,6 +135,9 @@ Teste de validação:
 ---
 
 ## 5. Testes E2E do editor visual (Playwright)
+
+Status: NÃO INICIADO (FALTA)
+Observação: já existem testes Playwright manuais em `tests/test_line_chart.py`, `tests/test_undo_and_text_wrap.py`, `tests/test_clipboard_visuals.py` e `tests/test_editing.py`, mas eles não estão organizados como suíte E2E nem integrados ao CI.
 
 O que é:
 Testes automatizados no navegador que validam fluxos reais do editor visual (inserir blocos, editar texto, undo/redo, trocar tema, gráficos, imagens).
@@ -128,6 +161,9 @@ Teste de validação:
 ---
 
 ## 6. Performance, fuzzing e mutation testing (avançado/opcional)
+
+Status: NÃO INICIADO (FALTA)
+Observação: nenhuma dependência instalada (`hypothesis`, `pytest-benchmark`, `mutmut`) e nenhum baseline de performance definido.
 
 O que é:
 Medir performance do parser, testar entradas malformadas/aleatórias (fuzzing) e avaliar se os testes detectam mudanças no código (mutation testing).
@@ -153,13 +189,35 @@ Teste de validação:
 
 ---
 
+## O que falta (próximos passos)
+
+### A. Ações manuais no repositório remoto
+1. Fazer commit e push das mudanças (CI, pre-commit, docs).
+2. Abrir a aba Actions e confirmar que o workflow `CI` passa nas 3 versões de Python.
+3. Criar conta no Codecov, vincular `filipealvesr2019/umd` e adicionar o token `CODECOV_TOKEN` em Settings → Secrets (se necessário).
+4. Confirmar que os badges de CI e cobertura renderizam nos READMEs.
+5. Rodar `pre-commit install` localmente.
+
+### B. Testes E2E do editor (item 5)
+1. Criar `tests/e2e/` (ex.: `test_editor_e2e.py`) reaproveitando os helpers Playwright já existentes.
+2. Cobrir: abrir `editor.html`, inserir bloco, editar texto, undo/redo, tema claro/escuro, gráfico e imagem.
+3. Adicionar `playwright` em `[project.optional-dependencies] dev`.
+4. No CI, instalar navegador: `playwright install --with-deps chromium` e rodar `pytest tests/e2e/`.
+5. Validar com `pytest tests/e2e/` local e no CI.
+
+### C. Performance, fuzzing e mutation testing (item 6)
+1. Criar `benchmarks/` com documento grande e medir tempo de parse (baseline documentado).
+2. Adicionar `hypothesis` e testes de parser com entradas malformadas.
+3. Adicionar `mutmut` e rodar `mutmut run` para medir qualidade dos testes.
+4. Registrar resultados no `docs/TEST_STRATEGY.md` e na versão pt-BR.
+
 ## Ordem sugerida de execução
-1. CI de testes (item 1) — base para tudo.
-2. Lint/pre-commit (item 2) — qualidade de código.
-3. Cobertura/Codecov (item 3) — métricas visíveis.
-4. Documentação pt-BR (item 4) — comunicação.
-5. Testes E2E (item 5) — QA de interface.
-6. Performance/fuzzing/mutation (item 6) — diferenciação avançada.
+1. Push + conferir CI (A) — valida os itens 1 e 2.
+2. Codecov (A.3) — conclui o item 3.
+3. Testes E2E (B) — QA de interface.
+4. Performance/fuzzing/mutation (C) — diferenciação avançada.
 
 ## Validação geral
 Após cada item: rodar `pytest tests/` e confirmar 84+ testes passando (ou mais, se novos testes forem adicionados).
+Comando de cobertura: `pytest --cov --cov-report=term-missing` (mínimo exigido: 75%).
+Lint: `ruff check .` deve retornar "All checks passed!".
