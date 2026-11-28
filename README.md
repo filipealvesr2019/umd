@@ -6,7 +6,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-100%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-102%20passed-brightgreen.svg)]()
 [![CI](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml/badge.svg)](https://github.com/filipealvesr2019/umd/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/filipealvesr2019/umd/branch/main/graph/badge.svg)](https://codecov.io/gh/filipealvesr2019/umd)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20external-purple.svg)]()
@@ -52,7 +52,8 @@ Traditional documentation tools often force you to choose between:
 ## ✨ Key Features
 
 - **📄 Zero Companion Files**: Everything — styled text, metrics, charts, pipelines, callouts, checklists, images, and tables — lives cleanly in one plain `.umd` text file.
-- **🎨 Interactive Visual Editor**: Seamless WYSIWYG editor built for **Antigravity IDE** and **VS Code**, featuring instant right-click component insertion, full document **Undo/Redo** (`Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z`), **hover-only scrollbars & action buttons** for a distraction-free canvas, and real-time live sync.
+- **🔁 Full `.md` Compatibility (`Open with UMD`)**: Open any standard `.md` or `.markdown` file directly in the UMD Visual Editor without changing your default Markdown text editor — just right-click any `.md` file in the Explorer, Editor, or Tab bar and click **Open with UMD** (or **Open With... → UMD Visual Editor**). Supports full Markdown syntax including ATX (`#`–`######`) & Setext (`===`/`---`) headings, inline & reference links/images, linked images, footnotes (`[^id]`), escaped punctuation (`\*`, `\|`), nested blockquotes, `+`/`*`/`-` & indented lists, task lists, multi-table documents, and inline `<dl>` blocks.
+- **🎨 Interactive Visual Editor**: Seamless WYSIWYG editor built for **Antigravity IDE** and **VS Code**, featuring instant right-click component insertion, **`Ctrl+F` / `Cmd+F` live find & highlight**, full document **Undo/Redo** (`Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z`), **hover-only scrollbars & action buttons** for a distraction-free canvas, and real-time live sync.
 - **🌗 Automatic Dark & Light Themes**: Automatically adapts to VS Code / Antigravity `vscode-dark` and `vscode-light` themes (as well as OS `prefers-color-scheme`) with dedicated palettes for code syntax highlighting, charts, tables, floating toolbars, and menus.
 - **🖼️ Native Image Blocks (`[IMAGE]` & `![alt](src)`)**: Open local images from anywhere on your PC (**Open Image**), embed direct image URLs, edit captions inline, and resize with hover presets (`S / M / L / Full`) — storing only clean plain-text paths in `.umd` (zero Base64 bloat).
 - **📝 Smart Code & Auto-Wrapping Plain-Text Blocks**: Syntax-highlighted code blocks (`python`, `json`, `html`, `js`, `sql`, `bash`) plus automatic word-wrapping in `text` blocks so long transcripts and outputs never require horizontal scrolling.
@@ -130,7 +131,7 @@ Activate the visual editor in VS Code and Antigravity IDE with a single command:
 umd install
 ```
 
-> **Tip:** Reload your IDE (`Ctrl+Shift+P` → `Developer: Reload Window`). Click any `.umd` file to open it directly in the visual editor!
+> **Tip:** Reload your IDE (`Ctrl+Shift+P` → `Developer: Reload Window`). Click any `.umd` file to open it directly in the visual editor, or **right-click any `.md` file → `Open with UMD`** to view and edit standard Markdown files visually!
 
 ---
 
@@ -331,7 +332,7 @@ UMD includes a comprehensive test suite covering parser grammar, AST validation,
 pytest tests/
 ```
 
-**Status:** 100 tests passing (unit, roundtrip, security, editing, charts, CLI, Playwright end-to-end, Hypothesis fuzzing and performance guards). Coverage: 76% (branch). See [docs/TEST_STRATEGY.md](docs/TEST_STRATEGY.md).
+**Status:** 102 tests passing (unit, full `.md` compatibility, roundtrip, security, editing, charts, CLI, Playwright end-to-end, Hypothesis fuzzing and performance guards). Coverage: 76% (branch). See [docs/TEST_STRATEGY.md](docs/TEST_STRATEGY.md).
 
 ---
 
