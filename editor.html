@@ -2414,6 +2414,41 @@
     color: #0f172a;
     border-color: #cbd5e1;
   }
+
+  /* Markdown compatibility styles (links, footnotes, definition lists) */
+  .notion-canvas a.umd-md-link {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+  .notion-canvas a.umd-md-link:hover {
+    opacity: 0.85;
+  }
+  .umd-footnote-ref {
+    font-size: 0.75em;
+    color: var(--accent);
+    margin-left: 2px;
+    font-weight: 600;
+  }
+  .umd-md-html-block {
+    margin: 10px 0;
+    padding: 10px 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    color: var(--text-body);
+    font-size: 14.5px;
+  }
+  .umd-md-html-block dt {
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-top: 6px;
+  }
+  .umd-md-html-block dd {
+    margin-left: 18px;
+    margin-bottom: 6px;
+  }
 </style>
 </head>
 <body>
@@ -2959,10 +2994,28 @@
       .replace(/'/g, '&#39;');
   }
 
+  let mdRefLinks = Object.create(null);
+
+  function sanitizeMdUrl(url) {
+    const clean = (url || '').trim();
+    if (!clean) return '#';
+    if (/^\s*(javascript|vbscript|data:text\/html):/i.test(clean)) return '#';
+    return clean;
+  }
+
   // CONVERTE MARKDOWN INLINE PARA HTML VISUAL (SEM ASTERISCOS BRUTOS)
   function markdownInlineToHtml(text) {
     if (!text) return '<br>';
-    let html = escapeHtml(text);
+
+    // Preserve backslash-escaped Markdown punctuation (\*, \_, \~, \`, \[, \], \\)
+    const escapedTokens = [];
+    let pre = String(text).replace(/\\([\\`*_{}\[\]()#+\-.!~|])/g, (_, ch) => {
+      const idx = escapedTokens.length;
+      escapedTokens.push(escapeHtml(ch));
+      return `\u0000ESC${idx}\u0000`;
+    });
+
+    let html = escapeHtml(pre);
     // Inline spans with styles (color, font-size, font-family, letter-spacing)
     html = html.replace(/&lt;span\s+style=(?:&quot;|")([\s\S]*?)(?:&quot;|")&gt;([\s\S]*?)&lt;\/span&gt;/gi, (m, st, content) => {
       const decodedStyle = st.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
@@ -2971,16 +3024,90 @@
     // Underline: <u>text</u> or <ins>text</ins>
     html = html.replace(/&lt;u&gt;(.*?)&lt;\/u&gt;/gi, '<u class="umd-underlined">$1</u>');
     html = html.replace(/&lt;ins&gt;(.*?)&lt;\/ins&gt;/gi, '<u class="umd-underlined">$1</u>');
-    // Code: `code`
-    html = html.replace(/`([^`\n]+?)`/g, '<code class="inline-code">$1</code>');
+    html = html.replace(/&lt;del&gt;(.*?)&lt;\/del&gt;/gi, '<del>$1</del>');
+    html = html.replace(/&lt;em&gt;(.*?)&lt;\/em&gt;/gi, '<em>$1</em>');
+    html = html.replace(/&lt;strong&gt;(.*?)&lt;\/strong&gt;/gi, '<strong>$1</strong>');
+
+    // Protect inline code spans first so *, _, [] inside code aren't parsed
+    const codeTokens = [];
+    html = html.replace(/`([^`\n]+?)`/g, (_, codeBody) => {
+      const idx = codeTokens.length;
+      codeTokens.push(`<code class="inline-code">${codeBody}</code>`);
+      return `\u0000CODE${idx}\u0000`;
+    });
+
+    // Linked image: [![alt](imgUrl)](href)
+    html = html.replace(/\[!\[([^\]]*)\]\(([^\s)]+)(?:\s+&quot;([^&]*)&quot;)?\)\]\(([^\s)]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, alt, imgUrl, imgTitle, href) => {
+      const safeHref = escapeHtml(sanitizeMdUrl(href));
+      const safeImg = escapeHtml(resolveImageSrc(sanitizeMdUrl(imgUrl)));
+      const tAttr = imgTitle ? ` title="${imgTitle}"` : '';
+      return `<a class="umd-md-link" href="${safeHref}" target="_blank" rel="noopener noreferrer"><img src="${safeImg}" alt="${alt}"${tAttr} referrerpolicy="no-referrer" style="max-width:100%;height:auto;border-radius:6px;vertical-align:middle;" /></a>`;
+    });
+
+    // Inline image: ![alt](url "optional title")
+    html = html.replace(/!\[([^\]]*)\]\(([^\s)]+)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, alt, imgUrl, imgTitle) => {
+      const safeImg = escapeHtml(resolveImageSrc(sanitizeMdUrl(imgUrl)));
+      const tAttr = imgTitle ? ` title="${imgTitle}"` : '';
+      return `<img src="${safeImg}" alt="${alt}"${tAttr} referrerpolicy="no-referrer" style="max-width:100%;height:auto;border-radius:6px;vertical-align:middle;" />`;
+    });
+
+    // Reference-style image: ![alt][ref]
+    html = html.replace(/!\[([^\]]*)\]\[([^\]]*)\]/g, (m, alt, refKey) => {
+      const key = (refKey || alt || '').trim().toLowerCase();
+      const ref = mdRefLinks[key];
+      if (!ref) return m;
+      const safeImg = escapeHtml(resolveImageSrc(sanitizeMdUrl(ref.url)));
+      const tAttr = ref.title ? ` title="${escapeHtml(ref.title)}"` : '';
+      return `<img src="${safeImg}" alt="${alt}"${tAttr} referrerpolicy="no-referrer" style="max-width:100%;height:auto;border-radius:6px;vertical-align:middle;" />`;
+    });
+
+    // Inline link: [text](url "optional title")
+    html = html.replace(/\[([^\]]+)\]\(([^\s)]*)(?:\s+&quot;([^&]*)&quot;)?\)/g, (_, label, href, title) => {
+      const safeHref = escapeHtml(sanitizeMdUrl(href || '#'));
+      const tAttr = title ? ` title="${title}"` : '';
+      return `<a class="umd-md-link" href="${safeHref}"${tAttr} target="_blank" rel="noopener noreferrer">${label}</a>`;
+    });
+
+    // Reference-style link: [text][ref]
+    html = html.replace(/\[([^\]]+)\]\[([^\]]*)\]/g, (m, label, refKey) => {
+      const key = (refKey || label || '').trim().toLowerCase();
+      const ref = mdRefLinks[key];
+      if (!ref) return m;
+      const safeHref = escapeHtml(sanitizeMdUrl(ref.url));
+      const tAttr = ref.title ? ` title="${escapeHtml(ref.title)}"` : '';
+      return `<a class="umd-md-link" href="${safeHref}"${tAttr} target="_blank" rel="noopener noreferrer">${label}</a>`;
+    });
+
+    // Footnote reference: [^id]
+    html = html.replace(/\[\^([^\]]+)\]/g, (_, fid) => `<sup class="umd-footnote-ref">[${fid}]</sup>`);
+
+    // Shortcut reference link: [link text itself]
+    html = html.replace(/\[([^\]]+)\]/g, (m, label) => {
+      const ref = mdRefLinks[label.trim().toLowerCase()];
+      if (!ref) return m;
+      const safeHref = escapeHtml(sanitizeMdUrl(ref.url));
+      const tAttr = ref.title ? ` title="${escapeHtml(ref.title)}"` : '';
+      return `<a class="umd-md-link" href="${safeHref}"${tAttr} target="_blank" rel="noopener noreferrer">${label}</a>`;
+    });
+
+    // Angle-bracket autolinks: <https://...>
+    html = html.replace(/&lt;(https?:\/\/[^&\s]+)&gt;/gi, (_, url) => {
+      const safeHref = escapeHtml(sanitizeMdUrl(url));
+      return `<a class="umd-md-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
+
     // Bold: **text** or __text__
     html = html.replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/__([^_\n]+?)__/g, '<strong>$1</strong>');
     // Italic: *text* or _text_
     html = html.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
-    html = html.replace(/_([^_\n]+?)_/g, '<em>$1</em>');
+    html = html.replace(/(^|[\s(>])_([^_\n]+?)_(?=$|[\s.,;:!?)<])/g, '$1<em>$2</em>');
     // Strike: ~~text~~
     html = html.replace(/~~([^~\n]+?)~~/g, '<del>$1</del>');
+
+    // Restore protected inline code and escaped punctuation
+    html = html.replace(/\u0000CODE(\d+)\u0000/g, (_, idx) => codeTokens[Number(idx)] || '');
+    html = html.replace(/\u0000ESC(\d+)\u0000/g, (_, idx) => escapedTokens[Number(idx)] || '');
     return html;
   }
 
@@ -6541,12 +6668,46 @@
     page.innerHTML = '';
 
     const lines = text.split(/\r?\n/);
+
+    // Pre-pass: collect Markdown reference link/image definitions ([id]: url "title") outside code fences
+    mdRefLinks = Object.create(null);
+    let inScanFence = false;
+    let scanFenceChar = '';
+    for (let k = 0; k < lines.length; k++) {
+      const t = lines[k].trim();
+      if (t.startsWith('```') || t.startsWith('~~~')) {
+        const fc = t.slice(0, 3);
+        if (!inScanFence) {
+          inScanFence = true;
+          scanFenceChar = fc;
+        } else if (fc === scanFenceChar) {
+          inScanFence = false;
+          scanFenceChar = '';
+        }
+        continue;
+      }
+      if (inScanFence) continue;
+      const refM = t.match(/^\[([^\^][^\]]*)\]:\s*<?([^\s>]+)>?(?:\s+(?:"([^"]*)"|'([^']*)'|\(([^)]*)\)))?\s*$/);
+      if (refM) {
+        mdRefLinks[refM[1].trim().toLowerCase()] = {
+          url: refM[2].trim(),
+          title: (refM[3] || refM[4] || refM[5] || '').trim(),
+        };
+      }
+    }
+
     let i = 0;
 
     while (i < lines.length) {
       const line = lines[i];
 
       if (!line.trim() && page.children.length === 0) {
+        i++;
+        continue;
+      }
+
+      // Skip standalone Markdown reference definition lines ([id]: url "title")
+      if (/^\[([^\^][^\]]*)\]:\s*<?([^\s>]+)>?(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*$/.test(line.trim())) {
         i++;
         continue;
       }
@@ -6632,39 +6793,71 @@
         }
       }
 
-      // Headings 1-4
-      if (line.startsWith('# ')) {
-        page.appendChild(createHeadingBlock(1, line.substring(2).trim()));
-        i++;
-        continue;
+      // Setext Headings (Alt-H1\n====== or Alt-H2\n------)
+      if (
+        line.trim() &&
+        !line.trim().startsWith('[') &&
+        !line.trim().startsWith('|') &&
+        !line.trim().startsWith('>') &&
+        i + 1 < lines.length
+      ) {
+        const nextTrim = lines[i + 1].trim();
+        if (/^={3,}$/.test(nextTrim)) {
+          page.appendChild(createHeadingBlock(1, line.trim()));
+          i += 2;
+          continue;
+        }
+        if (/^-{3,}$/.test(nextTrim) && !line.includes('|')) {
+          page.appendChild(createHeadingBlock(2, line.trim()));
+          i += 2;
+          continue;
+        }
       }
-      if (line.startsWith('## ')) {
-        page.appendChild(createHeadingBlock(2, line.substring(3).trim()));
-        i++;
-        continue;
-      }
-      if (line.startsWith('### ')) {
-        page.appendChild(createHeadingBlock(3, line.substring(4).trim()));
-        i++;
-        continue;
-      }
-      if (line.startsWith('#### ')) {
-        page.appendChild(createHeadingBlock(4, line.substring(5).trim()));
+
+      // Headings 1-6
+      const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+      if (headingMatch) {
+        const lvl = Math.min(4, headingMatch[1].length);
+        page.appendChild(createHeadingBlock(lvl, headingMatch[2].trim()));
         i++;
         continue;
       }
 
-      // Divider (---)
-      if (line.trim() === '---' || line.trim() === '***') {
+      // Divider (---, ------, ***, ___)
+      if (/^(\s*[-*_]\s*){3,}$/.test(line.trim())) {
         page.appendChild(createHrBlock());
         i++;
         continue;
       }
 
-      // Quote (> text)
-      if (line.startsWith('> ') || line === '>') {
-        page.appendChild(createQuoteBlock(line.substring(2).trim()));
+      // Quote (> text, >> nested, > > > nested)
+      if (/^\s*>/.test(line)) {
+        const quoteLines = [];
+        while (i < lines.length && /^\s*>/.test(lines[i])) {
+          quoteLines.push(lines[i].replace(/^(\s*>\s*)+/, '').trim());
+          i++;
+        }
+        page.appendChild(createQuoteBlock(quoteLines.join(' ').trim()));
+        continue;
+      }
+
+      // Inline HTML definition list (<dl> ... </dl>)
+      if (line.trim().toLowerCase().startsWith('<dl')) {
+        const dlLines = [line];
         i++;
+        while (i < lines.length && !lines[i].trim().toLowerCase().includes('</dl>')) {
+          dlLines.push(lines[i]);
+          i++;
+        }
+        if (i < lines.length) {
+          dlLines.push(lines[i]);
+          i++;
+        }
+        const dlBox = document.createElement('div');
+        dlBox.className = 'umd-md-html-block';
+        dlBox.setAttribute('data-block-type', 'raw-html');
+        dlBox.innerHTML = dlLines.join('\n').replace(/<script[\s\S]*?<\/script>/gi, '');
+        page.appendChild(dlBox);
         continue;
       }
 
@@ -6686,22 +6879,20 @@
         continue;
       }
 
-      // To-do (- [ ] or - [x])
-      if (line.match(/^-\s+\[([ xX])\]\s*(.*)$/)) {
-        const m = line.match(/^-\s+\[([ xX])\]\s*(.*)$/);
+      // To-do (- [ ] or - [x] or * [x])
+      if (line.match(/^\s*[-*+]\s+\[([ xX])\]\s*(.*)$/)) {
+        const m = line.match(/^\s*[-*+]\s+\[([ xX])\]\s*(.*)$/);
         const checked = m[1].toLowerCase() === 'x';
         page.appendChild(createTodoBlock(m[2], checked));
         i++;
         continue;
       }
 
-      // Bullet List (- item or * item)
-      if (line.startsWith('- ') || line.startsWith('* ')) {
+      // Bullet List (- item, * item, + item, including indented sub-items)
+      if (/^\s*[-*+]\s+/.test(line)) {
         const bulletItems = [];
-        while (i < lines.length && (lines[i].startsWith('- ') || lines[i].startsWith('* '))) {
-          if (!lines[i].match(/^-\s+\[([ xX])\]/)) {
-            bulletItems.push(lines[i].substring(2).trim());
-          }
+        while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i]) && !/^\s*[-*+]\s+\[([ xX])\]/.test(lines[i])) {
+          bulletItems.push(lines[i].replace(/^\s*[-*+]\s+/, '').trim());
           i++;
         }
         if (bulletItems.length > 0) {
@@ -6710,11 +6901,11 @@
         continue;
       }
 
-      // Numbered List (1. item)
-      if (line.match(/^\d+\.\s+(.*)$/)) {
+      // Numbered List (1. item, including indented sub-items)
+      if (/^\s*\d+\.\s+(.*)$/.test(line)) {
         const numItems = [];
-        while (i < lines.length && lines[i].match(/^\d+\.\s+(.*)$/)) {
-          const m = lines[i].match(/^\d+\.\s+(.*)$/);
+        while (i < lines.length && /^\s*\d+\.\s+(.*)$/.test(lines[i])) {
+          const m = lines[i].match(/^\s*\d+\.\s+(.*)$/);
           numItems.push(m[1].trim());
           i++;
         }
@@ -6733,10 +6924,10 @@
         }
         if (sepIdx < lines.length && isSepRow(lines[sepIdx])) {
           const parseCells = (rowText) => {
-            let s = rowText.trim();
+            let s = rowText.trim().replace(/\\\|/g, '\u0000PIPE\u0000');
             if (s.startsWith('|')) s = s.slice(1);
             if (s.endsWith('|')) s = s.slice(0, -1);
-            return s.split('|').map(c => c.trim());
+            return s.split('|').map(c => c.replace(/\u0000PIPE\u0000/g, '|').trim());
           };
 
           const headers = parseCells(line);
@@ -6747,7 +6938,8 @@
             if (!lines[i].trim()) {
               let peek = i + 1;
               while (peek < lines.length && !lines[peek].trim()) peek++;
-              if (peek < lines.length && isPipeRow(lines[peek]) && !lines[peek].trim().startsWith('[') && !isSepRow(lines[peek])) {
+              const nextStartsNewTable = peek + 1 < lines.length && isSepRow(lines[peek + 1]);
+              if (!nextStartsNewTable && peek < lines.length && isPipeRow(lines[peek]) && !lines[peek].trim().startsWith('[') && !isSepRow(lines[peek])) {
                 i++;
                 continue;
               } else {
@@ -6954,12 +7146,29 @@
         continue;
       }
 
-      // Standard Markdown Image: ![alt](src)
-      let mdImgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      // Standard Markdown Image: ![alt](src "optional title")
+      let mdImgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^\s)]+)(?:\s+(?:"([^"]*)"|'([^']*)'))?\)$/);
       if (mdImgMatch) {
-        page.appendChild(createImageElement(mdImgMatch[2].trim(), mdImgMatch[1].trim(), '', ''));
+        page.appendChild(createImageElement(
+          mdImgMatch[2].trim(),
+          mdImgMatch[1].trim(),
+          (mdImgMatch[3] || mdImgMatch[4] || '').trim(),
+          ''
+        ));
         i++;
         continue;
+      }
+
+      // Reference-style Markdown Image: ![alt][ref]
+      let mdRefImgMatch = line.trim().match(/^!\[([^\]]*)\]\[([^\]]*)\]$/);
+      if (mdRefImgMatch) {
+        const key = (mdRefImgMatch[2] || mdRefImgMatch[1] || '').trim().toLowerCase();
+        const ref = mdRefLinks[key];
+        if (ref) {
+          page.appendChild(createImageElement(ref.url, mdRefImgMatch[1].trim(), ref.title || '', ''));
+          i++;
+          continue;
+        }
       }
 
       // Plain text line or blank line

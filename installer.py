@@ -21,10 +21,41 @@ PACKAGE_JSON = {
     },
     "categories": ["Other"],
     "activationEvents": [
-        "onCustomEditor:umd.editor"
+        "onCustomEditor:umd.editor",
+        "onCustomEditor:umd.markdownEditor",
+        "onCommand:umd.openWithUmd"
     ],
     "main": "./extension.js",
     "contributes": {
+        "commands": [
+            {
+                "command": "umd.openWithUmd",
+                "title": "Open with UMD"
+            }
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "umd.openWithUmd",
+                    "when": "resourceExtname == .md || resourceExtname == .markdown",
+                    "group": "navigation@1"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "umd.openWithUmd",
+                    "when": "editorLangId == markdown || resourceExtname == .md || resourceExtname == .markdown",
+                    "group": "navigation@1"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "umd.openWithUmd",
+                    "when": "editorLangId == markdown || resourceExtname == .md || resourceExtname == .markdown",
+                    "group": "navigation@1"
+                }
+            ]
+        },
         "customEditors": [
             {
                 "viewType": "umd.editor",
@@ -35,6 +66,19 @@ PACKAGE_JSON = {
                     }
                 ],
                 "priority": "default"
+            },
+            {
+                "viewType": "umd.markdownEditor",
+                "displayName": "UMD Visual Editor",
+                "selector": [
+                    {
+                        "filenamePattern": "*.md"
+                    },
+                    {
+                        "filenamePattern": "*.markdown"
+                    }
+                ],
+                "priority": "option"
             }
         ]
     }

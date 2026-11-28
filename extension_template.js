@@ -3,15 +3,26 @@ const fs = require('fs');
 const path = require('path');
 
 function activate(context) {
+    const provider = new UmdEditorProvider(context);
+    const opts = {
+        webviewOptions: { retainContextWhenHidden: true },
+        supportsMultipleEditorsPerDocument: false
+    };
     context.subscriptions.push(
-        vscode.window.registerCustomEditorProvider(
-            'umd.editor',
-            new UmdEditorProvider(context),
-            {
-                webviewOptions: { retainContextWhenHidden: true },
-                supportsMultipleEditorsPerDocument: false
-            }
-        )
+        vscode.window.registerCustomEditorProvider('umd.editor', provider, opts),
+        vscode.window.registerCustomEditorProvider('umd.markdownEditor', provider, opts),
+        vscode.commands.registerCommand('umd.openWithUmd', async (uri) => {
+            const targetUri =
+                uri ||
+                (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.uri) ||
+                (vscode.window.tabGroups &&
+                    vscode.window.tabGroups.activeTabGroup &&
+                    vscode.window.tabGroups.activeTabGroup.activeTab &&
+                    vscode.window.tabGroups.activeTabGroup.activeTab.input &&
+                    vscode.window.tabGroups.activeTabGroup.activeTab.input.uri);
+            if (!targetUri) return;
+            await vscode.commands.executeCommand('vscode.openWith', targetUri, 'umd.markdownEditor');
+        })
     );
 }
 
