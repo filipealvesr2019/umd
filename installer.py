@@ -16,6 +16,7 @@ PACKAGE_JSON = {
     "description": "Interactive Notion-style visual editor for .umd files",
     "version": "0.0.9",
     "publisher": "ui-markdown",
+    "icon": "icon.png",
     "engines": {
         "vscode": "^1.60.0"
     },
@@ -113,6 +114,14 @@ def install_extension() -> list[Path]:
 
         html_path = ext_dir / "editor.html"
         html_path.write_text(editor_html, encoding="utf-8")
+
+        ext_src_dir = current_dir / "vs_code_extension"
+        icon_src = ext_src_dir / "icon.png"
+        if icon_src.exists():
+            (ext_dir / "icon.png").write_bytes(icon_src.read_bytes())
+        readme_src = ext_src_dir / "README.md"
+        if readme_src.exists():
+            (ext_dir / "README.md").write_text(readme_src.read_text(encoding="utf-8"), encoding="utf-8")
 
         installed_paths.append(ext_dir)
     return installed_paths
