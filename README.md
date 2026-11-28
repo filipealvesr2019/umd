@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/filipealvesr2019/umd/main/assets/logo.png" alt="UI-Markdown (UMD) Logo" width="88" />
+
 # UI-Markdown (UMD)
 
 **Interactive Visual Documents in Pure Plain Text**
