@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 name = "ui-markdown"
 
-version = "0.1.0"
+version = "0.1.1"
 
 description = "UI-Markdown — Interactive visual documents in pure plain text"
 
@@ -190,5 +190,5 @@ umd = "."
 
 [tool.setuptools.package-data]
 
-umd = ["editor.html", "extension_template.js"]
+umd = ["editor.html", "extension_template.js", "vs_code_extension/icon.png", "vs_code_extension/README.md"]
 

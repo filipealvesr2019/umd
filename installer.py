@@ -14,7 +14,7 @@ PACKAGE_JSON = {
     "name": "ui-markdown-editor",
     "displayName": "UI-Markdown Visual Editor",
     "description": "Interactive Notion-style visual editor for .umd files",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "ui-markdown",
     "icon": "icon.png",
     "engines": {
@@ -28,6 +28,17 @@ PACKAGE_JSON = {
     ],
     "main": "./extension.js",
     "contributes": {
+        "languages": [
+            {
+                "id": "umd",
+                "aliases": ["UI-Markdown", "UMD"],
+                "extensions": [".umd"],
+                "icon": {
+                    "light": "./icon.png",
+                    "dark": "./icon.png"
+                }
+            }
+        ],
         "commands": [
             {
                 "command": "umd.openWithUmd",
