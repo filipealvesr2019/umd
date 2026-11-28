@@ -1,0 +1,102 @@
+{
+  "name": "ui-markdown-editor",
+  "displayName": "UI-Markdown (UMD) Visual Editor",
+  "description": "Interactive Notion-style visual editor for .umd and .md files — live charts, stat cards, pipelines, tables, images, and rich typography in pure plain text.",
+  "version": "0.0.9",
+  "publisher": "ui-markdown",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/filipealvesr2019/umd.git"
+  },
+  "homepage": "https://github.com/filipealvesr2019/umd#readme",
+  "bugs": {
+    "url": "https://github.com/filipealvesr2019/umd/issues"
+  },
+  "galleryBanner": {
+    "color": "#18181b",
+    "theme": "dark"
+  },
+  "keywords": [
+    "umd",
+    "ui-markdown",
+    "markdown",
+    "visual-editor",
+    "wysiwyg",
+    "charts",
+    "notion",
+    "documentation",
+    "ai-reports"
+  ],
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Visualization",
+    "Formatters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCustomEditor:umd.editor",
+    "onCustomEditor:umd.markdownEditor",
+    "onCommand:umd.openWithUmd"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "umd.openWithUmd",
+        "title": "Open with UMD"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "umd.openWithUmd",
+          "when": "resourceExtname == .md || resourceExtname == .markdown",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "umd.openWithUmd",
+          "when": "editorLangId == markdown || resourceExtname == .md || resourceExtname == .markdown",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "umd.openWithUmd",
+          "when": "editorLangId == markdown || resourceExtname == .md || resourceExtname == .markdown",
+          "group": "navigation@1"
+        }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "umd.editor",
+        "displayName": "UI-Markdown Visual Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.umd"
+          }
+        ],
+        "priority": "default"
+      },
+      {
+        "viewType": "umd.markdownEditor",
+        "displayName": "UMD Visual Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          },
+          {
+            "filenamePattern": "*.markdown"
+          }
+        ],
+        "priority": "option"
+      }
+    ]
+  }
+}
